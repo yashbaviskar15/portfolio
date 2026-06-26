@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL LAYOUT MAIN STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.terminal-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0f1c 0%, #111827 50%, #0a0f1c 100%);
+  color: #00d4ff;
+  font-family: 'Monaco', 'Courier New', 'Courier', monospace;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Terminal Container */
+.terminal-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  height: calc(100vh - 40px);
+  background: rgba(10, 15, 28, 0.8);
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 0 50px rgba(0, 212, 255, 0.2), inset 0 0 50px rgba(0, 212, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+/* Terminal Header with Title Bar */
+.terminal-header {
+  background: linear-gradient(
+    to bottom,
+    rgba(25, 25, 50, 0.8),
+    rgba(15, 20, 35, 0.8)
+  );
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 8px 12px;
+}
+
+.terminal-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 32px;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.terminal-dot.close {
+  background: #ff5f56;
+}
+
+.terminal-dot.close:hover {
+  background: #ff6b63;
+  box-shadow: 0 0 8px rgba(255, 95, 86, 0.5);
+}
+
+.terminal-dot.minimize {
+  background: #ffbd2e;
+}
+
+.terminal-dot.minimize:hover {
+  background: #ffcd41;
+  box-shadow: 0 0 8px rgba(255, 189, 46, 0.5);
+}
+
+.terminal-dot.maximize {
+  background: #27c93f;
+}
+
+.terminal-dot.maximize:hover {
+  background: #32d94d;
+  box-shadow: 0 0 8px rgba(39, 201, 63, 0.5);
+}
+
+.terminal-title {
+  flex: 1;
+  text-align: center;
+  color: #00d4ff;
+  font-size: 13px;
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* Terminal Body */
+.terminal-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Main Content Area */
+.terminal-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px;
+  color: #f1f5f9;
+  gap: 20px;
+}
+
+.terminal-main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-main-content::-webkit-scrollbar-track {
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.terminal-main-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 4px;
+}
+
+.terminal-main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.5);
+}
+
+/* Command Line at Bottom */
+.terminal-command-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.command-prompt {
+  color: #00d4ff;
+  font-weight: bold;
+}
+
+.command-cursor {
+  color: #00d4ff;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.command-cursor.active {
+  opacity: 1;
+  animation: blink 0.6s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .terminal-container {
+    margin: 10px;
+    height: calc(100vh - 20px);
+  }
+
+  .terminal-main-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .terminal-layout {
+    min-height: auto;
+  }
+
+  .terminal-container {
+    height: auto;
+    max-height: none;
+  }
+
+  .terminal-body {
+    flex-direction: column;
+  }
+
+  .terminal-title {
+    font-size: 11px;
+  }
+}
