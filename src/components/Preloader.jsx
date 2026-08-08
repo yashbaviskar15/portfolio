@@ -46,7 +46,7 @@ export default function Preloader({ onComplete }) {
                 Yash Baviskar
               </h3>
               <p className="text-xs font-mono font-semibold text-purple-600 tracking-wider uppercase">
-                Cloud Engineer & DevOps
+                Junior Cloud Engineer
               </p>
             </div>
           </div>

@@ -122,7 +122,7 @@ export default function Navbar() {
                 Yash Baviskar
               </span>
               <span className="text-[9px] font-mono text-purple-600 font-bold tracking-wider uppercase hidden md:block leading-none">
-                Cloud Engineer & DevOps
+                Junior Cloud Engineer
               </span>
             </div>
           </a>
