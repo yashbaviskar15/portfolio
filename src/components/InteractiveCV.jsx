@@ -1,138 +1,106 @@
-import { useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCV } from '../context/CVContext';
 
 export default function InteractiveCV() {
-  const printRef = useRef(null);
-
-  const handlePrint = () => {
-    window.print();
-  };
+  const { isOpen, closeCV } = useCV();
 
   return (
-    <section className="resume-section section" id="resume">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-label"><i className="bi bi-file-earmark-pdf-fill" aria-hidden="true" /> Curriculum Vitae</span>
-          <h2 className="section-title">Interactive Resume</h2>
-          <p className="section-subtitle">View, print, or download my official professional resume formatted for recruiters.</p>
-        </div>
-
-        <div className="resume-action">
-          <button onClick={handlePrint} className="btn-primary">
-            <i className="bi bi-printer-fill" aria-hidden="true" /> Print / Save as PDF
-          </button>
-        </div>
-
-        <div className="resume-paper" ref={printRef} id="printable-resume">
-          {/* Header */}
-          <header className="resume-paper__header">
-            <h1>Yash Baviskar</h1>
-            <p className="resume-paper__contact">
-              Jalgaon, Maharashtra, India &nbsp;|&nbsp;
-              <a href="tel:+919623166585">+91 96231 66585</a> &nbsp;|&nbsp;
-              <a href="mailto:yashbaviskar0215@outlook.com">yashbaviskar0215@outlook.com</a>
-            </p>
-            <p className="resume-paper__links">
-              <a href="https://linkedin.com/in/yashbaviskar15" target="_blank" rel="noopener noreferrer">
-                <i className="bi bi-linkedin" /> linkedin.com/in/yashbaviskar15
-              </a>
-              &nbsp;|&nbsp;
-              <a href="https://github.com/yashbaviskar15" target="_blank" rel="noopener noreferrer">
-                <i className="bi bi-github" /> github.com/yashbaviskar15
-              </a>
-            </p>
-          </header>
-
-          <hr className="resume-paper__divider" />
-
-          {/* Summary */}
-          <section className="resume-paper__section">
-            <h2>Summary</h2>
-            <p>
-              Final-year BCA student specializing in cloud computing and DevOps engineering, with hands-on experience building
-              AWS-based cloud infrastructure and full-stack applications. Proficient in Docker, Kubernetes, Terraform, GitHub Actions,
-              Linux, Prometheus, and Grafana. Strong foundation in Infrastructure as Code, CI/CD automation, cloud security, and
-              scalable system design. Seeking a DevOps Engineer internship to contribute to AI, robotics, and education technology
-              platforms.
-            </p>
-          </section>
-
-          {/* Technical Skills */}
-          <section className="resume-paper__section">
-            <h2>Technical Skills</h2>
-            <ul className="resume-paper__skills">
-              <li><strong>Cloud Platforms:</strong> AWS (EC2, S3, IAM, VPC, Route 53, Lambda, RDS, ECS, SNS, ELB, CloudFront, ECR, CodePipeline)</li>
-              <li><strong>Containers & Orchestration:</strong> Docker, Amazon ECS, Amazon ECR</li>
-              <li><strong>Infrastructure as Code:</strong> Terraform, AWS CloudFormation, Ansible, AWS CLI</li>
-              <li><strong>CI/CD & DevOps:</strong> GitHub Actions, AWS CodePipeline, CodeBuild, CodeDeploy, Jenkins</li>
-              <li><strong>Monitoring & Security:</strong> Prometheus, Grafana, CloudWatch, IAM Policies, AWS KMS, SSL/TLS (ACM), Secrets Management</li>
-              <li><strong>Databases & Storage:</strong> PostgreSQL, MySQL, Amazon S3</li>
-              <li><strong>Networking:</strong> VPC Design, Subnets, NACLs, Security Groups, DNS, Load Balancers, Nginx</li>
-              <li><strong>Programming & Scripting:</strong> Python, Bash/Shell Scripting, SQL, YAML, JSON, JavaScript</li>
-              <li><strong>Operating Systems & Tools:</strong> Linux (Ubuntu, Amazon Linux), Git, VS Code, Bootstrap</li>
-            </ul>
-          </section>
-
-          {/* Projects */}
-          <section className="resume-paper__section">
-            <h2>Projects</h2>
-            
-            <div className="resume-paper__project">
-              <div className="resume-paper__project-header">
-                <h3>CI/CD Pipeline with Docker, GitHub Actions & AWS</h3>
-                <span>GitHub Actions | Docker | Amazon ECR | Amazon ECS</span>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={closeCV}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md"
+        >
+          <motion.div
+            initial={{ scale: 0.94, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.94, y: 20 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden"
+          >
+            {/* Modal Header without CGPA */}
+            <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50/90">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg font-bold">
+                  <i className="bi bi-file-earmark-pdf-fill" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold font-heading text-slate-900 leading-tight">
+                    Yash Baviskar — Curriculum Vitae (CV)
+                  </h3>
+                  <p className="text-xs text-slate-500 font-mono">
+                    Cloud Engineer & DevOps • Verified Official PDF
+                  </p>
+                </div>
               </div>
-              <ul>
-                <li>Designed and implemented end-to-end automated build, test, and deployment pipelines using GitHub Actions triggered on every code push and pull request, eliminating manual deployment steps.</li>
-                <li>Containerized multi-service applications with Docker, pushed versioned images to Amazon ECR, and orchestrated blue/green deployments to Amazon ECS for zero-downtime production releases.</li>
-                <li>Integrated AWS CodePipeline with CodeBuild and CodeDeploy to create a fully managed, auditable release workflow with automatic rollback on failed health checks.</li>
-                <li>Configured environment-specific secrets management and IAM least-privilege roles across all pipeline stages, hardening the supply chain against credential exposure.</li>
-                <li>Reduced average release cycle time and deployment errors, establishing a repeatable pattern applicable to mobile backends, web platforms, and AI microservices.</li>
-              </ul>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href="/yash_cv.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                  title="Open in new browser tab"
+                >
+                  <i className="bi bi-box-arrow-up-right text-xs" />
+                  <span className="hidden sm:inline">Open in Tab</span>
+                </a>
+                <a
+                  href="/yash_cv.pdf"
+                  download="Yash_Baviskar_CV.pdf"
+                  className="px-4 py-1.5 rounded-xl gradient-btn text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+                >
+                  <i className="bi bi-download" />
+                  <span>Download PDF</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={closeCV}
+                  className="w-8 h-8 rounded-full bg-slate-200/60 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Close CV preview modal"
+                >
+                  <i className="bi bi-x-lg text-xs" />
+                </button>
+              </div>
             </div>
 
-            <div className="resume-paper__project">
-              <div className="resume-paper__project-header">
-                <h3>Cloud Infrastructure Monitoring with Prometheus & Grafana</h3>
-                <span>AWS EC2 | Terraform | Prometheus | Grafana | Docker | Linux</span>
-              </div>
-              <ul>
-                <li>Provisioned monitoring infrastructure on AWS EC2 using Terraform, defining all resources as version-controlled Infrastructure as Code for repeatable environment setup.</li>
-                <li>Deployed Prometheus for metrics collection across containerized services and built Grafana dashboards to visualize CPU, memory, and application-level performance.</li>
-                <li>Configured alerting rules for resource thresholds and service downtime, reducing mean time to detect infrastructure issues.</li>
-                <li>Documented setup and runbooks to make the monitoring stack reproducible across development, staging, and production environments.</li>
-              </ul>
+            {/* PDF Preview Frame */}
+            <div className="flex-1 bg-slate-100 min-h-[60vh] sm:min-h-[70vh] relative flex flex-col">
+              <iframe
+                src="/yash_cv.pdf#view=FitH&toolbar=0&navpanes=0"
+                title="Yash Baviskar CV PDF Preview"
+                className="w-full h-full flex-1 border-0 bg-white"
+                style={{ minHeight: '62vh' }}
+              />
             </div>
-          </section>
 
-          {/* Education */}
-          <section className="resume-paper__section">
-            <h2>Education</h2>
-            <div className="resume-paper__edu">
-              <div className="resume-paper__edu-header">
-                <h3>KCES’s Institute of Management and Research, Jalgaon</h3>
-                <span>2026</span>
+            {/* Bottom Quick-Action Bar */}
+            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/90 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold border border-emerald-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Verified Official CV
+                </span>
+                <span className="hidden sm:inline text-slate-400">•</span>
+                <span className="hidden sm:inline text-slate-500 font-mono">yashbaviskar0215@outlook.com</span>
               </div>
-              <p className="resume-paper__degree">Bachelor of Computer Applications (BCA) – CGPA: 8.14/10.0</p>
-              <p className="resume-paper__coursework">Completed coursework in Cloud Computing, Computer Networking, Operating Systems, Database Management Systems (DBMS), and Distributed Systems.</p>
-            </div>
-            <div className="resume-paper__edu">
-              <div className="resume-paper__edu-header">
-                <h3>Adv. S.A. Baheti Arts, Commerce and Science College, Jalgaon</h3>
-                <span>2022 – 2023</span>
+              <div className="flex items-center gap-2">
+                <a
+                  href="mailto:yashbaviskar0215@outlook.com?subject=Opportunity%20Discussion%20-%20Cloud%20Engineer%20%26%20DevOps"
+                  className="text-purple-600 hover:text-purple-700 font-semibold flex items-center gap-1"
+                >
+                  <i className="bi bi-send-fill text-xs" />
+                  <span>Contact Directly</span>
+                </a>
               </div>
-              <p className="resume-paper__degree">Higher Secondary (HSC)</p>
             </div>
-          </section>
-
-          {/* Achievements & Activities */}
-          <section className="resume-paper__section">
-            <h2>Achievements & Activities</h2>
-            <ul>
-              <li><strong>Active AWS Community Learner:</strong> Contributes to cloud learning communities and knowledge-sharing forums focused on DevOps, containerization, and cloud-native architecture.</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </section>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

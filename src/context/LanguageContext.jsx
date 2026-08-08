@@ -961,26 +961,37 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem('portfolio_lang', lang);
   }, [lang]);
 
-  const t = (path) => {
+  const t = (path, fallbackText = '') => {
+    if (!path) return fallbackText || '';
     const keys = path.split('.');
     let current = translations[lang] || translations.en;
+    let found = true;
     for (const key of keys) {
       if (current && current[key] !== undefined) {
         current = current[key];
       } else {
-        // Fallback to English if translation key is missing
-        let fallback = translations.en;
-        for (const fKey of keys) {
-          if (fallback && fallback[fKey] !== undefined) {
-            fallback = fallback[fKey];
-          } else {
-            return path;
-          }
-        }
-        return fallback;
+        found = false;
+        break;
       }
     }
-    return current;
+    if (found && current !== undefined && typeof current === 'string') return current;
+
+    // Fallback to English
+    let fallback = translations.en;
+    let fbFound = true;
+    for (const fKey of keys) {
+      if (fallback && fallback[fKey] !== undefined) {
+        fallback = fallback[fKey];
+      } else {
+        fbFound = false;
+        break;
+      }
+    }
+    if (fbFound && fallback !== undefined && typeof fallback === 'string') return fallback;
+
+    // Return human-readable fallback word from key instead of raw path
+    const lastKey = keys[keys.length - 1];
+    return fallbackText || lastKey.charAt(0).toUpperCase() + lastKey.slice(1);
   };
 
   return (
