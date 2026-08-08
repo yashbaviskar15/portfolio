@@ -35,11 +35,11 @@ export default function Hero() {
         <div className="relative w-full h-full flex items-end justify-end">
           <img
             src="/photo2.png"
-            alt="Yash Baviskar — Cloud Engineer & DevOps"
+            alt="Yash Baviskar — Junior Cloud Engineer"
             className="h-auto max-h-[85vh] lg:max-h-[88vh] w-auto max-w-full object-contain object-bottom filter drop-shadow-xl select-none"
             onError={(e) => { e.target.src = '/profilephoto.png'; }}
           />
-          {/* Left-edge readability gradient — does NOT mask face */}
+          {/* Left-edge readability gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#F8FAF9] via-[#F8FAF9]/30 via-20% to-transparent hidden lg:block" />
           <div className="absolute inset-0 bg-[#F8FAF9]/80 lg:hidden" />
         </div>
@@ -71,26 +71,29 @@ export default function Hero() {
                 Yash Baviskar
               </h1>
               <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600 font-heading">
-                {t('hero.role', 'Cloud Engineer & DevOps')}
+                {t('hero.role', 'Junior Cloud Engineer')}
+              </p>
+              <p className="text-xs sm:text-sm font-bold font-mono text-slate-700 tracking-wide pt-0.5">
+                AWS • Terraform • Docker • Kubernetes • CI/CD
               </p>
             </motion.div>
 
-            {/* Summary — uses existing hero.summary key */}
+            {/* Summary */}
             <motion.div variants={itemVariants}>
-              <p className="text-sm sm:text-base text-slate-700 max-w-lg leading-relaxed">
-                {t('hero.summary', 'Specializing in AWS, Terraform, Docker, Kubernetes, Linux, and CI/CD pipelines. Actively expanding expertise into Microsoft Azure cloud technologies.')}
+              <p className="text-xs sm:text-sm text-slate-600 max-w-lg leading-relaxed">
+                {t('hero.summary', 'Building, automating, deploying, and managing cloud infrastructure with AWS, Terraform, Docker, Kubernetes, and automated CI/CD release workflows.')}
               </p>
             </motion.div>
 
-            {/* Tech Stack Chips — compact */}
+            {/* Tech Stack Chips */}
             <motion.div variants={itemVariants} className="flex flex-wrap gap-1.5">
               {[
-                { name: 'AWS & Azure', color: 'bg-amber-500' },
+                { name: 'AWS Cloud', color: 'bg-amber-500' },
                 { name: 'Terraform (IaC)', color: 'bg-purple-500' },
                 { name: 'Docker & Kubernetes', color: 'bg-blue-500' },
                 { name: 'GitHub Actions (CI/CD)', color: 'bg-rose-500' },
                 { name: 'Prometheus & Grafana', color: 'bg-emerald-500' },
-                { name: 'Linux (Ubuntu/Amazon)', color: 'bg-slate-700' },
+                { name: 'Linux (Ubuntu)', color: 'bg-slate-700' },
                 { name: 'Python & Bash', color: 'bg-indigo-600' },
               ].map((chip) => (
                 <span
@@ -103,7 +106,7 @@ export default function Hero() {
               ))}
             </motion.div>
 
-            {/* Action Buttons — no duplicate Download CV */}
+            {/* Action Buttons */}
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2 sm:gap-2.5">
               <button
                 type="button"
@@ -111,7 +114,7 @@ export default function Hero() {
                 className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-white font-semibold text-xs sm:text-sm gradient-btn shadow-md hover:shadow-purple-500/20 flex items-center gap-2 transition-all hover:-translate-y-0.5 cursor-pointer"
               >
                 <i className="bi bi-folder2-open text-sm" />
-                <span>{t('hero.exploreProjects', 'Explore Projects')}</span>
+                <span>{t('hero.exploreProjects', 'View Projects')}</span>
               </button>
 
               <a
@@ -134,7 +137,7 @@ export default function Hero() {
               </button>
             </motion.div>
 
-            {/* Social Channels */}
+            {/* Social Channels Bar */}
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-200/80">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-heading">
                 {t('hero.connect', 'Connect:')}

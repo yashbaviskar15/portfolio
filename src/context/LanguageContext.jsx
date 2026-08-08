@@ -35,7 +35,7 @@ export const translations = {
     hero: {
       statusBadge: 'Open to Roles & 6-Month Internships',
       greeting: "Hi, I'm",
-      role: 'Cloud Engineer & DevOps',
+      role: 'Junior Cloud Engineer',
       summary: 'Specializing in AWS, Terraform, Docker, Kubernetes, Linux, and CI/CD pipelines. Actively expanding expertise into Microsoft Azure cloud technologies.',
       exploreProjects: 'Explore Projects',
       viewResume: 'View Resume',
@@ -45,7 +45,7 @@ export const translations = {
     },
     about: {
       badge: 'Profile Overview',
-      title: 'Cloud Engineer & DevOps',
+      title: 'Junior Cloud Engineer',
       summary: 'Hands-on experience designing, automating, and deploying cloud infrastructure using Terraform, Docker, Kubernetes, Linux, and GitHub Actions, primarily on AWS — with strong motivation to grow alongside international teams and expand into Microsoft Azure technologies.',
       metric1Label: 'Deployment Speedup',
       metric2Label: 'Faster Incident Detection',
