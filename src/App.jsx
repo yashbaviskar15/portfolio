@@ -1,98 +1,92 @@
-import { useEffect, useState } from 'react';
-import './index.css';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LanguageProvider } from './context/LanguageContext';
+import ScrollProgressBar from './components/ScrollProgressBar';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
 import Experience from './components/Experience';
 import Projects from './components/Projects';
-import Certifications from './components/Certifications';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-
-function PortfolioSkeleton() {
-  return (
-    <div className="skeleton-screen" aria-label="Loading portfolio" role="status">
-      <div className="skeleton-nav">
-        <span className="skeleton-logo" />
-        <span className="skeleton-line skeleton-line--nav" />
-      </div>
-      <div className="skeleton-hero">
-        <div className="skeleton-copy">
-          <span className="skeleton-pill" />
-          <span className="skeleton-title" />
-          <span className="skeleton-title skeleton-title--short" />
-          <span className="skeleton-line" />
-          <span className="skeleton-line skeleton-line--wide" />
-          <div className="skeleton-actions">
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-        <div className="skeleton-photo" />
-      </div>
-    </div>
-  );
-}
-
-function BackToTop() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setVisible(window.scrollY > 520);
-    window.addEventListener('scroll', handler, { passive: true });
-    handler();
-    return () => window.removeEventListener('scroll', handler);
-  }, []);
-
-  return (
-    <button
-      className={`back-to-top ${visible ? 'back-to-top--visible' : ''}`}
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      aria-label="Back to top"
-      title="Back to top"
-      type="button"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <polyline points="18 15 12 9 6 15" />
-      </svg>
-    </button>
-  );
-}
+import Preloader from './components/Preloader';
+import SkeletonLoader from './components/SkeletonLoader';
+import CursorFollower from './components/CursorFollower';
+import BackToTop from './components/BackToTop';
+import CookieBanner from './components/CookieBanner';
 
 export default function App() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('portfolio-theme') || 'dark');
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Restore visited section or scroll position after page reload and preloader completion
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('portfolio-theme', theme);
-  }, [theme]);
+    if (!isLoading) {
+      const restoreSection = () => {
+        const hash = window.location.hash ? window.location.hash.replace('#', '') : null;
+        const savedSection = hash || sessionStorage.getItem('yash_portfolio_active_section');
+        const savedScrollY = sessionStorage.getItem('yash_portfolio_scroll_y');
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 650);
-    return () => window.clearTimeout(timer);
-  }, []);
+        if (savedSection && savedSection !== 'home') {
+          const element = document.getElementById(savedSection);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
+        }
 
-  if (loading) {
-    return <PortfolioSkeleton />;
-  }
+        if (savedScrollY && Number(savedScrollY) > 80) {
+          window.scrollTo({ top: Number(savedScrollY), behavior: 'smooth' });
+        }
+      };
+
+      const timer = setTimeout(restoreSection, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   return (
-    <div className="app">
-      <Navbar theme={theme} toggleTheme={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))} />
-      <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Experience />
-        <Projects />
-        <Certifications />
-        <Contact />
-      </main>
-      <Footer />
-      <BackToTop />
-    </div>
+    <LanguageProvider>
+      <div className="min-h-screen bg-[#F8FAF9] text-slate-900 font-sans relative selection:bg-purple-500 selection:text-white overflow-x-hidden">
+        {/* Professional White Page Preloader */}
+        <Preloader onComplete={() => setIsLoading(false)} />
+
+        {/* Content with Smooth Entrance & Skeleton Backdrop */}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <SkeletonLoader />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <ScrollProgressBar />
+              <CursorFollower />
+              <BackToTop />
+              <Navbar />
+              <main>
+                <Hero />
+                <About />
+                <Skills />
+                <Experience />
+                <Projects />
+                <Contact />
+              </main>
+              <Footer />
+              <CookieBanner />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </LanguageProvider>
   );
 }

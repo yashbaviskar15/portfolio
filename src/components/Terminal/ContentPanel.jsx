@@ -1,132 +1,182 @@
 import './ContentPanel.css';
 
 const sectionContent = {
-  skills: {
-    title: 'Technical Skills',
+  journey: {
+    title: 'My Journey',
     items: [
       {
-        category: 'Cloud Platforms',
-        skills: ['AWS (EC2, S3, Lambda, RDS, CloudFront)', 'Azure Basics', 'Google Cloud Platform'],
+        year: '2023 - Present',
+        title: 'Cloud Engineer & DevOps',
+        description: 'Focused on building scalable, resilient cloud infrastructure and automating everything.'
       },
       {
-        category: 'Container & Orchestration',
-        skills: ['Docker', 'Kubernetes (EKS, microk8s)', 'Docker Compose', 'Helm'],
+        year: '2022 - 2023',
+        title: 'Learning AWS & Kubernetes',
+        description: 'Deep dive into cloud technologies, containerization, and orchestration.'
       },
       {
-        category: 'DevOps & IaC',
-        skills: ['Terraform', 'CloudFormation', 'Ansible', 'Jenkins', 'GitLab CI/CD', 'GitHub Actions'],
-      },
-      {
-        category: 'Monitoring & Logging',
-        skills: ['Prometheus', 'Grafana', 'ELK Stack', 'CloudWatch', 'DataDog'],
-      },
-      {
-        category: 'Programming',
-        skills: ['Python', 'Bash Scripting', 'Go (basics)', 'SQL', 'JavaScript (Node.js)'],
-      },
-      {
-        category: 'Other Tools',
-        skills: ['Git', 'Linux Administration', 'Nginx', 'Apache', 'PostgreSQL', 'MongoDB'],
-      },
-    ],
+        year: '2021 - 2022',
+        title: 'Getting Started with DevOps',
+        description: 'Explored CI/CD pipelines, infrastructure as code, and monitoring.'
+      }
+    ]
   },
-  experience: {
-    title: 'Cloud Engineering Journey',
+  about: {
+    title: 'About Me',
     items: [
       {
-        role: 'BCA - Cloud Computing Focus',
-        company: "KCES's Institute of Management & Research",
-        period: '2023 - 2026',
-        description: 'Studying computing fundamentals with a focus on networking, operating systems, DBMS, and cloud concepts.',
-        highlights: ['CGPA 8.17 / 10', 'AWS learning path', 'Cloud project portfolio'],
+        icon: '👨‍💻',
+        title: 'Who I Am',
+        description: 'A passionate Cloud Engineer & DevOps specialist with a love for automation and infrastructure.'
       },
       {
-        role: 'AWS Certification Path',
-        company: 'Amazon Web Services',
-        period: '2023 - 2024',
-        description: 'Prepared and validated AWS fundamentals and architecture knowledge through certifications.',
-        highlights: ['Cloud Practitioner', 'Solutions Architect Associate', 'Architecture fundamentals'],
+        icon: '🎯',
+        title: 'What I Do',
+        description: 'I design, build, and maintain scalable cloud infrastructure with a focus on reliability and efficiency.'
       },
       {
-        role: 'Infrastructure Automation Practice',
-        company: 'Terraform and DevOps Labs',
-        period: '2024 - Present',
-        description: 'Building portfolio projects around Terraform, CI/CD, Docker, and AWS infrastructure.',
-        highlights: ['Terraform workflows', 'GitHub Actions', 'Docker and ECR'],
-      },
-    ],
+        icon: '🚀',
+        title: 'My Mission',
+        description: 'To help teams ship faster with confidence through automation and best practices.'
+      }
+    ]
   },
-  projects: {
-    title: 'Featured Projects',
+  resume: {
+    title: 'Resume',
     items: [
       {
-        name: 'Multi-Region K8s Cluster',
-        description: 'Designed and deployed a highly available Kubernetes cluster across multiple AWS regions.',
-        tech: ['Kubernetes', 'Terraform', 'AWS', 'Prometheus'],
-        status: 'Completed',
+        label: 'Experience',
+        value: '3+ Years'
+      },
+      {
+        label: 'Projects',
+        value: '15+'
+      },
+      {
+        label: 'Certifications',
+        value: '5+'
+      },
+      {
+        label: 'Technologies',
+        value: '20+'
+      }
+    ]
+  },
+  portfolio: {
+    title: 'Portfolio',
+    items: [
+      {
+        name: 'Multi-Region Kubernetes Cluster',
+        description: 'Highly available Kubernetes deployment across AWS regions',
+        tech: ['Kubernetes', 'Terraform', 'AWS', 'Helm']
       },
       {
         name: 'CI/CD Pipeline Automation',
-        description: 'Built comprehensive GitLab CI/CD pipeline reducing deployment time from 2 hours to 15 minutes.',
-        tech: ['GitLab CI', 'Docker', 'Python', 'Ansible'],
-        status: 'Completed',
-      },
-      {
-        name: 'Cloud Cost Optimization',
-        description: 'Implemented automated cost optimization tools saving 40% on cloud infrastructure expenses.',
-        tech: ['Python', 'AWS CloudWatch', 'Lambda', 'Grafana'],
-        status: 'Completed',
+        description: 'Automated deployment pipeline reducing release time by 80%',
+        tech: ['GitHub Actions', 'Docker', 'AWS ECS']
       },
       {
         name: 'Infrastructure Monitoring Stack',
-        description: 'Deployed comprehensive monitoring and alerting system across entire infrastructure.',
-        tech: ['Prometheus', 'Grafana', 'AlertManager', 'ELK Stack'],
-        status: 'Completed',
+        description: 'Comprehensive observability platform for cloud infrastructure',
+        tech: ['Prometheus', 'Grafana', 'ELK', 'PagerDuty']
       },
-    ],
+      {
+        name: 'Cloud Cost Optimization',
+        description: 'Automated cost management reducing expenses by 40%',
+        tech: ['AWS Cost Explorer', 'Lambda', 'Python']
+      }
+    ]
   },
-  certifications: {
-    title: 'Professional Certifications',
+  blog: {
+    title: 'Blog',
     items: [
       {
-        name: 'AWS Certified Solutions Architect - Professional',
-        issuer: 'Amazon Web Services',
-        year: '2023',
-        expiry: 'Valid until 2025',
+        date: '2024-01-15',
+        title: 'Getting Started with Terraform',
+        excerpt: 'A beginner\'s guide to infrastructure as code with Terraform.'
       },
       {
-        name: 'Kubernetes Application Developer (CKAD)',
-        issuer: 'Linux Foundation',
-        year: '2022',
-        expiry: 'Valid until 2025',
+        date: '2024-02-20',
+        title: 'Kubernetes Best Practices',
+        excerpt: 'Essential tips for running production-grade Kubernetes clusters.'
       },
       {
-        name: 'AWS Certified DevOps Engineer - Professional',
-        issuer: 'Amazon Web Services',
-        year: '2022',
-        expiry: 'Valid until 2024',
-      },
-      {
-        name: 'Certified Kubernetes Administrator (CKA)',
-        issuer: 'Linux Foundation',
-        year: '2021',
-        expiry: 'Valid until 2024',
-      },
-      {
-        name: 'HashiCorp Certified: Terraform Associate',
-        issuer: 'HashiCorp',
-        year: '2021',
-        expiry: 'Valid until 2024',
-      },
-    ],
+        date: '2024-03-10',
+        title: 'CI/CD Pipeline Design',
+        excerpt: 'How to build robust and efficient deployment pipelines.'
+      }
+    ]
   },
   contact: {
     title: 'Get In Touch',
-    items: [],
+    items: [
+      {
+        icon: '📧',
+        label: 'Email',
+        value: 'yash@example.com'
+      },
+      {
+        icon: '💼',
+        label: 'LinkedIn',
+        value: 'linkedin.com/in/yash'
+      },
+      {
+        icon: '🐙',
+        label: 'GitHub',
+        value: 'github.com/yash'
+      },
+      {
+        icon: '🐦',
+        label: 'Twitter',
+        value: '@yash_engineer'
+      }
+    ]
   },
+  terminal: {
+    title: 'Terminal',
+    items: [
+      {
+        command: 'help',
+        description: 'List all available commands'
+      },
+      {
+        command: 'about',
+        description: 'Learn more about me'
+      },
+      {
+        command: 'projects',
+        description: 'View my portfolio'
+      },
+      {
+        command: 'contact',
+        description: 'Get in touch'
+      }
+    ]
+  },
+  infrastructure: {
+    title: 'Infrastructure',
+    items: [
+      {
+        name: 'AWS Architecture',
+        description: 'VPC design, multi-AZ deployment, auto-scaling groups'
+      },
+      {
+        name: 'Kubernetes Platform',
+        description: 'EKS cluster management, Helm charts, operators'
+      },
+      {
+        name: 'CI/CD Platform',
+        description: 'GitHub Actions, ArgoCD, GitOps workflows'
+      },
+      {
+        name: 'Observability Stack',
+        description: 'Prometheus, Grafana, Loki, Tempo'
+      }
+    ]
+  }
 };
 
-export default function ContentPanel({ section }) {
+export default function ContentPanel({ section, activeTab }) {
   const content = sectionContent[section];
 
   if (!content) {
@@ -141,55 +191,52 @@ export default function ContentPanel({ section }) {
       </div>
 
       <div className="panel-content">
-        {section === 'skills' && (
-          <div className="skills-grid">
-            {content.items.map((skillGroup, idx) => (
-              <div key={idx} className="skill-group">
-                <h4 className="skill-category">{skillGroup.category}</h4>
-                <ul className="skill-list">
-                  {skillGroup.skills.map((skill, sidx) => (
-                    <li key={sidx} className="skill-item">
-                      <span className="skill-dot">●</span> {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {section === 'experience' && (
-          <div className="experience-list">
-            {content.items.map((exp, idx) => (
-              <div key={idx} className="experience-item">
-                <div className="exp-header">
-                  <h4 className="exp-role">{exp.role}</h4>
-                  <span className="exp-period">{exp.period}</span>
+        {section === 'journey' && (
+          <div className="journey-list">
+            {content.items.map((item, idx) => (
+              <div key={idx} className="journey-item">
+                <div className="journey-year">{item.year}</div>
+                <div className="journey-details">
+                  <h4 className="journey-title">{item.title}</h4>
+                  <p className="journey-description">{item.description}</p>
                 </div>
-                <p className="exp-company">{exp.company}</p>
-                <p className="exp-description">{exp.description}</p>
-                <ul className="exp-highlights">
-                  {exp.highlights.map((h, hidx) => (
-                    <li key={hidx}>✓ {h}</li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
         )}
 
-        {section === 'projects' && (
-          <div className="projects-grid">
+        {section === 'about' && (
+          <div className="about-grid">
+            {content.items.map((item, idx) => (
+              <div key={idx} className="about-card">
+                <div className="about-icon">{item.icon}</div>
+                <h4 className="about-title">{item.title}</h4>
+                <p className="about-description">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {section === 'resume' && (
+          <div className="resume-grid">
+            {content.items.map((item, idx) => (
+              <div key={idx} className="resume-card">
+                <div className="resume-value">{item.value}</div>
+                <div className="resume-label">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {section === 'portfolio' && (
+          <div className="portfolio-grid">
             {content.items.map((project, idx) => (
-              <div key={idx} className="project-card">
-                <div className="project-header">
-                  <h4 className="project-name">{project.name}</h4>
-                  <span className={`project-status ${project.status.toLowerCase()}`}>{project.status}</span>
-                </div>
-                <p className="project-description">{project.description}</p>
-                <div className="project-tech">
+              <div key={idx} className="portfolio-card">
+                <h4 className="portfolio-name">{project.name}</h4>
+                <p className="portfolio-description">{project.description}</p>
+                <div className="portfolio-tech">
                   {project.tech.map((t, tidx) => (
-                    <span key={tidx} className="tech-tag">{t}</span>
+                    <span key={tidx} className="tech-badge">{t}</span>
                   ))}
                 </div>
               </div>
@@ -197,18 +244,14 @@ export default function ContentPanel({ section }) {
           </div>
         )}
 
-        {section === 'certifications' && (
-          <div className="certifications-list">
-            {content.items.map((cert, idx) => (
-              <div key={idx} className="cert-item">
-                <div className="cert-badge">🏆</div>
-                <div className="cert-details">
-                  <h4 className="cert-name">{cert.name}</h4>
-                  <p className="cert-issuer">{cert.issuer}</p>
-                  <div className="cert-meta">
-                    <span className="cert-year">{cert.year}</span>
-                    <span className="cert-expiry">{cert.expiry}</span>
-                  </div>
+        {section === 'blog' && (
+          <div className="blog-list">
+            {content.items.map((post, idx) => (
+              <div key={idx} className="blog-item">
+                <div className="blog-date">{post.date}</div>
+                <div className="blog-content">
+                  <h4 className="blog-title">{post.title}</h4>
+                  <p className="blog-excerpt">{post.excerpt}</p>
                 </div>
               </div>
             ))}
@@ -216,25 +259,39 @@ export default function ContentPanel({ section }) {
         )}
 
         {section === 'contact' && (
-          <div className="contact-section">
-            <div className="contact-form">
-              <div className="form-group">
-                <label className="form-label">Email:</label>
-                <a href="mailto:yash@example.com" className="contact-link">yash@example.com</a>
+          <div className="contact-grid">
+            {content.items.map((item, idx) => (
+              <div key={idx} className="contact-card">
+                <div className="contact-icon">{item.icon}</div>
+                <div className="contact-info">
+                  <div className="contact-label">{item.label}</div>
+                  <div className="contact-value">{item.value}</div>
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">LinkedIn:</label>
-                <a href="#linkedin" className="contact-link">linkedin.com/in/yash</a>
+            ))}
+          </div>
+        )}
+
+        {section === 'terminal' && (
+          <div className="terminal-commands">
+            {content.items.map((cmd, idx) => (
+              <div key={idx} className="command-item">
+                <span className="command-prompt">$</span>
+                <span className="command-name">{cmd.command}</span>
+                <span className="command-desc">- {cmd.description}</span>
               </div>
-              <div className="form-group">
-                <label className="form-label">GitHub:</label>
-                <a href="#github" className="contact-link">github.com/yash</a>
+            ))}
+          </div>
+        )}
+
+        {section === 'infrastructure' && (
+          <div className="infrastructure-grid">
+            {content.items.map((item, idx) => (
+              <div key={idx} className="infrastructure-card">
+                <h4 className="infrastructure-name">{item.name}</h4>
+                <p className="infrastructure-description">{item.description}</p>
               </div>
-              <div className="form-group">
-                <label className="form-label">Twitter:</label>
-                <a href="#twitter" className="contact-link">@yash_engineer</a>
-              </div>
-            </div>
+            ))}
           </div>
         )}
       </div>
