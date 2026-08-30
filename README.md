@@ -107,42 +107,6 @@ yash-portfolio/
 
 ---
 
-## Getting Started
-
-### Prerequisites
-- Node.js (version 18 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yashbaviskar15/portfolio.git
-cd portfolio
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-4. Build for production:
-```bash
-npm run build
-```
-
-5. Preview production build locally:
-```bash
-npm run preview
-```
-
----
-
 ## Contact & Links
 
 - Developer: Yash Baviskar
