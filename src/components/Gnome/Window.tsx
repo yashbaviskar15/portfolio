@@ -245,85 +245,93 @@ export const Window: React.FC<WindowProps> = ({
           : 'bg-[#f7f7f8] border border-neutral-300 shadow-[0_10px_25px_rgba(0,0,0,0.15)]'
       }`}
     >
-      {/* Authentic Ubuntu GNOME HeaderBar */}
       <motion.div
-        onDoubleClick={onMaximizeToggle}
-        className={`h-10 px-3.5 flex items-center justify-between select-none cursor-grab active:cursor-grabbing shrink-0 border-b gnome-titlebar-handle transition-all duration-150 ${
-          themeMode === 'dark'
-            ? isFocused
-              ? 'bg-[#282828] text-white border-white/10 opacity-100'
-              : 'bg-[#1e1e1e] text-neutral-400 border-white/5 opacity-60'
-            : isFocused
-            ? 'bg-[#ebebeb] text-neutral-900 border-neutral-300 opacity-100'
-            : 'bg-[#f4f4f4] text-neutral-600 border-neutral-200 opacity-60'
-        }`}
-        style={isFocused ? { borderTop: `2px solid ${accentColor}` } : {}}
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+        className="w-full h-full flex flex-col overflow-hidden"
       >
-        {/* Left Side: Window Icon & Title (Truncates gracefully with ellipsis) */}
-        <div className="flex items-center gap-2.5 text-xs font-semibold truncate pointer-events-none pr-3">
-          {icon && <span className="shrink-0">{icon}</span>}
-          <span className="truncate">{title}</span>
+        {/* Authentic Ubuntu GNOME HeaderBar */}
+        <div
+          onDoubleClick={onMaximizeToggle}
+          className={`h-10 px-3.5 flex items-center justify-between select-none cursor-grab active:cursor-grabbing shrink-0 border-b gnome-titlebar-handle transition-all duration-150 ${
+            themeMode === 'dark'
+              ? isFocused
+                ? 'bg-[#282828] text-white border-white/10 opacity-100'
+                : 'bg-[#1e1e1e] text-neutral-400 border-white/5 opacity-60'
+              : isFocused
+              ? 'bg-[#ebebeb] text-neutral-900 border-neutral-300 opacity-100'
+              : 'bg-[#f4f4f4] text-neutral-600 border-neutral-200 opacity-60'
+          }`}
+          style={isFocused ? { borderTop: `2px solid ${accentColor}` } : {}}
+        >
+          {/* Left Side: Window Icon & Title (Truncates gracefully with ellipsis) */}
+          <div className="flex items-center gap-2.5 text-xs font-semibold truncate pointer-events-none pr-3">
+            {icon && <span className="shrink-0">{icon}</span>}
+            <span className="truncate">{title}</span>
+          </div>
+
+          {/* Right Side: Standardized Traffic-Light Dots */}
+          <div className="flex items-center gap-1.5 ml-2 shrink-0">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMinimize();
+              }}
+              aria-label={`Minimize ${title}`}
+              className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-300 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
+              title="Minimize"
+            >
+              <Minus className="w-3 h-3" />
+            </motion.button>
+
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMaximizeToggle();
+              }}
+              aria-label={`Maximize ${title}`}
+              className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-300 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
+              title="Maximize"
+            >
+              <Square className="w-2.5 h-2.5" />
+            </motion.button>
+
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              onMouseEnter={() => setIsCloseHovered(true)}
+              onMouseLeave={() => setIsCloseHovered(false)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              aria-label={`Close ${title}`}
+              className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
+              title="Close"
+            >
+              <X className="w-3.5 h-3.5 font-bold" />
+            </motion.button>
+          </div>
         </div>
 
-        {/* Right Side: Standardized Traffic-Light Dots */}
-        <div className="flex items-center gap-1.5 ml-2 shrink-0">
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onMinimize();
-            }}
-            aria-label={`Minimize ${title}`}
-            className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-300 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
-            title="Minimize"
-          >
-            <Minus className="w-3 h-3" />
-          </motion.button>
-
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onMaximizeToggle();
-            }}
-            aria-label={`Maximize ${title}`}
-            className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-300 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
-            title="Maximize"
-          >
-            <Square className="w-2.5 h-2.5" />
-          </motion.button>
-
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.9 }}
-            onMouseEnter={() => setIsCloseHovered(true)}
-            onMouseLeave={() => setIsCloseHovered(false)}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            aria-label={`Close ${title}`}
-            className="w-5.5 h-5.5 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
-            title="Close"
-          >
-            <X className="w-3.5 h-3.5 font-bold" />
-          </motion.button>
+        {/* Floating Window Scrollable Body */}
+        <div
+          className={`gnome-window-content gnome-scrollbar select-text flex-1 min-h-0 ${
+            themeMode === 'dark' ? 'bg-[#1a1a1a] text-neutral-200' : 'bg-neutral-100 text-neutral-800'
+          }`}
+        >
+          {children}
         </div>
       </motion.div>
-
-      {/* Floating Window Scrollable Body */}
-      <div
-        className={`gnome-window-content gnome-scrollbar select-text ${
-          themeMode === 'dark' ? 'bg-[#1a1a1a] text-neutral-200' : 'bg-neutral-100 text-neutral-800'
-        }`}
-      >
-        {children}
-      </div>
     </Rnd>
   );
 };

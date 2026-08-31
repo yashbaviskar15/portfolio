@@ -244,29 +244,31 @@ export const GnomeDesktop: React.FC = () => {
 
       {/* 8. Active Windows Layer with react-rnd 8-direction resizing */}
       <AnimatePresence>
-        {windows.map((win) => (
-          <Window
-            key={win.id}
-            id={win.id}
-            title={win.title}
-            icon={getWindowIcon(win.id)}
-            isOpen={win.isOpen}
-            isMinimized={win.isMinimized}
-            isMaximized={win.isMaximized}
-            zIndex={win.zIndex}
-            isFocused={activeWindowId === win.id}
-            origin={windowOrigins[win.id]}
-            position={win.position}
-            size={win.size}
-            onClose={() => closeApp(win.id)}
-            onMinimize={() => minimizeApp(win.id)}
-            onMaximizeToggle={() => toggleMaximizeApp(win.id)}
-            onFocus={() => focusApp(win.id)}
-            onUpdateBounds={(pos, sz) => updateWindowBounds(win.id, pos, sz)}
-          >
-            {renderAppContent(win.id)}
-          </Window>
-        ))}
+        {windows
+          .filter((win) => win.isOpen && !win.isMinimized)
+          .map((win) => (
+            <Window
+              key={win.id}
+              id={win.id}
+              title={win.title}
+              icon={getWindowIcon(win.id)}
+              isOpen={win.isOpen}
+              isMinimized={win.isMinimized}
+              isMaximized={win.isMaximized}
+              zIndex={win.zIndex}
+              isFocused={activeWindowId === win.id}
+              origin={windowOrigins[win.id]}
+              position={win.position}
+              size={win.size}
+              onClose={() => closeApp(win.id)}
+              onMinimize={() => minimizeApp(win.id)}
+              onMaximizeToggle={() => toggleMaximizeApp(win.id)}
+              onFocus={() => focusApp(win.id)}
+              onUpdateBounds={(pos, sz) => updateWindowBounds(win.id, pos, sz)}
+            >
+              {renderAppContent(win.id)}
+            </Window>
+          ))}
       </AnimatePresence>
 
       {/* 9. Alt+Tab Window Switcher Overlay */}

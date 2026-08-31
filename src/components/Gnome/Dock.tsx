@@ -41,21 +41,18 @@ const DockItem: React.FC<DockItemProps> = ({
   const [hovered, setHovered] = useState<boolean>(false);
   const [isBouncing, setIsBouncing] = useState<boolean>(false);
 
-  // Compute cursor distance from the center of this item
+  // Compute cursor distance from the stable center of this item
   const distance = useTransform(mouseX, (val) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
     return val - (bounds.x + bounds.width / 2);
   });
 
-  // Desktop fluid wave width & margin expansion
-  const widthSync = useTransform(distance, [-140, 0, 140], [44, 64, 44]);
-  const width = useSpring(widthSync, { mass: 0.1, stiffness: 220, damping: 18 });
+  // Desktop fluid wave magnification (GPU scale & vertical lift)
+  const scaleSync = useTransform(distance, [-160, 0, 160], [1, 1.34, 1]);
+  const scale = useSpring(scaleSync, { mass: 0.08, stiffness: 320, damping: 22 });
 
-  const marginSync = useTransform(distance, [-140, 0, 140], [3, 8, 3]);
-  const margin = useSpring(marginSync, { mass: 0.1, stiffness: 220, damping: 18 });
-
-  const ySync = useTransform(distance, [-140, 0, 140], [0, -8, 0]);
-  const y = useSpring(ySync, { mass: 0.1, stiffness: 220, damping: 18 });
+  const ySync = useTransform(distance, [-160, 0, 160], [0, -10, 0]);
+  const y = useSpring(ySync, { mass: 0.08, stiffness: 320, damping: 22 });
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -68,20 +65,11 @@ const DockItem: React.FC<DockItemProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      style={
-        isDesktop
-          ? {
-              width,
-              marginLeft: margin,
-              marginRight: margin,
-            }
-          : {}
-      }
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-auto mx-[1px] sm:mx-0"
+      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
     >
       {/* Clean Tooltip Above Icon (Desktop Only) */}
       <AnimatePresence>
@@ -90,7 +78,7 @@ const DockItem: React.FC<DockItemProps> = ({
             initial={{ opacity: 0, y: 8, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.92 }}
-            transition={{ duration: 0.12, ease: 'easeOut' }}
+            transition={{ duration: 0.14, ease: 'easeOut' }}
             className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[11.5px] font-semibold px-2.5 py-1 rounded-md border border-white/15 shadow-2xl whitespace-nowrap pointer-events-none z-60 hidden sm:block"
           >
             {app.label}
@@ -98,16 +86,16 @@ const DockItem: React.FC<DockItemProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Button: Dynamic Magnification on Desktop, Compact 28px on Mobile */}
+      {/* Button: GPU Magnification on Desktop, Compact 28px on Mobile */}
       <motion.button
         type="button"
         tabIndex={0}
         style={
           isDesktop
             ? {
-                width,
-                height: width,
+                scale,
                 y,
+                transformOrigin: 'bottom center',
               }
             : {}
         }
@@ -119,9 +107,9 @@ const DockItem: React.FC<DockItemProps> = ({
           }
         }}
         animate={isBouncing ? dockLaunchBounce : {}}
-        whileTap={{ scale: 0.88 }}
+        whileTap={{ scale: 0.85 }}
         aria-label={app.label}
-        className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl ${app.tileClass} border flex items-center justify-center text-white shadow-lg cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 shrink-0`}
+        className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl ${app.tileClass} border flex items-center justify-center text-white shadow-lg cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 shrink-0 transition-shadow duration-200 hover:shadow-2xl`}
       >
         <div className="w-3.5 h-3.5 sm:w-6 sm:h-6 flex items-center justify-center pointer-events-none">
           {app.icon}
@@ -145,21 +133,21 @@ const DockItem: React.FC<DockItemProps> = ({
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActivities }) => {
   const mouseX = useMotionValue(Infinity);
   const [gridHovered, setGridHovered] = useState<boolean>(false);
-  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState<boolean>(() => typeof window !== 'undefined' ? window.innerWidth >= 640 : false);
   const { themeMode, accentColor, t } = useGnomeStore();
   const strings = t();
 
   // Track responsive viewport width
   useEffect(() => {
     const handleResize = () => {
-      setIsDesktop(typeof window !== 'undefined' && window.innerWidth >= 640);
+      setIsDesktop(window.innerWidth >= 640);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -223,7 +211,7 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
         if (isDesktop) mouseX.set(Infinity);
       }}
       style={{ left: '50%' }}
-      className={`fixed bottom-3 sm:bottom-4 z-40 select-none flex items-end justify-center px-1.5 sm:px-4 py-1 sm:py-2 rounded-2xl sm:rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors duration-150 overflow-visible pointer-events-auto max-w-[calc(100vw-12px)] sm:max-w-none ${
+      className={`fixed bottom-3 sm:bottom-4 z-40 select-none flex items-end justify-center px-1.5 sm:px-3 py-1 sm:py-2 rounded-2xl sm:rounded-3xl border shadow-2xl backdrop-blur-2xl transition-colors duration-150 overflow-visible pointer-events-auto max-w-[calc(100vw-12px)] sm:max-w-none ${
         themeMode === 'dark'
           ? 'bg-[#121214]/85 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.06)]'
           : 'bg-[#f4f4f5]/90 border-neutral-300 shadow-[0_20px_40px_rgba(0,0,0,0.25)]'
@@ -253,11 +241,11 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
       </div>
 
       {/* Subtle Vertical Glass Divider */}
-      <div className="w-[1px] h-5 sm:h-8 bg-white/15 mx-0.5 sm:mx-2 mb-1 sm:mb-2.5 shrink-0" />
+      <div className="w-[1px] h-5 sm:h-8 bg-white/15 mx-0.5 sm:mx-1.5 mb-1 sm:mb-2 shrink-0" />
 
       {/* Rightmost 9-Dots Grid Launcher (Show Applications / Activities) */}
       <div
-        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-auto mx-[1px] sm:mx-1"
+        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
         onMouseEnter={() => setGridHovered(true)}
         onMouseLeave={() => setGridHovered(false)}
       >
@@ -267,7 +255,7 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
               initial={{ opacity: 0, y: 8, scale: 0.92 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 4, scale: 0.92 }}
-              transition={{ duration: 0.12, ease: 'easeOut' }}
+              transition={{ duration: 0.14, ease: 'easeOut' }}
               className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[11.5px] font-semibold px-2.5 py-1 rounded-md border border-white/15 shadow-2xl whitespace-nowrap pointer-events-none z-60 hidden sm:block"
             >
               <span>Show Applications</span>
@@ -279,8 +267,8 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
           type="button"
           tabIndex={0}
           onClick={onToggleActivities}
-          whileHover={{ scale: 1.15, rotate: 90 }}
-          whileTap={{ scale: 0.88 }}
+          whileHover={{ scale: 1.18, rotate: 90 }}
+          whileTap={{ scale: 0.85 }}
           transition={{ type: 'spring', stiffness: 450, damping: 20 }}
           aria-label="Show Applications / Activities"
           className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 shrink-0 ${
