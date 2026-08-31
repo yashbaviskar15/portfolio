@@ -10,8 +10,6 @@ import { springPhysics } from '../../lib/animations';
 export const ActivitiesOverview: React.FC = () => {
   const { isActivitiesOpen, setActivitiesOpen, openApp, themeMode, accentColor } = useGnomeStore();
 
-  if (!isActivitiesOpen) return null;
-
   const appItems = [
     { id: 'projects' as WindowId, title: 'Projects Showcase', desc: 'AWS 3-Tier, Telemetry, CI/CD & CloudOS', icon: <FolderGit2 className="w-5 h-5 text-amber-400" /> },
     { id: 'skills' as WindowId, title: 'Technical Skills Matrix', desc: 'AWS, Terraform, Docker, Kubernetes & Linux', icon: <Zap className="w-5 h-5 text-orange-400" /> },
@@ -27,21 +25,25 @@ export const ActivitiesOverview: React.FC = () => {
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-[#0c0312]/90 backdrop-blur-3xl z-60 flex flex-col items-center justify-start pt-14 sm:pt-16 px-4 select-none"
-        onClick={() => setActivitiesOpen(false)}
-      >
+      {isActivitiesOpen && (
         <motion.div
-          initial={{ y: -25, scale: 0.95, opacity: 0 }}
-          animate={{ y: 0, scale: 1, opacity: 1 }}
-          exit={{ y: -20, scale: 0.95, opacity: 0 }}
-          transition={springPhysics}
-          onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-2xl"
+          key="activities-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-[#0c0312]/90 backdrop-blur-3xl z-60 flex flex-col items-center justify-start pt-14 sm:pt-16 px-4 select-none"
+          onClick={() => setActivitiesOpen(false)}
         >
+          <motion.div
+            key="activities-cmdk-card"
+            initial={{ y: -25, scale: 0.95, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: -20, scale: 0.95, opacity: 0 }}
+            transition={springPhysics}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl"
+          >
           {/* cmdk Command Palette Root */}
           <Command
             className={`rounded-2xl border shadow-2xl overflow-hidden font-sans ${
@@ -120,6 +122,7 @@ export const ActivitiesOverview: React.FC = () => {
           </Command>
         </motion.div>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 };

@@ -7,24 +7,28 @@ import { springPhysics } from '../../lib/animations';
 export const WallpaperModal: React.FC = () => {
   const { isWallpaperModalOpen, setWallpaperModalOpen, selectedWallpaperId, setWallpaper, themeMode, accentColor } = useGnomeStore();
 
-  if (!isWallpaperModalOpen) return null;
-
   return (
     <AnimatePresence>
-      <div
-        className="fixed inset-0 z-70 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 select-none"
-        onClick={() => setWallpaperModalOpen(false)}
-      >
+      {isWallpaperModalOpen && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.94 }}
-          transition={springPhysics}
-          onClick={(e) => e.stopPropagation()}
-          className={`max-w-xl w-full p-6 rounded-3xl border shadow-2xl space-y-5 ${
-            themeMode === 'dark' ? 'bg-[#1e1e22]/95 border-white/15 text-white' : 'bg-white border-neutral-300 text-neutral-900'
-          }`}
+          key="wallpaper-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-70 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 select-none"
+          onClick={() => setWallpaperModalOpen(false)}
         >
+          <motion.div
+            key="wallpaper-dialog"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            transition={springPhysics}
+            onClick={(e) => e.stopPropagation()}
+            className={`max-w-xl w-full p-6 rounded-3xl border shadow-2xl space-y-5 ${
+              themeMode === 'dark' ? 'bg-[#1e1e22]/95 border-white/15 text-white' : 'bg-white border-neutral-300 text-neutral-900'
+            }`}
+          >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div className="flex items-center gap-2.5">
@@ -89,8 +93,9 @@ export const WallpaperModal: React.FC = () => {
           <div className="text-center text-xs text-neutral-500 font-mono pt-1">
             Backgrounds cross-fade smoothly across desktop viewports
           </div>
+          </motion.div>
         </motion.div>
-      </div>
+      )}
     </AnimatePresence>
   );
 };

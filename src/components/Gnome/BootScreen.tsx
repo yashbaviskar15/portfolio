@@ -17,11 +17,17 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
   ];
 
   useEffect(() => {
-    // Check if user already booted this session
-    const hasSeenBoot = sessionStorage.getItem('yash_ubuntu_booted');
-    if (hasSeenBoot) {
-      onBootComplete();
-      return;
+    // Check if user already booted this session (hydration and privacy mode safe)
+    try {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        const hasSeenBoot = window.sessionStorage.getItem('yash_ubuntu_booted');
+        if (hasSeenBoot) {
+          onBootComplete();
+          return;
+        }
+      }
+    } catch {
+      // Ignore storage access errors in private/sandboxed mode
     }
 
     const logTimer1 = setTimeout(() => setBootStep(1), 350);
@@ -29,12 +35,20 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
     const logTimer3 = setTimeout(() => setBootStep(3), 1150);
 
     const finishTimer = setTimeout(() => {
-      sessionStorage.setItem('yash_ubuntu_booted', 'true');
+      try {
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          window.sessionStorage.setItem('yash_ubuntu_booted', 'true');
+        }
+      } catch {}
       onBootComplete();
     }, 1850);
 
     const handleSkip = () => {
-      sessionStorage.setItem('yash_ubuntu_booted', 'true');
+      try {
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          window.sessionStorage.setItem('yash_ubuntu_booted', 'true');
+        }
+      } catch {}
       onBootComplete();
     };
 
@@ -49,7 +63,11 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete }) => {
   }, [onBootComplete]);
 
   const handleSkipClick = () => {
-    sessionStorage.setItem('yash_ubuntu_booted', 'true');
+    try {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        window.sessionStorage.setItem('yash_ubuntu_booted', 'true');
+      }
+    } catch {}
     onBootComplete();
   };
 
