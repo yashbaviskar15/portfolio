@@ -41,6 +41,7 @@ type SettingsPage = 'appearance' | 'region' | 'about';
 interface SidebarItem {
   id: SettingsPage;
   label: string;
+  shortLabel: string;
   icon: React.ReactNode;
 }
 
@@ -90,9 +91,9 @@ export const AboutApp: React.FC = () => {
 
   // GNOME Settings Sidebar Items
   const sidebarItems: SidebarItem[] = [
-    { id: 'appearance', label: strings.about.desktopAppearance || 'Appearance', icon: <Palette className="w-4 h-4" /> },
-    { id: 'region', label: strings.about.regionalLanguage || 'Region & Language', icon: <Languages className="w-4 h-4" /> },
-    { id: 'about', label: strings.about.aboutTitle || 'About', icon: <Info className="w-4 h-4" /> },
+    { id: 'appearance', label: strings.about.desktopAppearance || 'Appearance', shortLabel: 'Appearance', icon: <Palette className="w-4 h-4" /> },
+    { id: 'region', label: strings.about.regionalLanguage || 'Region & Language', shortLabel: 'Language', icon: <Languages className="w-4 h-4" /> },
+    { id: 'about', label: strings.about.aboutTitle || 'About', shortLabel: 'About', icon: <Info className="w-4 h-4" /> },
   ];
 
   const currentLang = SUPPORTED_LANGUAGES.find((l) => l.code === locale) || SUPPORTED_LANGUAGES[0];
@@ -522,8 +523,8 @@ export const AboutApp: React.FC = () => {
   );
 
   return (
-    <div className="flex h-full w-full">
-      {/* ════ Left Sidebar Navigation (GNOME Settings) ════ */}
+    <div className="flex flex-col sm:flex-row h-full w-full">
+      {/* ════ Left Sidebar Navigation (Desktop) ════ */}
       <div
         className={`hidden sm:flex flex-col w-52 shrink-0 border-r py-2 ${
           themeMode === 'dark'
@@ -561,14 +562,13 @@ export const AboutApp: React.FC = () => {
         })}
       </div>
 
-      {/* Mobile Sidebar (horizontal tabs) */}
+      {/* ════ Mobile Top Tabs (Horizontal Scrollable) ════ */}
       <div
-        className={`sm:hidden flex items-center border-b shrink-0 px-2 gap-1 ${
+        className={`sm:hidden flex items-center border-b shrink-0 px-2 gap-1 overflow-x-auto gnome-scrollbar ${
           themeMode === 'dark'
             ? 'bg-[#1a1a1e] border-white/10'
             : 'bg-[#f0f0f2] border-neutral-300'
         }`}
-        style={{ position: 'sticky', top: 0, zIndex: 10 }}
       >
         {sidebarItems.map((item) => {
           const isActive = settingsPage === item.id;
@@ -577,14 +577,15 @@ export const AboutApp: React.FC = () => {
               key={item.id}
               type="button"
               onClick={() => setSettingsPage(item.id)}
-              className={`px-3 py-2 text-[11px] font-medium border-b-2 transition-colors cursor-pointer ${
+              className={`px-3 py-2 text-[11px] font-medium border-b-2 whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
                 isActive
                   ? 'text-white font-semibold'
                   : 'border-transparent text-neutral-400 hover:text-white'
               }`}
               style={isActive ? { borderBottomColor: accentColor } : {}}
             >
-              {item.label}
+              {item.icon}
+              <span>{item.shortLabel}</span>
             </button>
           );
         })}
@@ -592,7 +593,7 @@ export const AboutApp: React.FC = () => {
 
       {/* ════ Main Content Area ════ */}
       <div
-        className={`flex-1 min-w-0 overflow-y-auto gnome-scrollbar p-4 sm:p-6 transition-colors duration-200 ${
+        className={`flex-1 min-w-0 min-h-0 overflow-y-auto gnome-scrollbar p-3.5 sm:p-6 transition-colors duration-200 ${
           themeMode === 'dark' ? 'text-neutral-200' : 'text-neutral-800'
         }`}
       >

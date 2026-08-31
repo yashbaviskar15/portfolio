@@ -3,7 +3,7 @@ import { Globe, ArrowLeft, ArrowRight, RotateCw, Lock, ExternalLink, ShieldCheck
 import { portfolioData } from '../../../data/portfolio';
 
 export const BrowserApp: React.FC = () => {
-  const [url, setUrl] = useState<string>('https://yashbaviskar.dev/cloud-architecture');
+  const [url, setUrl] = useState<string>('https://yashbaviskar.me/cloud-architecture');
 
   return (
     <div className="flex flex-col h-full bg-neutral-900 text-neutral-200 select-none">

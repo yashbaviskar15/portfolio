@@ -130,6 +130,34 @@ export const dropdownMenuVariants: Variants = {
   },
 };
 
+// 5b. Center Popover Transitions (Preserves x: -50% with Framer Motion transforms)
+export const centerDropdownMenuVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.95,
+    x: '-50%',
+    y: -6,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: '-50%',
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 450,
+      damping: 24,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    x: '-50%',
+    y: -4,
+    transition: { duration: 0.12, ease: 'easeIn' },
+  },
+};
+
 // 6. Right-Click Desktop Context Menu
 export const contextMenuVariants: Variants = {
   hidden: {

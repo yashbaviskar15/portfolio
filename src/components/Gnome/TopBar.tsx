@@ -23,7 +23,7 @@ import {
   Laptop,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { dropdownMenuVariants } from '../../lib/animations';
+import { dropdownMenuVariants, centerDropdownMenuVariants } from '../../lib/animations';
 import { WindowId } from '../../types/gnome';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { SUPPORTED_LANGUAGES } from '../../types/i18n';
@@ -314,8 +314,9 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
             <Power className="w-3 h-3 text-orange-400" />
           </button>
         </div>
+      </header>
 
-        {/* ====== Popovers Rendered with Viewport-Safe Absolute Positioning ====== */}
+      {/* ====== Popovers Rendered with Viewport-Safe Absolute Positioning ====== */}
 
         {/* 1. Help Menu Popover */}
         <AnimatePresence>
@@ -367,23 +368,24 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
           {calendarOpen && (
             <motion.div
               id="calendar-popover"
-              variants={dropdownMenuVariants}
+              variants={centerDropdownMenuVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              className={`fixed top-9 left-1/2 -translate-x-1/2 w-[calc(100vw-20px)] max-w-sm sm:max-w-md rounded-2xl border shadow-2xl backdrop-blur-2xl p-3.5 sm:p-4 z-50 space-y-3.5 sm:space-y-4 font-sans max-h-[82vh] overflow-y-auto gnome-scrollbar ${
+              style={{ left: '50%' }}
+              className={`fixed top-9 w-[calc(100vw-16px)] max-w-sm sm:max-w-md rounded-2xl border shadow-2xl backdrop-blur-2xl p-3 sm:p-4 z-50 space-y-3 sm:space-y-4 font-sans max-h-[82vh] overflow-y-auto gnome-scrollbar ${
                 themeMode === 'dark'
                   ? 'bg-[#1e1e22]/95 border-white/15 text-neutral-200'
                   : 'bg-white/95 border-neutral-300 text-neutral-800'
               }`}
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <div className="flex items-center gap-2 text-xs font-bold">
-                  <CalendarIcon className="w-4 h-4 text-orange-400" />
-                  <span>{strings.topbar.notifications}</span>
+              <div className="flex items-center justify-between border-b border-white/10 pb-2 gap-2">
+                <div className="flex items-center gap-2 text-xs font-bold min-w-0">
+                  <CalendarIcon className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span className="truncate">{strings.topbar.notifications}</span>
                 </div>
-                <span className="text-[10px] text-neutral-400 font-mono">
+                <span className="text-[10px] text-neutral-400 font-mono shrink-0">
                   {locale.toUpperCase()} • {network.devicePlatform}
                 </span>
               </div>
@@ -449,11 +451,11 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                                 : 'bg-neutral-50 border-neutral-200'
                             }`}
                           >
-                            <div className="space-y-0.5 flex-1 pr-1">
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-white text-[11.5px] flex items-center gap-1.5">
+                            <div className="space-y-0.5 flex-1 min-w-0 pr-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="font-bold text-white text-[11.5px] flex items-center gap-1.5 min-w-0">
                                   <span
-                                    className={`w-1.5 h-1.5 rounded-full ${
+                                    className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                                       notif.type === 'success'
                                         ? 'bg-emerald-400'
                                         : notif.type === 'alert'
@@ -461,9 +463,9 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                                         : 'bg-sky-400'
                                     }`}
                                   />
-                                  <span>{notif.title}</span>
+                                  <span className="truncate">{notif.title}</span>
                                 </span>
-                                <span className="text-[9.5px] text-neutral-500 font-mono">
+                                <span className="text-[9.5px] text-neutral-500 font-mono shrink-0">
                                   {liveTime}
                                 </span>
                               </div>
@@ -499,7 +501,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
               initial="hidden"
               animate="visible"
               exit="exit"
-              className={`fixed top-9 right-2 sm:right-3 w-[calc(100vw-20px)] max-w-xs sm:max-w-sm rounded-2xl border shadow-2xl backdrop-blur-2xl p-3.5 sm:p-4 z-50 space-y-3 font-sans ${
+              className={`fixed top-9 right-2 sm:right-3 w-[calc(100vw-16px)] max-w-xs sm:max-w-sm rounded-2xl border shadow-2xl backdrop-blur-2xl p-3 sm:p-4 z-50 space-y-3 font-sans ${
                 themeMode === 'dark'
                   ? 'bg-[#1e1e22]/95 border-white/15 text-neutral-200'
                   : 'bg-white/95 border-neutral-300 text-neutral-800'
@@ -741,7 +743,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
             </motion.div>
           )}
         </AnimatePresence>
-      </header>
 
       {/* Ubuntu Power Off Confirmation Modal */}
       <AnimatePresence>
