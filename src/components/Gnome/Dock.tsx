@@ -47,12 +47,15 @@ const DockItem: React.FC<DockItemProps> = ({
     return val - (bounds.x + bounds.width / 2);
   });
 
-  // Desktop fluid wave magnification (GPU scale & vertical lift)
-  const scaleSync = useTransform(distance, [-160, 0, 160], [1, 1.28, 1]);
-  const scale = useSpring(scaleSync, { mass: 0.08, stiffness: 340, damping: 24 });
+  // Desktop fluid wave magnification (smooth dynamic width, GPU scale & lift)
+  const widthSync = useTransform(distance, [-150, 0, 150], [44, 58, 44]);
+  const width = useSpring(widthSync, { mass: 0.08, stiffness: 300, damping: 24 });
 
-  const ySync = useTransform(distance, [-160, 0, 160], [0, -8, 0]);
-  const y = useSpring(ySync, { mass: 0.08, stiffness: 340, damping: 24 });
+  const scaleSync = useTransform(distance, [-150, 0, 150], [1, 1.25, 1]);
+  const scale = useSpring(scaleSync, { mass: 0.08, stiffness: 300, damping: 24 });
+
+  const ySync = useTransform(distance, [-150, 0, 150], [0, -8, 0]);
+  const y = useSpring(ySync, { mass: 0.08, stiffness: 300, damping: 24 });
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -65,27 +68,13 @@ const DockItem: React.FC<DockItemProps> = ({
   };
 
   return (
-    <div
+    <motion.div
       ref={ref}
+      style={isDesktop ? { width } : {}}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1.5"
+      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
     >
-      {/* Clean Tooltip Above Icon (Desktop Only - elevated with high z-index and clear margin) */}
-      <AnimatePresence>
-        {hovered && isDesktop && (
-          <motion.div
-            initial={{ opacity: 0, y: 6, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.94 }}
-            transition={{ duration: 0.12, ease: 'easeOut' }}
-            className="absolute bottom-[calc(100%+16px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.8)] whitespace-nowrap pointer-events-none z-70 hidden sm:block"
-          >
-            {app.label}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Button: GPU Magnification on Desktop, Compact 28px on Mobile */}
       <motion.button
         type="button"
@@ -109,8 +98,24 @@ const DockItem: React.FC<DockItemProps> = ({
         animate={isBouncing ? dockLaunchBounce : {}}
         whileTap={{ scale: 0.85 }}
         aria-label={app.label}
-        className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl ${app.tileClass} border flex items-center justify-center text-white shadow-lg cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 shrink-0 transition-shadow duration-200 hover:shadow-2xl`}
+        className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl ${app.tileClass} border flex items-center justify-center text-white shadow-lg cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 shrink-0 transition-shadow duration-200 hover:shadow-2xl overflow-visible`}
       >
+        {/* Tooltip: Anchored to button so it always floats precisely above the scaled icon */}
+        <AnimatePresence>
+          {hovered && isDesktop && (
+            <motion.div
+              initial={{ opacity: 0, y: 4, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 2, scale: 0.92 }}
+              transition={{ duration: 0.12, ease: 'easeOut' }}
+              className="absolute bottom-[calc(100%+14px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_12px_28px_rgba(0,0,0,0.85)] whitespace-nowrap pointer-events-none z-70 hidden sm:flex flex-col items-center"
+            >
+              <span>{app.label}</span>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#18181b]/95" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="w-3.5 h-3.5 sm:w-6 sm:h-6 flex items-center justify-center pointer-events-none">
           {app.icon}
         </div>
@@ -133,7 +138,7 @@ const DockItem: React.FC<DockItemProps> = ({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -245,24 +250,10 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
 
       {/* Rightmost 9-Dots Grid Launcher (Show Applications / Activities) */}
       <div
-        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1.5"
+        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
         onMouseEnter={() => setGridHovered(true)}
         onMouseLeave={() => setGridHovered(false)}
       >
-        <AnimatePresence>
-          {gridHovered && isDesktop && (
-            <motion.div
-              initial={{ opacity: 0, y: 6, scale: 0.94 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.94 }}
-              transition={{ duration: 0.12, ease: 'easeOut' }}
-              className="absolute bottom-[calc(100%+16px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.8)] whitespace-nowrap pointer-events-none z-70 hidden sm:block"
-            >
-              <span>Show Applications</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <motion.button
           type="button"
           tabIndex={0}
@@ -271,12 +262,28 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
           whileTap={{ scale: 0.85 }}
           transition={{ type: 'spring', stiffness: 450, damping: 20 }}
           aria-label="Show Applications / Activities"
-          className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 shrink-0 ${
+          className={`w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-2xl border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 shrink-0 relative overflow-visible ${
             themeMode === 'dark'
               ? 'bg-neutral-800/80 hover:bg-neutral-700/80 border-white/15 text-neutral-300 hover:text-white shadow-lg'
               : 'bg-neutral-200 hover:bg-neutral-300 border-neutral-300 text-neutral-700 hover:text-neutral-900 shadow-md'
           }`}
         >
+          {/* Tooltip: Anchored to button */}
+          <AnimatePresence>
+            {gridHovered && isDesktop && (
+              <motion.div
+                initial={{ opacity: 0, y: 4, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 2, scale: 0.92 }}
+                transition={{ duration: 0.12, ease: 'easeOut' }}
+                className="absolute bottom-[calc(100%+14px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_12px_28px_rgba(0,0,0,0.85)] whitespace-nowrap pointer-events-none z-70 hidden sm:flex flex-col items-center"
+              >
+                <span>Show Applications</span>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#18181b]/95" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <LayoutGrid className="w-3.5 h-3.5 sm:w-6 sm:h-6" />
         </motion.button>
 
