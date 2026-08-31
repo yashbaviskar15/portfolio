@@ -48,11 +48,11 @@ const DockItem: React.FC<DockItemProps> = ({
   });
 
   // Desktop fluid wave magnification (GPU scale & vertical lift)
-  const scaleSync = useTransform(distance, [-160, 0, 160], [1, 1.34, 1]);
-  const scale = useSpring(scaleSync, { mass: 0.08, stiffness: 320, damping: 22 });
+  const scaleSync = useTransform(distance, [-160, 0, 160], [1, 1.28, 1]);
+  const scale = useSpring(scaleSync, { mass: 0.08, stiffness: 340, damping: 24 });
 
-  const ySync = useTransform(distance, [-160, 0, 160], [0, -10, 0]);
-  const y = useSpring(ySync, { mass: 0.08, stiffness: 320, damping: 22 });
+  const ySync = useTransform(distance, [-160, 0, 160], [0, -8, 0]);
+  const y = useSpring(ySync, { mass: 0.08, stiffness: 340, damping: 24 });
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -69,17 +69,17 @@ const DockItem: React.FC<DockItemProps> = ({
       ref={ref}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
+      className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1.5"
     >
-      {/* Clean Tooltip Above Icon (Desktop Only) */}
+      {/* Clean Tooltip Above Icon (Desktop Only - elevated with high z-index and clear margin) */}
       <AnimatePresence>
         {hovered && isDesktop && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.92 }}
+            initial={{ opacity: 0, y: 6, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.92 }}
-            transition={{ duration: 0.14, ease: 'easeOut' }}
-            className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[11.5px] font-semibold px-2.5 py-1 rounded-md border border-white/15 shadow-2xl whitespace-nowrap pointer-events-none z-60 hidden sm:block"
+            exit={{ opacity: 0, y: 4, scale: 0.94 }}
+            transition={{ duration: 0.12, ease: 'easeOut' }}
+            className="absolute bottom-[calc(100%+16px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.8)] whitespace-nowrap pointer-events-none z-70 hidden sm:block"
           >
             {app.label}
           </motion.div>
@@ -245,18 +245,18 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
 
       {/* Rightmost 9-Dots Grid Launcher (Show Applications / Activities) */}
       <div
-        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1"
+        className="relative flex flex-col items-center justify-end select-none shrink-0 w-7 sm:w-11 sm:h-11 mx-[1px] sm:mx-1.5"
         onMouseEnter={() => setGridHovered(true)}
         onMouseLeave={() => setGridHovered(false)}
       >
         <AnimatePresence>
           {gridHovered && isDesktop && (
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.92 }}
+              initial={{ opacity: 0, y: 6, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.92 }}
-              transition={{ duration: 0.14, ease: 'easeOut' }}
-              className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[11.5px] font-semibold px-2.5 py-1 rounded-md border border-white/15 shadow-2xl whitespace-nowrap pointer-events-none z-60 hidden sm:block"
+              exit={{ opacity: 0, y: 4, scale: 0.94 }}
+              transition={{ duration: 0.12, ease: 'easeOut' }}
+              className="absolute bottom-[calc(100%+16px)] left-1/2 -translate-x-1/2 bg-[#18181b]/95 backdrop-blur-xl text-white text-[11.5px] font-medium px-3 py-1 rounded-lg border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.8)] whitespace-nowrap pointer-events-none z-70 hidden sm:block"
             >
               <span>Show Applications</span>
             </motion.div>

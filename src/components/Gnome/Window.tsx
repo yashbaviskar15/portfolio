@@ -245,13 +245,7 @@ export const Window: React.FC<WindowProps> = ({
           : 'bg-[#f7f7f8] border border-neutral-300 shadow-[0_10px_25px_rgba(0,0,0,0.15)]'
       }`}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 420, damping: 26 }}
-        className="w-full h-full flex flex-col overflow-hidden"
-      >
+      <div className="w-full h-full flex flex-col overflow-hidden">
         {/* Authentic Ubuntu GNOME HeaderBar */}
         <div
           onDoubleClick={onMaximizeToggle}
@@ -331,7 +325,7 @@ export const Window: React.FC<WindowProps> = ({
         >
           {children}
         </div>
-      </motion.div>
+      </div>
     </Rnd>
   );
 };

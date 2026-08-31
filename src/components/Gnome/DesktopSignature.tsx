@@ -53,12 +53,12 @@ export const DesktopSignature: React.FC = () => {
     return (
       <div
         className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-2"
-        style={{ opacity: hasVisibleWindows ? 0.04 : 0.25 }}
+        style={{ opacity: hasVisibleWindows ? 0.12 : 0.7 }}
       >
         <svg
           viewBox="0 0 500 240"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-72 sm:w-96 md:w-[460px] lg:w-[540px] xl:w-[620px] max-w-[80vw]"
+          className="w-64 sm:w-80 md:w-[440px] lg:w-[520px] max-w-[88vw]"
           aria-hidden="true"
         >
           <path
@@ -80,27 +80,27 @@ export const DesktopSignature: React.FC = () => {
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-2"
-      animate={{ opacity: hasVisibleWindows ? 0.04 : 1 }}
-      transition={{ duration: 0.6, ease: 'easeInOut' }}
+      animate={{ opacity: hasVisibleWindows ? 0.18 : 0.95 }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       <div className="flex flex-col items-center justify-center relative">
         <svg
           viewBox="0 0 500 240"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-72 sm:w-96 md:w-[460px] lg:w-[540px] xl:w-[620px] max-w-[80vw] overflow-visible"
+          className="w-64 sm:w-80 md:w-[440px] lg:w-[520px] max-w-[88vw] overflow-visible"
           aria-hidden="true"
         >
           <defs>
-            {/* Subtle bright gradient */}
+            {/* Subtle luminous gradient */}
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-              <stop offset="60%" stopColor="#f3f4f6" stopOpacity="0.9" />
-              <stop offset="100%" stopColor={accentColor} stopOpacity="0.95" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="60%" stopColor="#f3f4f6" stopOpacity="0.95" />
+              <stop offset="100%" stopColor={accentColor} stopOpacity="1" />
             </linearGradient>
 
             {/* Soft luminous ambient glow */}
-            <filter id={glowFilterId} x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
+            <filter id={glowFilterId} x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -113,47 +113,47 @@ export const DesktopSignature: React.FC = () => {
             d={HELLO_CALLIGRAPHY_PATH}
             fill="none"
             stroke={`url(#${gradientId})`}
-            strokeWidth="7.5"
+            strokeWidth="8"
             strokeLinecap="round"
             strokeLinejoin="round"
             filter={`url(#${glowFilterId})`}
-            initial={{ pathLength: 0, opacity: 0.05 }}
+            initial={{ pathLength: 0, opacity: 0.1 }}
             animate={{
               pathLength: [0, 1, 1, 0],
-              opacity: [0.05, 0.45, 0.45, 0.05],
+              opacity: [0.15, 0.95, 0.95, 0.15],
             }}
             transition={{
-              duration: 7,
-              times: [0, 0.42, 0.78, 1],
+              duration: 5.5,
+              times: [0, 0.45, 0.78, 1],
               ease: 'easeInOut',
               repeat: Infinity,
-              repeatDelay: 1.2,
+              repeatDelay: 0.8,
             }}
           />
         </svg>
 
         {/* Signature Bottom Text: "I'm Yash" */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{
-            opacity: [0, 0.85, 0.85, 0],
-            y: [8, 0, 0, 8],
+            opacity: [0, 1, 1, 0],
+            y: [10, 0, 0, 10],
           }}
           transition={{
-            duration: 7,
-            times: [0.2, 0.45, 0.8, 1],
+            duration: 5.5,
+            times: [0.25, 0.48, 0.8, 1],
             ease: 'easeInOut',
             repeat: Infinity,
-            repeatDelay: 1.2,
+            repeatDelay: 0.8,
           }}
           className="mt-1 sm:mt-2 text-center"
         >
           <span
-            className="text-sm sm:text-base md:text-lg font-semibold tracking-widest font-heading drop-shadow-md px-3 py-0.5 rounded-full"
+            className="text-base sm:text-lg md:text-xl font-bold tracking-widest font-heading drop-shadow-lg px-4 py-0.5 rounded-full"
             style={{
               color: '#ffffff',
-              textShadow: `0 0 16px ${accentColor}88, 0 2px 4px rgba(0,0,0,0.5)`,
-              letterSpacing: '0.15em',
+              textShadow: `0 0 20px ${accentColor}aa, 0 2px 6px rgba(0,0,0,0.7)`,
+              letterSpacing: '0.18em',
             }}
           >
             I'm Yash
