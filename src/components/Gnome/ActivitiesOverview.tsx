@@ -1,7 +1,7 @@
 import React from 'react';
 import { Command } from 'cmdk';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Folder, Globe, Mail, User, FileText, Search, ExternalLink, Code, Layers, FileCode, CheckCircle2 } from 'lucide-react';
+import { Terminal, Folder, Globe, Mail, User, FileText, Search, ExternalLink, Code, Layers, FileCode, CheckCircle2, FolderGit2, Zap, Clock, Activity } from 'lucide-react';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { WindowId } from '../../types/gnome';
 import { portfolioData } from '../../data/portfolio';
@@ -13,12 +13,16 @@ export const ActivitiesOverview: React.FC = () => {
   if (!isActivitiesOpen) return null;
 
   const appItems = [
+    { id: 'projects' as WindowId, title: 'Projects Showcase', desc: 'AWS 3-Tier, Telemetry, CI/CD & CloudOS', icon: <FolderGit2 className="w-5 h-5 text-amber-400" /> },
+    { id: 'skills' as WindowId, title: 'Technical Skills Matrix', desc: 'AWS, Terraform, Docker, Kubernetes & Linux', icon: <Zap className="w-5 h-5 text-orange-400" /> },
+    { id: 'timeline' as WindowId, title: 'Career Timeline', desc: 'Engineering Milestones & Education', icon: <Clock className="w-5 h-5 text-purple-400" /> },
     { id: 'terminal' as WindowId, title: 'Terminal', desc: 'Interactive Ubuntu Bash Shell', icon: <Terminal className="w-5 h-5 text-emerald-400" /> },
     { id: 'files' as WindowId, title: 'Files (Nautilus)', desc: 'Cloud Architectures & Project Repositories', icon: <Folder className="w-5 h-5 text-amber-400" /> },
-    { id: 'about' as WindowId, title: 'Settings (About & Theme)', desc: 'Bio, Dark/Light Mode, Specs & Education', icon: <User className="w-5 h-5 text-orange-400" /> },
-    { id: 'resume' as WindowId, title: 'Resume (Gedit)', desc: 'Plaintext Resume & CV Download', icon: <FileText className="w-5 h-5 text-purple-400" /> },
-    { id: 'contact' as WindowId, title: 'Thunderbird Mail', desc: 'Email Yash Baviskar', icon: <Mail className="w-5 h-5 text-blue-400" /> },
+    { id: 'monitor' as WindowId, title: 'System Monitor', desc: 'Live CPU, RAM & Telemetry Node', icon: <Activity className="w-5 h-5 text-rose-400" /> },
     { id: 'browser' as WindowId, title: 'Web Browser', desc: 'Cloud Architecture Telemetry', icon: <Globe className="w-5 h-5 text-sky-400" /> },
+    { id: 'resume' as WindowId, title: 'Resume (Gedit)', desc: 'Plaintext Resume & CV Download', icon: <FileText className="w-5 h-5 text-purple-400" /> },
+    { id: 'about' as WindowId, title: 'Settings (About & Theme)', desc: 'Bio, Dark/Light Mode, Specs & Education', icon: <User className="w-5 h-5 text-orange-400" /> },
+    { id: 'contact' as WindowId, title: 'Thunderbird Mail', desc: 'Email Yash Baviskar', icon: <Mail className="w-5 h-5 text-blue-400" /> },
   ];
 
   return (
