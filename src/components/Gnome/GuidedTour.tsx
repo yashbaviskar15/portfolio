@@ -119,24 +119,24 @@ export const GuidedTour: React.FC = () => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-80 pointer-events-none flex items-end sm:items-center justify-center p-4 sm:p-6 select-none font-sans">
+      <div className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center p-4 sm:p-6 select-none font-sans">
         {/* Backdrop Tint */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/40 backdrop-blur-xs pointer-events-auto"
+          className="absolute inset-0 bg-black/50 backdrop-blur-xs pointer-events-auto"
           onClick={endTour}
         />
 
-        {/* Floating Tour Step Card */}
+        {/* Floating Tour Step Card - Centered on Mobile & Desktop */}
         <motion.div
           key={currentTourStep}
           initial={{ opacity: 0, scale: 0.92, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 16 }}
           transition={springPhysics}
-          className={`relative z-10 max-w-md w-full p-5 sm:p-6 rounded-3xl border shadow-2xl space-y-4 pointer-events-auto ${
+          className={`relative z-10 max-w-md w-full p-5 sm:p-6 rounded-3xl border shadow-2xl space-y-4 pointer-events-auto my-auto ${
             themeMode === 'dark'
               ? 'bg-[#18181b]/95 border-white/20 text-white shadow-[0_20px_60px_rgba(0,0,0,0.85)]'
               : 'bg-white border-neutral-300 text-neutral-900 shadow-2xl'

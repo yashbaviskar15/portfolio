@@ -2,38 +2,38 @@ import React, { useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useGnomeStore } from '../../store/useGnomeStore';
 
-// High-fidelity continuous cursive "hello" stroke path matching the iconic Apple/Ubuntu script
+// High-fidelity continuous cursive "hello" stroke path matching the iconic Apple script
 const HELLO_CALLIGRAPHY_PATH =
-  'M 40,155 ' +
+  'M 45,150 ' +
   // 'h' - ascender loop & downstroke
-  'C 60,120 75,55 92,20 ' +
-  'C 105,-5 98,45 88,110 ' +
-  'C 78,160 74,185 74,185 ' +
+  'C 62,118 78,55 94,22 ' +
+  'C 106,-2 98,45 88,110 ' +
+  'C 78,158 74,182 74,182 ' +
   // 'h' - hump & arch
-  'C 74,185 98,115 125,102 ' +
+  'C 74,182 98,115 125,102 ' +
   'C 145,92 152,112 144,145 ' +
-  'C 136,178 132,185 132,185 ' +
+  'C 136,178 132,182 132,182 ' +
   // 'e' - loop sweep
-  'C 132,185 160,165 178,128 ' +
-  'C 194,95 186,118 174,136 ' +
-  'C 160,156 156,182 178,185 ' +
-  'C 196,186 210,162 216,148 ' +
+  'C 132,182 158,162 176,128 ' +
+  'C 192,95 184,118 172,136 ' +
+  'C 158,156 156,182 178,182 ' +
+  'C 196,182 210,160 216,148 ' +
   // 'l' (first) - tall loop
   'C 216,148 238,85 252,32 ' +
   'C 264,-2 254,42 242,112 ' +
-  'C 232,160 228,185 242,185 ' +
-  'C 255,185 270,155 280,128 ' +
+  'C 232,158 228,182 242,182 ' +
+  'C 255,182 270,155 280,128 ' +
   // 'l' (second) - tall loop
   'C 280,128 300,70 314,30 ' +
   'C 326,-4 316,42 304,112 ' +
-  'C 294,160 292,185 306,185 ' +
-  'C 320,185 338,155 352,126 ' +
-  // 'o' - counter-clockwise oval and exit flick
-  'C 352,126 376,96 400,100 ' +
-  'C 426,104 428,155 410,176 ' +
-  'C 388,198 362,176 375,134 ' +
-  'C 384,106 410,96 424,105 ' +
-  'C 436,114 446,120 460,112';
+  'C 294,158 292,182 306,182 ' +
+  'C 320,182 338,155 352,126 ' +
+  // 'o' - counter-clockwise oval and top connector flick
+  'C 368,98 392,96 408,105 ' +
+  'C 426,116 428,155 412,174 ' +
+  'C 394,194 366,178 376,138 ' +
+  'C 384,106 408,98 424,106 ' +
+  'C 438,114 452,118 472,110';
 
 export const DesktopSignature: React.FC = () => {
   const { windows, accentColor, themeMode } = useGnomeStore();
@@ -48,7 +48,7 @@ export const DesktopSignature: React.FC = () => {
   const gradientId = 'desktop-calligraphy-grad';
   const glowFilterId = 'desktop-calligraphy-glow';
 
-  // Reduced motion: static subtle watermark
+  // Reduced motion: static watermark
   if (prefersReducedMotion) {
     return (
       <div
@@ -56,7 +56,7 @@ export const DesktopSignature: React.FC = () => {
         style={{ opacity: hasVisibleWindows ? 0.12 : 0.7 }}
       >
         <svg
-          viewBox="0 0 500 240"
+          viewBox="0 0 520 220"
           xmlns="http://www.w3.org/2000/svg"
           className="w-64 sm:w-80 md:w-[440px] lg:w-[520px] max-w-[88vw]"
           aria-hidden="true"
@@ -80,12 +80,12 @@ export const DesktopSignature: React.FC = () => {
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-2"
-      animate={{ opacity: hasVisibleWindows ? 0.18 : 0.95 }}
+      animate={{ opacity: hasVisibleWindows ? 0.16 : 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       <div className="flex flex-col items-center justify-center relative">
         <svg
-          viewBox="0 0 500 240"
+          viewBox="0 0 520 220"
           xmlns="http://www.w3.org/2000/svg"
           className="w-64 sm:w-80 md:w-[440px] lg:w-[520px] max-w-[88vw] overflow-visible"
           aria-hidden="true"
@@ -108,43 +108,38 @@ export const DesktopSignature: React.FC = () => {
             </filter>
           </defs>
 
-          {/* Continuous Animated Calligraphy Path (Draw Start to End in Loop) */}
+          {/* Continuous cursive "hello" stroke - draws smoothly on spawn and stays complete */}
           <motion.path
             d={HELLO_CALLIGRAPHY_PATH}
             fill="none"
             stroke={`url(#${gradientId})`}
-            strokeWidth="8"
+            strokeWidth="7.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             filter={`url(#${glowFilterId})`}
-            initial={{ pathLength: 0, opacity: 0.1 }}
+            initial={{ pathLength: 0, opacity: 0 }}
             animate={{
-              pathLength: [0, 1, 1, 0],
-              opacity: [0.15, 0.95, 0.95, 0.15],
+              pathLength: 1,
+              opacity: [0.75, 1, 0.75],
             }}
             transition={{
-              duration: 5.5,
-              times: [0, 0.45, 0.78, 1],
-              ease: 'easeInOut',
-              repeat: Infinity,
-              repeatDelay: 0.8,
+              pathLength: { duration: 2.2, ease: [0.16, 1, 0.3, 1] },
+              opacity: { duration: 4, ease: 'easeInOut', repeat: Infinity, delay: 2.2 },
             }}
           />
         </svg>
 
         {/* Signature Bottom Text: "I'm Yash" */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{
-            opacity: [0, 1, 1, 0],
-            y: [10, 0, 0, 10],
+            opacity: 1,
+            y: 0,
           }}
           transition={{
-            duration: 5.5,
-            times: [0.25, 0.48, 0.8, 1],
-            ease: 'easeInOut',
-            repeat: Infinity,
-            repeatDelay: 0.8,
+            duration: 1.2,
+            delay: 1.4,
+            ease: 'easeOut',
           }}
           className="mt-1 sm:mt-2 text-center"
         >
