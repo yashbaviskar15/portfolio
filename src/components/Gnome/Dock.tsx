@@ -258,7 +258,7 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
           type="button"
           tabIndex={0}
           onClick={onToggleActivities}
-          whileHover={{ scale: 1.18, rotate: 90 }}
+          whileHover={{ scale: 1.18 }}
           whileTap={{ scale: 0.85 }}
           transition={{ type: 'spring', stiffness: 450, damping: 20 }}
           aria-label="Show Applications / Activities"
@@ -268,7 +268,7 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
               : 'bg-neutral-200 hover:bg-neutral-300 border-neutral-300 text-neutral-700 hover:text-neutral-900 shadow-md'
           }`}
         >
-          {/* Tooltip: Anchored to button */}
+          {/* Tooltip: Anchored to button (remains perfectly horizontal) */}
           <AnimatePresence>
             {gridHovered && isDesktop && (
               <motion.div
@@ -284,7 +284,13 @@ export const Dock: React.FC<DockProps> = ({ openWindows, onOpenApp, onToggleActi
             )}
           </AnimatePresence>
 
-          <LayoutGrid className="w-3.5 h-3.5 sm:w-6 sm:h-6" />
+          <motion.div
+            animate={{ rotate: gridHovered ? 90 : 0 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+            className="flex items-center justify-center pointer-events-none"
+          >
+            <LayoutGrid className="w-3.5 h-3.5 sm:w-6 sm:h-6" />
+          </motion.div>
         </motion.button>
 
         {/* Empty spacer to align with indicator dot height */}
