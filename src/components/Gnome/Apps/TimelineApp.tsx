@@ -5,27 +5,8 @@ import { useGnomeStore } from '../../../store/useGnomeStore';
 
 export const TimelineApp: React.FC = () => {
   const { themeMode, accentColor, t } = useGnomeStore();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const strings = t();
   const milestones = strings.timeline.milestones || [];
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className={`p-6 space-y-4 ${themeMode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-neutral-100'}`}>
-        <div className="h-7 w-44 rounded-lg bg-neutral-800 animate-pulse" />
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 rounded-2xl bg-neutral-800/60 animate-pulse border border-white/5" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div

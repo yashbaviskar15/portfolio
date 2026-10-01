@@ -1,271 +1,364 @@
-import React, { useState } from 'react';
-import { FolderGit2, Folder, FileText, FileCode, ArrowLeft, ArrowRight, ExternalLink, CheckCircle2, AlertCircle, ShieldCheck, Home, HardDrive, Terminal } from 'lucide-react';
-import { portfolioData, Project } from '../../../data/portfolio';
-import { globalVFS, VFSNode } from '../../../lib/virtualFileSystem';
+import React, { useState, useEffect } from 'react';
+import {
+  Folder,
+  FileText,
+  FileCode,
+  Image as ImageIcon,
+  ArrowLeft,
+  ArrowRight,
+  ChevronUp,
+  LayoutGrid,
+  List as ListIcon,
+  Search,
+  Plus,
+  Trash2,
+  ExternalLink,
+  Home,
+  HardDrive,
+  FolderGit2,
+  File,
+  Briefcase,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { vfs, VFSNode } from '../../../lib/virtualFileSystem';
 import { useGnomeStore } from '../../../store/useGnomeStore';
 
 export const FilesApp: React.FC = () => {
-  const { currentCwd, setCwd, themeMode, accentColor, openApp } = useGnomeStore();
-  const [selectedProject, setSelectedProject] = useState<Project>(portfolioData.projects[0]);
-  const [activeTab, setActiveTab] = useState<'projects' | 'vfs'>('projects');
-  const [openedFile, setOpenedFile] = useState<{ name: string; content: string } | null>(null);
+  const { themeMode, openFileInApp, openApp } = useGnomeStore();
+  const [currentPath, setCurrentPath] = useState<string>('/home/yash');
+  const [historyStack, setHistoryStack] = useState<string[]>(['/home/yash']);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [selectedFile, setSelectedFile] = useState<VFSNode | null>(null);
+  const [vfsVersion, setVfsVersion] = useState<number>(0);
 
-  // VFS Folder browsing
-  const vfsFiles = globalVFS.listDirectory(currentCwd);
+  useEffect(() => {
+    return vfs.subscribe(() => {
+      setVfsVersion((v) => v + 1);
+    });
+  }, []);
 
-  const handleVfsClick = (node: VFSNode) => {
-    if (node.type === 'folder') {
-      const nextPath = globalVFS.resolvePath(node.name, currentCwd);
-      setCwd(nextPath);
-      setOpenedFile(null);
-    } else {
-      const fullPath = globalVFS.resolvePath(node.name, currentCwd);
-      const content = globalVFS.readFile(fullPath);
-      setOpenedFile({ name: node.name, content: content || '' });
+  const items = vfs
+    .listDir(currentPath, false)
+    .filter((f) => f.name.toLowerCase().includes(searchFilter.toLowerCase()));
+
+  const navigateTo = (path: string) => {
+    const resolved = vfs.resolvePath(currentPath, path);
+    const node = vfs.getNode(resolved);
+    if (!node || node.type !== 'folder') return;
+
+    setCurrentPath(resolved);
+    setSelectedFile(null);
+    const newStack = historyStack.slice(0, historyIndex + 1);
+    newStack.push(resolved);
+    setHistoryStack(newStack);
+    setHistoryIndex(newStack.length - 1);
+  };
+
+  const handleBack = () => {
+    if (historyIndex > 0) {
+      const prev = historyStack[historyIndex - 1];
+      setHistoryIndex(historyIndex - 1);
+      setCurrentPath(prev);
+      setSelectedFile(null);
     }
   };
 
-  const handleGoUp = () => {
-    const nextPath = globalVFS.resolvePath('..', currentCwd);
-    setCwd(nextPath);
-    setOpenedFile(null);
+  const handleForward = () => {
+    if (historyIndex < historyStack.length - 1) {
+      const next = historyStack[historyIndex + 1];
+      setHistoryIndex(historyIndex + 1);
+      setCurrentPath(next);
+      setSelectedFile(null);
+    }
   };
 
-  return (
-    <div className={`flex flex-col md:flex-row h-full select-none ${themeMode === 'dark' ? 'bg-neutral-900 text-neutral-200' : 'bg-neutral-100 text-neutral-800'}`}>
-      {/* Nautilus Left Sidebar */}
-      <div className={`w-full md:w-56 p-3 border-b md:border-b-0 md:border-r shrink-0 space-y-4 ${themeMode === 'dark' ? 'bg-neutral-950/80 border-white/10' : 'bg-neutral-200/70 border-neutral-300'}`}>
-        <div>
-          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-2 block mb-1.5 font-mono">
-            Places
-          </span>
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('projects');
-                setOpenedFile(null);
-              }}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left cursor-pointer ${
-                activeTab === 'projects'
-                  ? 'text-white font-semibold shadow-sm'
-                  : 'hover:bg-white/10 text-neutral-400 hover:text-neutral-200'
-              }`}
-              style={activeTab === 'projects' ? { backgroundColor: accentColor } : {}}
-            >
-              <FolderGit2 className="w-4 h-4 text-amber-400" />
-              <span>Cloud Projects ({portfolioData.projects.length})</span>
-            </button>
+  const handleUp = () => {
+    if (currentPath === '/') return;
+    const parent = currentPath.substring(0, currentPath.lastIndexOf('/')) || '/';
+    navigateTo(parent);
+  };
 
+  const handleItemClick = (node: VFSNode) => {
+    setSelectedFile(node);
+    if (node.type === 'folder') {
+      navigateTo(node.name);
+    } else {
+      const fullPath = vfs.resolvePath(currentPath, node.name);
+      openFileInApp(fullPath);
+    }
+  };
+
+  const handleCreateNewFolder = () => {
+    const name = `New_Folder_${Date.now().toString().slice(-4)}`;
+    vfs.createFolder(vfs.resolvePath(currentPath, name));
+    toast.success(`Created folder ${name}`);
+  };
+
+  const handleDeleteSelected = () => {
+    if (!selectedFile) return;
+    const targetPath = vfs.resolvePath(currentPath, selectedFile.name);
+    vfs.deleteNode(targetPath, false);
+    setSelectedFile(null);
+    toast.success(`Moved ${selectedFile.name} to Trash`);
+  };
+
+  const getFileIcon = (node: VFSNode) => {
+    if (node.type === 'folder') {
+      return <Folder className="w-8 h-8 text-amber-400" />;
+    }
+    const name = node.name.toLowerCase();
+    if (name.endsWith('.pdf')) return <FileText className="w-8 h-8 text-rose-400" />;
+    if (name.endsWith('.png') || name.endsWith('.jpg')) return <ImageIcon className="w-8 h-8 text-sky-400" />;
+    if (name.endsWith('.tf') || name.endsWith('.yaml') || name.endsWith('.json') || name.endsWith('.sh')) {
+      return <FileCode className="w-8 h-8 text-emerald-400" />;
+    }
+    if (name.endsWith('.md')) return <FileText className="w-8 h-8 text-purple-400" />;
+    return <File className="w-8 h-8 text-neutral-400" />;
+  };
+
+  const sidebarPlaces = [
+    { label: 'Home', path: '/home/yash', icon: <Home className="w-4 h-4 text-orange-400" /> },
+    { label: 'Desktop', path: '/home/yash/Desktop', icon: <HardDrive className="w-4 h-4 text-sky-400" /> },
+    { label: 'Documents', path: '/home/yash/Documents', icon: <FileText className="w-4 h-4 text-purple-400" /> },
+    { label: 'Projects', path: '/home/yash/Projects', icon: <FolderGit2 className="w-4 h-4 text-amber-400" /> },
+    { label: 'Experience', path: '/home/yash/Experience', icon: <Briefcase className="w-4 h-4 text-rose-400" /> },
+    { label: 'Pictures', path: '/home/yash/Pictures', icon: <ImageIcon className="w-4 h-4 text-emerald-400" /> },
+    { label: 'File System', path: '/', icon: <HardDrive className="w-4 h-4 text-neutral-400" /> },
+  ];
+
+  const breadcrumbs = currentPath.split('/').filter(Boolean);
+
+  return (
+    <div
+      className={`h-full flex flex-col font-sans select-none ${
+        themeMode === 'dark' ? 'bg-[#18181b] text-neutral-200' : 'bg-white text-neutral-900'
+      }`}
+    >
+      {/* Nautilus Top Toolbar */}
+      <div
+        className={`px-4 py-2 border-b flex flex-wrap items-center justify-between gap-3 shrink-0 ${
+          themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-neutral-100 border-neutral-200 shadow-sm'
+        }`}
+      >
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleBack}
+            disabled={historyIndex === 0}
+            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+            title="Back"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={handleForward}
+            disabled={historyIndex >= historyStack.length - 1}
+            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+            title="Forward"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={handleUp}
+            disabled={currentPath === '/'}
+            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+            title="Parent Directory"
+          >
+            <ChevronUp className="w-4 h-4" />
+          </button>
+
+          {/* Breadcrumbs Path Bar */}
+          <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-black/20 border border-white/10 text-xs font-mono">
             <button
               type="button"
-              onClick={() => {
-                setActiveTab('vfs');
-                setCwd('/home/yash');
-                setOpenedFile(null);
-              }}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors text-left cursor-pointer ${
-                activeTab === 'vfs'
-                  ? 'text-white font-semibold shadow-sm'
-                  : 'hover:bg-white/10 text-neutral-400 hover:text-neutral-200'
-              }`}
-              style={activeTab === 'vfs' ? { backgroundColor: accentColor } : {}}
+              onClick={() => navigateTo('/')}
+              className="hover:text-orange-400 font-bold transition-colors cursor-pointer"
             >
-              <HardDrive className="w-4 h-4 text-emerald-400" />
-              <span>Virtual File System</span>
+              /
             </button>
+            {breadcrumbs.map((crumb, idx) => {
+              const subpath = '/' + breadcrumbs.slice(0, idx + 1).join('/');
+              return (
+                <React.Fragment key={subpath}>
+                  <span className="text-neutral-500">/</span>
+                  <button
+                    type="button"
+                    onClick={() => navigateTo(subpath)}
+                    className={`hover:text-orange-400 transition-colors cursor-pointer ${
+                      idx === breadcrumbs.length - 1 ? 'text-orange-400 font-bold' : 'text-neutral-300'
+                    }`}
+                  >
+                    {crumb}
+                  </button>
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
-        {/* Project Repositories Quick Filter List */}
-        {activeTab === 'projects' && (
-          <div>
-            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-2 block mb-1.5 font-mono">
-              Repositories
-            </span>
-            <div className="space-y-1">
-              {portfolioData.projects.map((proj) => (
-                <button
-                  key={proj.id}
-                  type="button"
-                  onClick={() => setSelectedProject(proj)}
-                  className={`w-full text-left px-2.5 py-2 rounded-lg text-xs truncate transition-colors flex items-center gap-2 cursor-pointer ${
-                    selectedProject.id === proj.id
-                      ? 'bg-white/15 text-white font-semibold'
-                      : 'text-neutral-400 hover:bg-white/10'
-                  }`}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: accentColor }} />
-                  <span className="truncate">{proj.name}</span>
-                </button>
-              ))}
-            </div>
+        {/* Search & Actions Cluster */}
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <input
+              type="text"
+              placeholder="Search in folder..."
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              className="pl-8 pr-2 py-1 rounded-lg bg-white/10 border border-white/15 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500 w-36 sm:w-44"
+            />
           </div>
-        )}
 
-        <div className="pt-2 border-t border-white/10 text-[11px] text-neutral-400 px-2 flex items-center justify-between font-mono">
-          <span>ext4 • Linux Root</span>
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <button
+            type="button"
+            onClick={handleCreateNewFolder}
+            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            title="New Folder"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+
+          {selectedFile && (
+            <button
+              type="button"
+              onClick={handleDeleteSelected}
+              className="p-1.5 rounded-lg hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+              title="Delete Selected"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+
+          <div className="flex items-center border border-white/15 rounded-lg overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 transition-colors ${
+                viewMode === 'grid' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
+              }`}
+              title="Grid View"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 transition-colors ${
+                viewMode === 'list' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
+              }`}
+              title="List View"
+            >
+              <ListIcon className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Main Files & Detail View */}
-      <div className={`flex-1 p-4 sm:p-6 overflow-y-auto gnome-scrollbar space-y-5 ${themeMode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
-        {activeTab === 'projects' ? (
-          <>
-            {/* Header Bar */}
-            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-4">
-              <div className="space-y-1 max-w-xl">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border"
-                    style={{
-                      color: accentColor,
-                      borderColor: `${accentColor}40`,
-                      backgroundColor: `${accentColor}15`,
-                    }}
-                  >
-                    {selectedProject.category}
-                  </span>
-                  <span className="text-xs text-neutral-400 font-mono">{selectedProject.status}</span>
-                </div>
-                <h2 className={`text-lg sm:text-xl font-bold font-heading ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>
-                  {selectedProject.name}
-                </h2>
-              </div>
+      {/* Main Files Area: Sidebar + Browser */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar Places */}
+        <div
+          className={`w-44 p-3 border-r hidden md:flex flex-col gap-1 shrink-0 ${
+            themeMode === 'dark' ? 'bg-neutral-900/40 border-white/10' : 'bg-neutral-50 border-neutral-200'
+          }`}
+        >
+          <span className="text-[10px] font-bold font-mono text-neutral-400 uppercase tracking-wider px-2 py-1">
+            Places
+          </span>
+          {sidebarPlaces.map((place) => (
+            <button
+              key={place.path}
+              type="button"
+              onClick={() => navigateTo(place.path)}
+              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
+                currentPath === place.path
+                  ? 'bg-orange-600 text-white font-semibold shadow-sm'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {place.icon}
+              <span>{place.label}</span>
+            </button>
+          ))}
+        </div>
 
-              <a
-                href={selectedProject.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3.5 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer"
-                style={{ backgroundColor: accentColor }}
-              >
-                <FolderGit2 className="w-3.5 h-3.5" />
-                <span>Open GitHub Repo</span>
-                <ExternalLink className="w-3 h-3 ml-0.5" />
-              </a>
+        {/* Main Folder Explorer */}
+        <div className="flex-1 p-4 overflow-y-auto gnome-scrollbar">
+          {items.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center text-neutral-500 text-xs">
+              <Folder className="w-10 h-10 stroke-1 mb-2 opacity-40" />
+              <p>This folder is empty.</p>
             </div>
-
-            {/* Tagline Summary */}
-            <p className={`text-xs sm:text-sm leading-relaxed p-3.5 rounded-xl border ${themeMode === 'dark' ? 'bg-neutral-900 text-neutral-300 border-white/10' : 'bg-neutral-50 text-neutral-700 border-neutral-200'}`}>
-              {selectedProject.tagline}
-            </p>
-
-            {/* Implementation Highlights (From Official CV) */}
-            <div className={`p-4 rounded-xl border space-y-2 ${themeMode === 'dark' ? 'bg-neutral-900 border-white/10' : 'bg-neutral-50 border-neutral-200'}`}>
-              <div className="text-xs font-bold uppercase tracking-wider font-mono flex items-center gap-2" style={{ color: accentColor }}>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Implementation Highlights (From CV)</span>
-              </div>
-              <ul className="space-y-2 text-xs sm:text-[13px] pt-1">
-                {selectedProject.bulletPoints.map((bullet, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5">
-                    <span className="font-bold mt-0.5" style={{ color: accentColor }}>•</span>
-                    <span className="leading-relaxed">{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Problem vs Solution Split */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              <div className={`p-3.5 rounded-xl border space-y-1.5 ${themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-neutral-50 border-neutral-200'}`}>
-                <div className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>Problem Addressed</span>
-                </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">{selectedProject.problem}</p>
-              </div>
-
-              <div className={`p-3.5 rounded-xl border space-y-1.5 ${themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-neutral-50 border-neutral-200'}`}>
-                <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>DevOps / Cloud Solution</span>
-                </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">{selectedProject.solution}</p>
-              </div>
-            </div>
-
-            {/* Technologies Provisioned */}
-            <div className="space-y-2 pt-2 border-t border-white/10">
-              <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-mono">
-                Technologies & Tools
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {selectedProject.technologies.map((tech) => (
-                  <span
-                    key={tech}
-                    className={`px-2.5 py-1 rounded-md border text-xs font-mono ${
-                      themeMode === 'dark' ? 'bg-neutral-800 border-white/10 text-neutral-200' : 'bg-neutral-100 border-neutral-300 text-neutral-800'
-                    }`}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </>
-        ) : (
-          /* Virtual File System Browser */
-          <div className="space-y-4">
-            {/* Breadcrumb Path Bar */}
-            <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono ${themeMode === 'dark' ? 'bg-neutral-900 border-white/10' : 'bg-neutral-100 border-neutral-300'}`}>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleGoUp}
-                  disabled={currentCwd === '/'}
-                  className="p-1 rounded hover:bg-white/10 disabled:opacity-40"
-                  title="Go up one directory"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                </button>
-                <span className="font-semibold text-neutral-300">{currentCwd}</span>
-              </div>
-              <span className="text-[10px] text-neutral-500">{vfsFiles.length} items</span>
-            </div>
-
-            {/* File List Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {vfsFiles.map((file) => (
-                <button
-                  key={file.name}
-                  type="button"
-                  onClick={() => handleVfsClick(file)}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 text-center transition-all hover:scale-105 cursor-pointer ${
-                    themeMode === 'dark' ? 'bg-neutral-900/80 border-white/10 hover:border-orange-500/50' : 'bg-neutral-50 border-neutral-200 hover:border-orange-500'
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+              {items.map((item) => (
+                <div
+                  key={item.name}
+                  onClick={() => handleItemClick(item)}
+                  title={`Click to open ${item.name}`}
+                  className={`p-3 rounded-2xl flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                    selectedFile?.name === item.name
+                      ? 'bg-orange-600/30 border border-orange-500 text-white'
+                      : 'hover:bg-white/5 border border-transparent text-neutral-300'
                   }`}
                 >
-                  {file.type === 'folder' ? (
-                    <Folder className="w-8 h-8 text-amber-400" />
-                  ) : (
-                    <FileText className="w-8 h-8 text-sky-400" />
-                  )}
-                  <div>
-                    <span className="text-xs font-semibold block truncate max-w-[120px]">{file.name}</span>
-                    <span className="text-[10px] text-neutral-500 font-mono">{file.size || 'Folder'}</span>
-                  </div>
-                </button>
+                  {getFileIcon(item)}
+                  <span className="text-xs font-medium truncate max-w-full">
+                    {item.name}
+                  </span>
+                  <span className="text-[10px] text-neutral-500 font-mono">
+                    {item.type === 'folder' ? 'Folder' : item.size || '1.0 KB'}
+                  </span>
+                </div>
               ))}
             </div>
-
-            {/* File Preview */}
-            {openedFile && (
-              <div className={`p-4 rounded-xl border space-y-2 mt-4 ${themeMode === 'dark' ? 'bg-neutral-950 border-white/15' : 'bg-neutral-100 border-neutral-300'}`}>
-                <div className="flex items-center justify-between border-b border-white/10 pb-1.5 text-xs font-mono">
-                  <span className="font-bold text-orange-400">{openedFile.name}</span>
-                  <button type="button" onClick={() => setOpenedFile(null)} className="text-neutral-500 hover:text-white">
-                    Close Preview ✕
-                  </button>
-                </div>
-                <pre className="text-xs font-mono whitespace-pre-wrap leading-relaxed text-neutral-300 overflow-x-auto">
-                  {openedFile.content}
-                </pre>
+          ) : (
+            <div className="space-y-1 text-xs">
+              <div className="grid grid-cols-12 gap-2 px-3 py-1.5 text-[11px] font-mono text-neutral-500 border-b border-white/5 uppercase">
+                <span className="col-span-6">Name</span>
+                <span className="col-span-3">Size</span>
+                <span className="col-span-3">Type</span>
               </div>
-            )}
-          </div>
-        )}
+              {items.map((item) => (
+                <div
+                  key={item.name}
+                  onClick={() => handleItemClick(item)}
+                  title={`Click to open ${item.name}`}
+                  className={`grid grid-cols-12 gap-2 px-3 py-2 rounded-xl items-center transition-colors cursor-pointer ${
+                    selectedFile?.name === item.name
+                      ? 'bg-orange-600/30 text-white'
+                      : 'hover:bg-white/5 text-neutral-300'
+                  }`}
+                >
+                  <div className="col-span-6 flex items-center gap-2 truncate">
+                    {getFileIcon(item)}
+                    <span className="truncate">{item.name}</span>
+                  </div>
+                  <span className="col-span-3 font-mono text-neutral-400">
+                    {item.type === 'folder' ? '--' : item.size || '1.0 KB'}
+                  </span>
+                  <span className="col-span-3 text-neutral-400">
+                    {item.type === 'folder' ? 'Folder' : 'Document'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Status Bar */}
+      <div
+        className={`px-4 py-1.5 border-t flex items-center justify-between text-[11px] font-mono shrink-0 ${
+          themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10 text-neutral-400' : 'bg-neutral-100 border-neutral-200 text-neutral-600'
+        }`}
+      >
+        <span>{items.length} items</span>
+        <span>{selectedFile ? `${selectedFile.name} selected` : 'Free space: 424.3 GB'}</span>
       </div>
     </div>
   );

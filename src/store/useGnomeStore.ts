@@ -4,11 +4,12 @@ import { WindowId, WindowState, WindowPosition, WindowSize, NotificationItem, Wa
 import { LocaleCode, TranslationSchema, SUPPORTED_LANGUAGES } from '../types/i18n';
 import { translations, detectBrowserLocale } from '../locales/translations';
 import { sounds } from '../lib/soundEffects';
+import { vfs } from '../lib/virtualFileSystem';
 
 export const wallpaperPresets: WallpaperPreset[] = [
   {
     id: 'noble-numbat',
-    name: 'Ubuntu Noble (Aubergine)',
+    name: 'YashOS Noble (Aubergine)',
     gradient: 'radial-gradient(circle at 15% 15%, rgba(233, 84, 32, 0.2), transparent 45%), radial-gradient(circle at 85% 85%, rgba(119, 33, 111, 0.35), transparent 50%), linear-gradient(135deg, #2c001e 0%, #1a0826 40%, #0d1322 100%)',
     previewBg: 'linear-gradient(135deg, #2c001e, #1a0826, #0d1322)',
   },
@@ -62,10 +63,10 @@ const createInitialNotifications = (): NotificationItem[] => {
   ];
 };
 
-const getCenteredTerminalPosition = (): { x: number; y: number } => {
+const getCenteredPosition = (w = 780, h = 490): { x: number; y: number } => {
   if (typeof window !== 'undefined') {
-    const width = Math.min(780, window.innerWidth - 80);
-    const height = Math.min(490, window.innerHeight - 80);
+    const width = Math.min(w, window.innerWidth - 80);
+    const height = Math.min(h, window.innerHeight - 80);
     const x = Math.max(70, Math.floor((window.innerWidth - width) / 2));
     const y = Math.max(45, Math.floor((window.innerHeight - height) / 2));
     return { x, y };
@@ -73,610 +74,695 @@ const getCenteredTerminalPosition = (): { x: number; y: number } => {
   return { x: 260, y: 90 };
 };
 
+const STANDARD_WINDOW_SIZE: WindowSize = { width: 800, height: 510 };
+
 const initialWindows: WindowState[] = [
   {
     id: 'terminal',
-    title: 'yash@ubuntu: ~ (bash)',
-    isOpen: true,
+    title: 'yash@yash-portfolio: ~ (bash)',
+    isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 25,
-    position: getCenteredTerminalPosition(),
-    size: { width: 780, height: 490 },
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Terminal',
+    workspace: 1,
   },
   {
     id: 'projects',
-    title: 'Projects Gallery — Expanded Portfolio',
+    title: 'Projects Showcase — Cloud & DevOps Architecture',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 20,
-    position: { x: 180, y: 70 },
-    size: { width: 840, height: 540 },
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'FolderGit2',
+    workspace: 1,
   },
   {
     id: 'skills',
-    title: 'Technical Skills Visualizer',
+    title: 'Technical Skills Matrix',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 20,
-    position: { x: 200, y: 80 },
-    size: { width: 760, height: 530 },
+    zIndex: 19,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Zap',
+    workspace: 1,
   },
   {
     id: 'timeline',
-    title: 'Experience & Milestones Timeline',
+    title: 'Career & Education Timeline',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 20,
-    position: { x: 220, y: 75 },
-    size: { width: 780, height: 540 },
+    zIndex: 18,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Clock',
+    workspace: 1,
   },
   {
     id: 'files',
-    title: 'Projects — Files (Nautilus)',
+    title: 'Files (VFS Explorer)',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 20,
-    position: { x: 170, y: 80 },
-    size: { width: 840, height: 530 },
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Folder',
-  },
-  {
-    id: 'about',
-    title: 'System Settings — About Yash',
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 20,
-    position: { x: 190, y: 70 },
-    size: { width: 760, height: 520 },
-    iconName: 'User',
+    workspace: 1,
   },
   {
     id: 'resume',
-    title: 'resume.txt — Gedit Text Editor',
+    title: 'Document Viewer — Yash Baviskar CV',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 20,
-    position: { x: 210, y: 75 },
-    size: { width: 780, height: 520 },
+    zIndex: 21,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'FileText',
+    workspace: 1,
   },
   {
     id: 'contact',
-    title: 'Thunderbird Mail — Compose',
+    title: 'Contact Yash Baviskar',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 20,
-    position: { x: 230, y: 90 },
-    size: { width: 680, height: 480 },
+    zIndex: 22,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Mail',
+    workspace: 1,
   },
   {
     id: 'browser',
-    title: 'Cloud Telemetry — GNOME Web',
+    title: 'Web Browser',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 20,
-    position: { x: 160, y: 65 },
-    size: { width: 820, height: 520 },
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Globe',
+    workspace: 1,
   },
   {
     id: 'monitor',
-    title: 'System Monitor — Resources & Telemetry',
+    title: 'System Monitor & Telemetry',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 20,
-    position: { x: 180, y: 85 },
-    size: { width: 800, height: 520 },
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
     iconName: 'Activity',
+    workspace: 1,
+  },
+  {
+    id: 'about',
+    title: 'Settings — YashOS 24.04 LTS',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 20,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'Settings',
+    workspace: 1,
+  },
+  {
+    id: 'text-editor',
+    title: 'Text Editor (gedit)',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 23,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'FileCode',
+    workspace: 1,
+    activeFilePath: '/home/yash/Desktop/README.md',
+  },
+  {
+    id: 'image-viewer',
+    title: 'Image Viewer (Eye of GNOME)',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 23,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'Image',
+    workspace: 1,
+    activeFilePath: '/home/yash/Pictures/profile.jpg',
+  },
+  {
+    id: 'software-center',
+    title: 'Software Center (App Center)',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 20,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'LayoutGrid',
+    workspace: 1,
+  },
+  {
+    id: 'calculator',
+    title: 'Calculator',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 24,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'Calculator',
+    workspace: 1,
+  },
+  {
+    id: 'clocks',
+    title: 'Clocks',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 24,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'Clock',
+    workspace: 1,
+  },
+  {
+    id: 'weather',
+    title: 'Weather',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 24,
+    position: getCenteredPosition(800, 510),
+    size: STANDARD_WINDOW_SIZE,
+    iconName: 'CloudSun',
+    workspace: 1,
   },
 ];
 
-interface GnomeStoreState {
-  // Session & Overlay Flags
-  hasSeenWelcome: boolean;
-  hasClosedTerminal: boolean;
+interface GnomeStore {
+  // Lifecycle & Hardware States
+  isBooted: boolean;
+  setBooted: (booted: boolean) => void;
+  isLoggedIn: boolean;
+  setLoggedIn: (logged: boolean) => void;
+  isLocked: boolean;
+  setLocked: (locked: boolean) => void;
+  isSuspended: boolean;
+  setSuspended: (suspended: boolean) => void;
   isShutdown: boolean;
-  isShortcutsHelpOpen: boolean;
-  isWallpaperModalOpen: boolean;
-  selectedWallpaperId: string;
+  setShutdown: (shutdown: boolean) => void;
 
-  // i18n Internationalization
-  locale: LocaleCode;
-  hasAutoDetectedLocale: boolean;
+  // Workspaces
+  activeWorkspace: 1 | 2;
+  switchWorkspace: (ws: 1 | 2) => void;
 
-  // Guided Tour
-  isTourOpen: boolean;
-  currentTourStep: number;
-
-  // Notifications
-  notifications: NotificationItem[];
-
-  // Window System
+  // Windows & State
   windows: WindowState[];
   activeWindowId: WindowId | null;
-  windowOrigins: Record<string, { x: number; y: number }>;
+  windowOrigins: Record<WindowId, { x: number; y: number }>;
+  activeSnapPreview: 'left' | 'right' | 'top' | null;
+  setActiveSnapPreview: (snap: 'left' | 'right' | 'top' | null) => void;
 
-  // Desktop & Overlays
+  // Desktop Surface
+  rubberBand: { startX: number; startY: number; currentX: number; currentY: number } | null;
+  setRubberBand: (rb: any) => void;
+
+  // UI Modals
   isActivitiesOpen: boolean;
-  isAltTabOpen: boolean;
-  altTabSelectionIndex: number;
-  selectedDesktopIndex: number;
-
-  // Theming & Customization (Dark/Light + Accents)
+  isShortcutsHelpOpen: boolean;
+  isWallpaperModalOpen: boolean;
+  isTourOpen: boolean;
+  isRecruiterViewOpen: boolean;
+  selectedWallpaperId: string;
   themeMode: 'dark' | 'light';
   accentColor: string;
   soundEnabled: boolean;
   nightLight: boolean;
-
-  // Settings App Sidebar Navigation
+  fontSize: 'compact' | 'standard' | 'large';
+  reducedMotion: boolean;
   settingsPage: 'appearance' | 'region' | 'about';
-
-  // Virtual File System State
   currentCwd: string;
 
-  // Actions
-  setHasSeenWelcome: (seen: boolean) => void;
-  setShutdown: (shutdown: boolean) => void;
-  toggleShortcutsHelp: () => void;
-  setShortcutsHelpOpen: (open: boolean) => void;
-  setWallpaperModalOpen: (open: boolean) => void;
-  setWallpaper: (id: string) => void;
+  // Notifications
+  notifications: NotificationItem[];
+  addNotification: (notif: Omit<NotificationItem, 'id' | 'timestamp'>) => void;
+  removeNotification: (id: string) => void;
+  dismissNotification: (id: string) => void;
+  clearAllNotifications: () => void;
 
-  // i18n Actions
-  setLocale: (locale: LocaleCode) => void;
-  setHasAutoDetectedLocale: (detected: boolean) => void;
-  t: () => TranslationSchema;
+  // Alt-Tab Switcher
+  isAltTabOpen: boolean;
+  altTabSelectionIndex: number;
+  setAltTabOpen: (open: boolean) => void;
+  setAltTabSelection: (index: number) => void;
 
-  // Guided Tour Actions
+  // Desktop Icons Selection
+  selectedDesktopIndex: number;
+  setSelectedDesktopIndex: (index: number) => void;
+
+  // Guided Tour
+  currentTourStep: number;
   startTour: () => void;
   nextTourStep: () => void;
   prevTourStep: () => void;
   endTour: () => void;
 
-  // Notification Actions
-  addNotification: (title: string, message: string, type?: 'info' | 'success' | 'alert') => void;
-  dismissNotification: (id: string) => void;
-  clearAllNotifications: () => void;
+  // Welcome state
+  hasSeenWelcome: boolean;
+  setHasSeenWelcome: (seen: boolean) => void;
 
-  // Window Actions
-  openApp: (id: WindowId, origin?: { x: number; y: number }) => void;
+  // i18n
+  locale: LocaleCode;
+  hasAutoDetectedLocale: boolean;
+  setHasAutoDetectedLocale: (val: boolean) => void;
+  setLocale: (locale: LocaleCode) => void;
+  t: () => TranslationSchema;
+
+  // Actions
+  openApp: (id: WindowId, origin?: { x: number; y: number }, filePath?: string) => void;
+  openFileInApp: (filePath: string) => void;
   closeApp: (id: WindowId) => void;
   minimizeApp: (id: WindowId) => void;
   toggleMaximizeApp: (id: WindowId) => void;
   focusApp: (id: WindowId) => void;
-  updateWindowBounds: (id: WindowId, position: WindowPosition, size?: WindowSize) => void;
-
+  updateWindowBounds: (id: WindowId, position: WindowPosition, size: WindowSize) => void;
   nudgeActiveWindow: (dx: number, dy: number) => void;
-  snapActiveWindow: (direction: 'left' | 'right' | 'top' | 'full') => void;
-
-  setSelectedDesktopIndex: (index: number) => void;
+  snapActiveWindow: (direction: 'left' | 'right' | 'top') => void;
+  resetDesktopLayout: () => void;
+  takeScreenshot: () => void;
+  reclampAllWindows: () => void;
 
   toggleActivities: () => void;
   setActivitiesOpen: (open: boolean) => void;
-
-  setAltTabOpen: (open: boolean) => void;
-  setAltTabSelection: (index: number) => void;
-  cycleAltTab: (reverse?: boolean) => void;
-
+  toggleShortcutsHelp: () => void;
+  setShortcutsHelpOpen: (open: boolean) => void;
+  toggleWallpaperModal: () => void;
+  setWallpaperModalOpen: (open: boolean) => void;
+  toggleRecruiterView: () => void;
+  setRecruiterViewOpen: (open: boolean) => void;
+  setWallpaper: (id: string) => void;
   setThemeMode: (mode: 'dark' | 'light') => void;
   toggleThemeMode: () => void;
   setAccentColor: (color: string) => void;
   toggleSound: () => void;
   toggleNightLight: () => void;
   setNightLight: (enabled: boolean) => void;
+  setFontSize: (size: 'compact' | 'standard' | 'large') => void;
+  setReducedMotion: (reduced: boolean) => void;
+  toggleReducedMotion: () => void;
   setSettingsPage: (page: 'appearance' | 'region' | 'about') => void;
   setCwd: (path: string) => void;
 }
 
-export const useGnomeStore = create<GnomeStoreState>()(
+export const useGnomeStore = create<GnomeStore>()(
   persist(
     (set, get) => ({
-      hasSeenWelcome: true,
-      hasClosedTerminal: false,
+      // Lifecycle initial states
+      isBooted: true,
+      setBooted: (booted) => set({ isBooted: booted }),
+      isLoggedIn: true,
+      setLoggedIn: (logged) => set({ isLoggedIn: logged }),
+      isLocked: false,
+      setLocked: (locked) => set({ isLocked: locked }),
+      isSuspended: false,
+      setSuspended: (suspended) => set({ isSuspended: suspended }),
       isShutdown: false,
+      setShutdown: (shutdown) => set({ isShutdown: shutdown }),
+
+      // Workspaces
+      activeWorkspace: 1,
+      switchWorkspace: (ws) => {
+        sounds.playSliderTick();
+        set({ activeWorkspace: ws });
+      },
+
+      // Windows
+      windows: initialWindows,
+      activeWindowId: null,
+      windowOrigins: {
+        terminal: { x: 24, y: 120 },
+        files: { x: 24, y: 180 },
+        about: { x: 24, y: 480 },
+        resume: { x: 24, y: 240 },
+        contact: { x: 24, y: 300 },
+        browser: { x: 24, y: 360 },
+        monitor: { x: 24, y: 420 },
+        projects: { x: 24, y: 150 },
+        skills: { x: 24, y: 210 },
+        timeline: { x: 24, y: 270 },
+        'text-editor': { x: 24, y: 330 },
+        'image-viewer': { x: 24, y: 390 },
+        'software-center': { x: 24, y: 450 },
+        calculator: { x: 24, y: 510 },
+        weather: { x: 24, y: 570 },
+        clocks: { x: 24, y: 600 },
+      },
+      activeSnapPreview: null,
+      setActiveSnapPreview: (snap) => set({ activeSnapPreview: snap }),
+      rubberBand: null,
+      setRubberBand: (rb) => set({ rubberBand: rb }),
+
+      // UI States
+      isActivitiesOpen: false,
       isShortcutsHelpOpen: false,
       isWallpaperModalOpen: false,
+      isRecruiterViewOpen: false,
       selectedWallpaperId: 'noble-numbat',
-
-      locale: detectBrowserLocale(),
-      hasAutoDetectedLocale: false,
-
-      isTourOpen: false,
-      currentTourStep: 0,
-
-      notifications: createInitialNotifications(),
-
-      windows: initialWindows,
-      activeWindowId: 'terminal',
-      windowOrigins: {},
-
-      isActivitiesOpen: false,
-      isAltTabOpen: false,
-      altTabSelectionIndex: 0,
-      selectedDesktopIndex: 0,
-
       themeMode: 'dark',
       accentColor: '#e95420',
-      soundEnabled: true,
+      soundEnabled: false,
       nightLight: false,
-
-      settingsPage: 'about',
-
+      fontSize: 'standard',
+      reducedMotion: false,
+      settingsPage: 'appearance',
       currentCwd: '/home/yash',
 
-      setHasSeenWelcome: (seen: boolean) => {
-        set({ hasSeenWelcome: seen });
-      },
-
-      setShutdown: (shutdown: boolean) => {
-        if (shutdown) {
-          sounds.playWindowClose();
-        } else {
-          sounds.playWindowOpen();
-        }
-        set({ isShutdown: shutdown });
-      },
-
-      toggleShortcutsHelp: () => {
-        set((s) => ({ isShortcutsHelpOpen: !s.isShortcutsHelpOpen }));
-      },
-
-      setShortcutsHelpOpen: (open: boolean) => {
-        set({ isShortcutsHelpOpen: open });
-      },
-
-      setWallpaperModalOpen: (open: boolean) => {
-        set({ isWallpaperModalOpen: open });
-      },
-
-      setWallpaper: (id: string) => {
-        set({ selectedWallpaperId: id });
-      },
-
-      setLocale: (newLocale: LocaleCode) => {
-        set({ locale: newLocale });
-        if (typeof document !== 'undefined') {
-          document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
-          document.documentElement.lang = newLocale;
-        }
-      },
-
-      setHasAutoDetectedLocale: (detected: boolean) => {
-        set({ hasAutoDetectedLocale: detected });
-      },
-
-      t: () => {
-        const currentLocale = get().locale;
-        return translations[currentLocale] || translations.en;
-      },
-
-      startTour: () => {
-        sounds.playWindowOpen();
-        set({ isTourOpen: true, currentTourStep: 0 });
-      },
-
-      nextTourStep: () => {
-        const { currentTourStep } = get();
-        if (currentTourStep < 6) {
-          sounds.playWindowOpen();
-          set({ currentTourStep: currentTourStep + 1 });
-        }
-      },
-
-      prevTourStep: () => {
-        const { currentTourStep } = get();
-        if (currentTourStep > 0) {
-          set({ currentTourStep: currentTourStep - 1 });
-        }
-      },
-
-      endTour: () => {
-        set({ isTourOpen: false, currentTourStep: 0 });
-      },
-
-      addNotification: (title: string, message: string, type: 'info' | 'success' | 'alert' = 'info') => {
-        const newNotif: NotificationItem = {
-          id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-          title,
-          message,
-          time: 'Just now',
+      // Notifications
+      notifications: createInitialNotifications(),
+      addNotification: (notif) => {
+        sounds.playNotification();
+        const item: NotificationItem = {
+          ...notif,
+          id: `notif_${Date.now()}_${Math.random()}`,
           timestamp: Date.now(),
-          type,
         };
-        set((state) => ({
-          notifications: [newNotif, ...state.notifications].slice(0, 20),
-        }));
+        set((state) => ({ notifications: [item, ...state.notifications] }));
+      },
+      removeNotification: (id) =>
+        set((state) => ({ notifications: state.notifications.filter((n) => n.id !== id) })),
+      dismissNotification: (id) =>
+        set((state) => ({ notifications: state.notifications.filter((n) => n.id !== id) })),
+      clearAllNotifications: () => set({ notifications: [] }),
+
+      // Alt-Tab Switcher
+      isAltTabOpen: false,
+      altTabSelectionIndex: 0,
+      setAltTabOpen: (open) => set({ isAltTabOpen: open }),
+      setAltTabSelection: (idx) => set({ altTabSelectionIndex: idx }),
+
+      // Desktop Icons
+      selectedDesktopIndex: 0,
+      setSelectedDesktopIndex: (idx) => set({ selectedDesktopIndex: idx }),
+
+      // Guided Tour
+      isTourOpen: false,
+      currentTourStep: 0,
+      startTour: () => set({ isTourOpen: true, currentTourStep: 0, isActivitiesOpen: false }),
+      nextTourStep: () => set((state) => ({ currentTourStep: state.currentTourStep + 1 })),
+      prevTourStep: () => set((state) => ({ currentTourStep: Math.max(0, state.currentTourStep - 1) })),
+      endTour: () => set({ isTourOpen: false, currentTourStep: 0 }),
+
+      // Welcome State
+      hasSeenWelcome: false,
+      setHasSeenWelcome: (seen) => set({ hasSeenWelcome: seen }),
+
+      // i18n
+      locale: 'en',
+      hasAutoDetectedLocale: false,
+      setHasAutoDetectedLocale: (val) => set({ hasAutoDetectedLocale: val }),
+      setLocale: (locale) => set({ locale }),
+      t: () => {
+        const loc = get().locale;
+        return translations[loc] || translations.en;
       },
 
-      dismissNotification: (id: string) => {
-        sounds.playWindowClose();
-        set((state) => ({
-          notifications: state.notifications.filter((n) => n.id !== id),
-        }));
-      },
-
-      clearAllNotifications: () => {
-        sounds.playWindowClose();
-        set({ notifications: [] });
-      },
-
-      setSelectedDesktopIndex: (index: number) => {
-        set({ selectedDesktopIndex: index });
-      },
-
-      openApp: (id: WindowId, origin?: { x: number; y: number }) => {
+      // Actions
+      openApp: (id, origin, filePath) => {
         sounds.playWindowOpen();
-        const { windows, windowOrigins, addNotification } = get();
-        const highestZ = Math.max(...windows.map((w) => w.zIndex), 20) + 1;
+        set((state) => {
+          const maxZ = Math.max(...state.windows.map((w) => w.zIndex), 10);
+          const currentWs = state.activeWorkspace;
+          const openCount = state.windows.filter((w) => w.isOpen && !w.isMinimized && w.workspace === currentWs).length;
+          const cascadeOffsetX = (openCount % 6) * 36;
+          const cascadeOffsetY = (openCount % 6) * 30;
 
-        const updatedOrigins = origin ? { ...windowOrigins, [id]: origin } : windowOrigins;
+          return {
+            windows: state.windows.map((w) => {
+              if (w.id === id) {
+                const screenW = typeof window !== 'undefined' ? window.innerWidth : 1280;
+                const screenH = typeof window !== 'undefined' ? window.innerHeight : 800;
+                const standardW = Math.min(780, Math.max(480, screenW < 1200 ? screenW - 60 : Math.floor(screenW * 0.54)));
+                const standardH = Math.min(500, Math.max(340, screenH - 120));
+                const centered = getCenteredPosition(standardW, standardH);
+                const initialX = Math.min(Math.max(28, centered.x + cascadeOffsetX), Math.max(28, screenW - standardW - 20));
+                const initialY = Math.min(Math.max(40, centered.y + cascadeOffsetY), Math.max(40, screenH - standardH - 74));
 
-        // Auto-log real user interaction notification
-        const appTitles: Record<WindowId, string> = {
-          terminal: 'Terminal App',
-          files: 'Projects Workspace',
-          about: 'System Settings',
-          resume: 'Resume Document',
-          contact: 'Contact Channel',
-          browser: 'Telemetry Dashboard',
-          monitor: 'System Monitor',
-          projects: 'Projects Showcase',
-          skills: 'Skills Matrix',
-          timeline: 'Engineering Timeline',
-        };
+                return {
+                  ...w,
+                  size: w.isOpen ? w.size : { width: standardW, height: standardH },
+                  isOpen: true,
+                  isMinimized: false,
+                  zIndex: maxZ + 1,
+                  workspace: currentWs,
+                  activeFilePath: filePath || w.activeFilePath,
+                  position: w.isOpen ? w.position : { x: initialX, y: initialY },
+                };
+              }
+              return w;
+            }),
+            activeWindowId: id,
+            isActivitiesOpen: false,
+            windowOrigins: origin ? { ...state.windowOrigins, [id]: origin } : state.windowOrigins,
+          };
+        });
+      },
 
-        if (appTitles[id]) {
-          addNotification('Application Opened', `Launched ${appTitles[id]} in GNOME session.`, 'info');
+      openFileInApp: (filePath: string) => {
+        const ext = filePath.substring(filePath.lastIndexOf('.')).toLowerCase();
+        if (ext === '.pdf') {
+          get().openApp('resume', undefined, filePath);
+        } else if (['.png', '.jpg', '.jpeg', '.svg', '.webp'].includes(ext)) {
+          get().openApp('image-viewer', undefined, filePath);
+        } else if (['.md', '.txt', '.json', '.yml', '.yaml', '.tf', '.sh', '.js', '.ts'].includes(ext)) {
+          get().openApp('text-editor', undefined, filePath);
+        } else {
+          get().openApp('files', undefined, filePath);
         }
-
-        set({
-          isActivitiesOpen: false,
-          isAltTabOpen: false,
-          activeWindowId: id,
-          hasClosedTerminal: id === 'terminal' ? false : get().hasClosedTerminal,
-          windowOrigins: updatedOrigins,
-          windows: windows.map((w) => {
-            if (w.id === id) {
-              return {
-                ...w,
-                isOpen: true,
-                isMinimized: false,
-                zIndex: highestZ,
-              };
-            }
-            return w;
-          }),
-        });
       },
 
-      closeApp: (id: WindowId) => {
+      closeApp: (id) => {
         sounds.playWindowClose();
-        const { windows, activeWindowId } = get();
-        set({
-          hasClosedTerminal: id === 'terminal' ? true : get().hasClosedTerminal,
-          windows: windows.map((w) => (w.id === id ? { ...w, isOpen: false, isMinimized: false } : w)),
-          activeWindowId: activeWindowId === id ? null : activeWindowId,
-        });
+        set((state) => ({
+          windows: state.windows.map((w) => (w.id === id ? { ...w, isOpen: false } : w)),
+          activeWindowId: state.activeWindowId === id ? null : state.activeWindowId,
+        }));
       },
 
-      minimizeApp: (id: WindowId) => {
+      minimizeApp: (id) => {
         sounds.playWindowClose();
-        const { windows } = get();
-        set({
-          windows: windows.map((w) => (w.id === id ? { ...w, isMinimized: true } : w)),
-          activeWindowId: null,
+        set((state) => ({
+          windows: state.windows.map((w) => (w.id === id ? { ...w, isMinimized: true } : w)),
+          activeWindowId: state.activeWindowId === id ? null : state.activeWindowId,
+        }));
+      },
+
+      toggleMaximizeApp: (id) => {
+        sounds.playWindowOpen();
+        set((state) => ({
+          windows: state.windows.map((w) => (w.id === id ? { ...w, isMaximized: !w.isMaximized } : w)),
+        }));
+      },
+
+      focusApp: (id) => {
+        set((state) => {
+          const maxZ = Math.max(...state.windows.map((w) => w.zIndex), 10);
+          return {
+            windows: state.windows.map((w) => (w.id === id ? { ...w, zIndex: maxZ + 1, isMinimized: false } : w)),
+            activeWindowId: id,
+          };
         });
       },
 
-      toggleMaximizeApp: (id: WindowId) => {
-        const { windows } = get();
-        set({
-          windows: windows.map((w) => (w.id === id ? { ...w, isMaximized: !w.isMaximized } : w)),
+      updateWindowBounds: (id, position, size) => {
+        set((state) => {
+          const screenW = typeof window !== 'undefined' ? window.innerWidth : 1280;
+          const screenH = typeof window !== 'undefined' ? window.innerHeight : 800;
+          const clampedX = Math.max(0, Math.min(position.x, screenW - 80));
+          const clampedY = Math.max(32, Math.min(position.y, screenH - 50));
+
+          return {
+            windows: state.windows.map((w) =>
+              w.id === id
+                ? {
+                    ...w,
+                    position: { x: clampedX, y: clampedY },
+                    size: {
+                      width: Math.min(size.width, screenW),
+                      height: Math.min(size.height, screenH - 32),
+                    },
+                  }
+                : w
+            ),
+          };
         });
       },
 
-      focusApp: (id: WindowId) => {
-        const { windows } = get();
-        const highestZ = Math.max(...windows.map((w) => w.zIndex), 20) + 1;
-        set({
-          activeWindowId: id,
-          windows: windows.map((w) => (w.id === id ? { ...w, isMinimized: false, zIndex: highestZ } : w)),
-        });
-      },
-
-      updateWindowBounds: (id: WindowId, position: WindowPosition, size?: WindowSize) => {
-        const { windows } = get();
-        set({
-          windows: windows.map((w) => {
-            if (w.id === id) {
-              return {
-                ...w,
-                position,
-                size: size || w.size,
-              };
-            }
-            return w;
-          }),
-        });
-      },
-
-      nudgeActiveWindow: (dx: number, dy: number) => {
-        const { activeWindowId, windows } = get();
+      nudgeActiveWindow: (dx, dy) => {
+        const { activeWindowId, windows, updateWindowBounds } = get();
         if (!activeWindowId) return;
-        set({
-          windows: windows.map((w) => {
-            if (w.id === activeWindowId && !w.isMaximized) {
-              return {
-                ...w,
-                position: {
-                  x: Math.max(64, Math.min(window.innerWidth - 200, w.position.x + dx)),
-                  y: Math.max(32, Math.min(window.innerHeight - 100, w.position.y + dy)),
-                },
-              };
-            }
-            return w;
-          }),
-        });
+        const win = windows.find((w) => w.id === activeWindowId);
+        if (win && !win.isMaximized) {
+          updateWindowBounds(
+            activeWindowId,
+            { x: win.position.x + dx, y: win.position.y + dy },
+            win.size
+          );
+        }
       },
 
-      snapActiveWindow: (direction: 'left' | 'right' | 'top' | 'full') => {
-        const { activeWindowId, windows } = get();
+      snapActiveWindow: (direction) => {
+        const { activeWindowId, windows, updateWindowBounds, toggleMaximizeApp } = get();
         if (!activeWindowId || typeof window === 'undefined') return;
-
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
-        const dockOffset = screenW >= 768 ? 64 : 0;
-        const topBarOffset = 32;
-        const availW = screenW - dockOffset;
-        const availH = screenH - topBarOffset;
+        const win = windows.find((w) => w.id === activeWindowId);
+        if (!win) return;
 
-        set({
-          windows: windows.map((w) => {
-            if (w.id === activeWindowId) {
-              if (direction === 'left') {
-                return {
-                  ...w,
-                  isMaximized: false,
-                  position: { x: dockOffset, y: topBarOffset },
-                  size: { width: Math.floor(availW / 2), height: availH },
-                };
-              }
-              if (direction === 'right') {
-                return {
-                  ...w,
-                  isMaximized: false,
-                  position: { x: dockOffset + Math.floor(availW / 2), y: topBarOffset },
-                  size: { width: Math.floor(availW / 2), height: availH },
-                };
-              }
-              if (direction === 'top' || direction === 'full') {
-                return {
-                  ...w,
-                  isMaximized: true,
-                };
-              }
-            }
-            return w;
-          }),
-        });
-      },
-
-      toggleActivities: () => {
-        set((state) => ({ isActivitiesOpen: !state.isActivitiesOpen }));
-      },
-
-      setActivitiesOpen: (open: boolean) => {
-        set({ isActivitiesOpen: open });
-      },
-
-      setAltTabOpen: (open: boolean) => {
-        set({ isAltTabOpen: open });
-      },
-
-      setAltTabSelection: (index: number) => {
-        set({ altTabSelectionIndex: index });
-      },
-
-      cycleAltTab: (reverse = false) => {
-        const { windows, altTabSelectionIndex } = get();
-        const openWins = windows.filter((w) => w.isOpen);
-        if (openWins.length === 0) return;
-        const nextIndex = reverse
-          ? (altTabSelectionIndex - 1 + openWins.length) % openWins.length
-          : (altTabSelectionIndex + 1) % openWins.length;
-        set({ altTabSelectionIndex: nextIndex });
-      },
-
-      setThemeMode: (mode: 'dark' | 'light') => {
-        if (typeof document !== 'undefined') {
-          if (mode === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-          } else {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-          }
+        if (direction === 'top') {
+          toggleMaximizeApp(activeWindowId);
+          return;
         }
-        set({ themeMode: mode });
+
+        const topMargin = 34;
+        const bottomMargin = 74;
+        const sideMargin = 14;
+        const gutter = 10;
+        const availableHeight = Math.max(300, screenH - topMargin - bottomMargin);
+        const halfWidth = Math.max(340, Math.floor((screenW - sideMargin * 2 - gutter) / 2));
+
+        if (direction === 'left') {
+          updateWindowBounds(
+            activeWindowId,
+            { x: sideMargin, y: topMargin },
+            { width: halfWidth, height: availableHeight }
+          );
+        } else if (direction === 'right') {
+          updateWindowBounds(
+            activeWindowId,
+            { x: screenW - sideMargin - halfWidth, y: topMargin },
+            { width: halfWidth, height: availableHeight }
+          );
+        }
       },
 
-      toggleThemeMode: () => {
-        const current = get().themeMode;
-        const next = current === 'dark' ? 'light' : 'dark';
-        get().setThemeMode(next);
+      resetDesktopLayout: () => {
+        set({
+          windows: initialWindows.map((w) => ({
+            ...w,
+            isOpen: w.id === 'terminal',
+            isMinimized: false,
+            isMaximized: false,
+            position: getCenteredPosition(w.size.width, w.size.height),
+          })),
+          activeWindowId: 'terminal',
+          activeWorkspace: 1,
+        });
+        vfs.resetToFactory();
       },
 
-      setAccentColor: (color: string) => {
-        set({ accentColor: color });
-      },
+      takeScreenshot: () => {
+        sounds.playScreenshotSound();
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `Screenshot_${timestamp}.png`;
+        const filePath = `/home/yash/Pictures/Screenshots/${filename}`;
 
-      toggleSound: () => {
-        set((state) => {
-          const next = !state.soundEnabled;
-          sounds.isMuted = !next;
-          return { soundEnabled: next };
+        vfs.createFile(filePath, '[Screenshot Captured]', '/hero-bg.png', { app: 'image-viewer' });
+
+        get().addNotification({
+          title: 'Screenshot Captured',
+          message: `Saved to ~/Pictures/Screenshots/${filename}`,
+          time: 'Just now',
+          type: 'success',
         });
       },
 
-      toggleNightLight: () => {
-        set((state) => ({ nightLight: !state.nightLight }));
+      reclampAllWindows: () => {
+        if (typeof window === 'undefined') return;
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+
+        set((state) => ({
+          windows: state.windows.map((w) => {
+            const clampedX = Math.max(0, Math.min(w.position.x, Math.max(0, screenW - 100)));
+            const clampedY = Math.max(32, Math.min(w.position.y, Math.max(32, screenH - 60)));
+            const clampedW = Math.min(w.size.width, Math.max(280, screenW - 20));
+            const clampedH = Math.min(w.size.height, Math.max(200, screenH - 50));
+
+            return {
+              ...w,
+              position: { x: clampedX, y: clampedY },
+              size: { width: clampedW, height: clampedH },
+            };
+          }),
+        }));
       },
 
-      setNightLight: (enabled: boolean) => {
-        set({ nightLight: enabled });
+      toggleActivities: () => set((state) => ({ isActivitiesOpen: !state.isActivitiesOpen })),
+      setActivitiesOpen: (open) => set({ isActivitiesOpen: open }),
+      toggleShortcutsHelp: () => set((state) => ({ isShortcutsHelpOpen: !state.isShortcutsHelpOpen })),
+      setShortcutsHelpOpen: (open) => set({ isShortcutsHelpOpen: open }),
+      toggleWallpaperModal: () => set((state) => ({ isWallpaperModalOpen: !state.isWallpaperModalOpen })),
+      setWallpaperModalOpen: (open) => set({ isWallpaperModalOpen: open }),
+      toggleRecruiterView: () => set((state) => ({ isRecruiterViewOpen: !state.isRecruiterViewOpen })),
+      setRecruiterViewOpen: (open) => set({ isRecruiterViewOpen: open }),
+      setWallpaper: (id) => set({ selectedWallpaperId: id }),
+      setThemeMode: (mode) => set({ themeMode: mode }),
+      toggleThemeMode: () => {
+        const next = get().themeMode === 'dark' ? 'light' : 'dark';
+        set({ themeMode: next });
       },
-
-      setSettingsPage: (page: 'appearance' | 'region' | 'about') => {
-        set({ settingsPage: page });
+      setAccentColor: (color) => set({ accentColor: color }),
+      toggleSound: () => {
+        const next = !get().soundEnabled;
+        sounds.isMuted = !next;
+        set({ soundEnabled: next });
       },
-
-      setCwd: (path: string) => {
-        set({ currentCwd: path });
+      toggleNightLight: () => set((state) => ({ nightLight: !state.nightLight })),
+      setNightLight: (enabled) => set({ nightLight: enabled }),
+      setFontSize: (size) => {
+        if (typeof document !== 'undefined') {
+          const root = document.documentElement;
+          if (size === 'compact') root.style.fontSize = '14px';
+          else if (size === 'large') root.style.fontSize = '18px';
+          else root.style.fontSize = '16px';
+        }
+        set({ fontSize: size });
       },
+      setReducedMotion: (reduced) => {
+        if (typeof document !== 'undefined') {
+          if (reduced) document.documentElement.classList.add('reduce-motion');
+          else document.documentElement.classList.remove('reduce-motion');
+        }
+        set({ reducedMotion: reduced });
+      },
+      toggleReducedMotion: () => get().setReducedMotion(!get().reducedMotion),
+      setSettingsPage: (page) => set({ settingsPage: page }),
+      setCwd: (path) => set({ currentCwd: path }),
     }),
     {
-      name: 'yash_gnome_settings',
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          if (state.hasClosedTerminal) {
-            state.windows = state.windows.map((w) =>
-              w.id === 'terminal' ? { ...w, isOpen: false } : w
-            );
-            if (state.activeWindowId === 'terminal') {
-              state.activeWindowId = null;
-            }
-          }
-          if (typeof document !== 'undefined' && state.locale) {
-            document.documentElement.dir = state.locale === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = state.locale;
-          }
-        }
-      },
+      name: 'yashos_gnome_store_v2',
       partialize: (state) => ({
-        hasSeenWelcome: state.hasSeenWelcome,
-        hasClosedTerminal: state.hasClosedTerminal,
-        locale: state.locale,
-        hasAutoDetectedLocale: state.hasAutoDetectedLocale,
+        selectedWallpaperId: state.selectedWallpaperId,
         themeMode: state.themeMode,
         accentColor: state.accentColor,
         soundEnabled: state.soundEnabled,
-        selectedWallpaperId: state.selectedWallpaperId,
-        notifications: state.notifications,
+        fontSize: state.fontSize,
+        reducedMotion: state.reducedMotion,
+        locale: state.locale,
       }),
     }
   )

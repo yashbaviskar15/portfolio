@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Cpu, HardDrive, Wifi, Server, Activity, ShieldCheck, Terminal, Folder, FileText } from 'lucide-react';
-import { portfolioData } from '../../data/portfolio';
+import {
+  Server,
+  Activity,
+  Terminal,
+  Folder,
+  FileText,
+  ChevronRight,
+  ChevronLeft,
+  Laptop,
+  HardDrive,
+  Cpu,
+  Clock,
+  Wifi,
+  Radio,
+} from 'lucide-react';
 import { WindowId } from '../../types/gnome';
 import { useNetworkDevice } from '../../hooks/useNetworkDevice';
+import { useGnomeStore } from '../../store/useGnomeStore';
 
 interface ConkyWidgetProps {
   onOpenApp: (appId: WindowId) => void;
@@ -10,170 +24,241 @@ interface ConkyWidgetProps {
 
 export const ConkyWidget: React.FC<ConkyWidgetProps> = ({ onOpenApp }) => {
   const network = useNetworkDevice();
-  const [cpuUsage, setCpuUsage] = useState<number[]>([18, 12, 25, 8]);
-  const [memUsage, setMemUsage] = useState<number>(27.2);
-  const [ping, setPing] = useState<number>(12);
+  const { windows } = useGnomeStore();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [fps, setFps] = useState<number>(60);
+  const [uptimeSeconds, setUptimeSeconds] = useState<number>(0);
+  const [storageInfo, setStorageInfo] = useState<string>('Reading...');
 
-  // Subtle real-time jitter for authentic Linux telemetry
+  const cpuCores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
+  const deviceMem =
+    typeof navigator !== 'undefined' && (navigator as any).deviceMemory
+      ? `${(navigator as any).deviceMemory} GB`
+      : 'Unavailable in browser';
+
+  const jsHeap = (() => {
+    if (typeof performance !== 'undefined' && (performance as any).memory) {
+      const mem = (performance as any).memory;
+      return `${(mem.usedJSHeapSize / (1024 * 1024)).toFixed(1)} MB (Heap)`;
+    }
+    return 'Unavailable in browser';
+  })();
+
+  // 1. Session Uptime Tracker
   useEffect(() => {
     const timer = setInterval(() => {
-      setCpuUsage([
-        Math.floor(12 + Math.random() * 15),
-        Math.floor(8 + Math.random() * 12),
-        Math.floor(18 + Math.random() * 18),
-        Math.floor(5 + Math.random() * 10),
-      ]);
-      setPing(Math.floor(11 + Math.random() * 4));
-    }, 2500);
-
+      setUptimeSeconds((s) => s + 1);
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // 2. Storage Estimation (Real browser Storage API)
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.storage?.estimate) {
+      navigator.storage
+        .estimate()
+        .then((est) => {
+          const used = est.usage ? (est.usage / (1024 * 1024)).toFixed(1) : '0';
+          const quota = est.quota ? (est.quota / (1024 * 1024 * 1024)).toFixed(1) : '1.0';
+          setStorageInfo(`${used} MB / ${quota} GB (VFS/Cache)`);
+        })
+        .catch(() => setStorageInfo('Unavailable in browser'));
+    } else {
+      setStorageInfo('Unavailable in browser');
+    }
+  }, []);
+
+  // 3. Real Client FPS Meter via requestAnimationFrame
+  useEffect(() => {
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let animId: number;
+
+    const calculateFps = (currentTime: number) => {
+      frameCount++;
+      if (currentTime - lastTime >= 1000) {
+        setFps(Math.round((frameCount * 1000) / (currentTime - lastTime)));
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+      animId = requestAnimationFrame(calculateFps);
+    };
+
+    animId = requestAnimationFrame(calculateFps);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  const formatUptime = (total: number) => {
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return `${h}h ${m}m ${s < 10 ? '0' : ''}${s}s`;
+  };
+
+  const openWindowsCount = windows.filter((w) => w.isOpen && !w.isMinimized).length;
+
   return (
     <aside
-      className="hidden lg:flex flex-col gap-3 absolute top-12 right-6 w-80 z-10 select-none font-mono text-[11px] text-neutral-300 pointer-events-auto"
-      aria-label="Linux Conky System Monitor"
+      className="hidden lg:flex flex-col gap-2 absolute top-12 right-6 z-10 select-none font-mono text-[11px] text-neutral-300 pointer-events-auto transition-all"
+      aria-label="System Monitor Widget"
     >
-      {/* Conky Main Panel */}
-      <div className="p-4 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-xl shadow-2xl space-y-3">
-        {/* Header / Hostname */}
-        <div className="border-b border-white/10 pb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
-            <span className="font-bold text-white tracking-wide">YASH@UBUNTU-NODE</span>
-          </div>
-          <span className="text-[10px] text-orange-400 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/20">
-            {network.devicePlatform}
-          </span>
-        </div>
-
-        {/* System & Kernel Meta */}
-        <div className="space-y-1 text-[10.5px]">
-          <div className="flex justify-between text-neutral-400">
-            <span>Kernel:</span>
-            <span className="text-neutral-200">{portfolioData.developer.kernel}</span>
-          </div>
-          <div className="flex justify-between text-neutral-400">
-            <span>Uptime:</span>
-            <span className="text-neutral-200">{portfolioData.developer.uptime}</span>
-          </div>
-          <div className="flex justify-between text-neutral-400">
-            <span>Role:</span>
-            <span className="text-orange-400 font-semibold">{portfolioData.developer.role}</span>
-          </div>
-          <div className="flex justify-between text-neutral-400">
-            <span>Education:</span>
-            <span className="text-emerald-400 font-bold">BCA (2023–2026)</span>
-          </div>
-        </div>
-
-        {/* CPU Core Utilization Bars */}
-        <div className="space-y-1.5 pt-2 border-t border-white/10">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-orange-400" />
-              <span>CPU Cores (AMD Ryzen)</span>
-            </span>
-            <span className="text-white font-bold">
-              {Math.round(cpuUsage.reduce((a, b) => a + b, 0) / 4)}%
-            </span>
+      {isCollapsed ? (
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(false)}
+          className="p-2 rounded-xl bg-[#121214]/90 border border-white/10 backdrop-blur-md shadow-lg text-orange-400 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+          title="Expand System Telemetry Widget"
+        >
+          <Activity className="w-4 h-4 text-orange-400" />
+          <span className="text-[10px] font-bold">SYSTEM TELEMETRY</span>
+          <ChevronLeft className="w-3.5 h-3.5" />
+        </button>
+      ) : (
+        <div className="w-76 p-3.5 rounded-xl bg-[#121214]/90 border border-white/10 backdrop-blur-md shadow-xl space-y-2.5 relative">
+          {/* Header / Hostname + Collapse Button */}
+          <div className="border-b border-white/10 pb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              <span className="font-bold text-white tracking-wide text-[11px]">YASH@PORTFOLIO</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                {fps} FPS
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(true)}
+                className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer"
+                title="Collapse widget"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-1.5 pt-0.5">
-            {cpuUsage.map((core, i) => (
-              <div key={i} className="space-y-0.5 bg-neutral-900/80 p-1.5 rounded border border-white/5">
-                <div className="flex justify-between text-[9.5px] text-neutral-400">
-                  <span>Core {i}</span>
-                  <span className="text-neutral-200">{core}%</span>
-                </div>
-                <div className="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-orange-500 to-amber-400 h-full transition-all duration-500 rounded-full"
-                    style={{ width: `${core}%` }}
-                  />
-                </div>
+          {/* Quick System Status & Uptime */}
+          <div className="p-2 rounded-lg bg-black/40 border border-white/5 space-y-1 text-[10px]">
+            <div className="flex justify-between items-center text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-orange-400" />
+                <span>Session Uptime:</span>
+              </span>
+              <span className="text-white font-bold">{formatUptime(uptimeSeconds)}</span>
+            </div>
+            <div className="flex justify-between items-center text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <Activity className="w-3 h-3 text-emerald-400" />
+                <span>Active GUI Tasks:</span>
+              </span>
+              <span className="text-emerald-400 font-semibold">{openWindowsCount} active window{openWindowsCount === 1 ? '' : 's'}</span>
+            </div>
+          </div>
+
+          {/* Device Panel (Real Browser Info with honest fallbacks) */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-neutral-400 text-[10px] uppercase font-bold tracking-wider">
+              <span className="flex items-center gap-1.5">
+                <Laptop className="w-3 h-3 text-sky-400" />
+                <span>Device Telemetry (from browser)</span>
+              </span>
+            </div>
+            <div className="p-2 rounded-lg bg-black/40 border border-white/5 space-y-1 text-[10px]">
+              <div className="flex justify-between text-neutral-400">
+                <span className="flex items-center gap-1">
+                  <Cpu className="w-2.5 h-2.5 text-neutral-500" />
+                  <span>CPU Threads:</span>
+                </span>
+                <span className="text-neutral-200 font-semibold">{cpuCores} logical cores</span>
               </div>
-            ))}
+              <div className="flex justify-between text-neutral-400">
+                <span>CPU Load %:</span>
+                <span className="text-neutral-500 italic">Unavailable in browser</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span>Device Memory (RAM):</span>
+                <span className="text-neutral-200 font-semibold">{deviceMem}</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span>Active JS Heap:</span>
+                <span className="text-neutral-200 font-semibold">{jsHeap}</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span className="flex items-center gap-1">
+                  <HardDrive className="w-2.5 h-2.5 text-neutral-500" />
+                  <span>Storage (Origin):</span>
+                </span>
+                <span className="text-neutral-200 font-semibold truncate max-w-[130px]">{storageInfo}</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span className="flex items-center gap-1">
+                  <Wifi className="w-2.5 h-2.5 text-neutral-500" />
+                  <span>Network:</span>
+                </span>
+                <span className="text-emerald-400 font-semibold">{network.networkName}</span>
+              </div>
+              {network.rtt && (
+                <div className="flex justify-between text-neutral-400">
+                  <span>RTT Latency:</span>
+                  <span className="text-neutral-200 font-semibold">{network.rtt} ms</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Cloud Lab Project Telemetry (Explicitly Labeled) */}
+          <div className="space-y-1 pt-1 border-t border-white/10">
+            <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <Server className="w-3 h-3 text-purple-400" />
+                <span>Lab Project Telemetry</span>
+              </span>
+              <span className="text-neutral-500 font-mono text-[9px]">Sample</span>
+            </div>
+            <div className="p-2 rounded-lg bg-black/40 border border-white/5 space-y-1 text-[10px] text-neutral-300">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Project:</span>
+                <span className="text-orange-400 font-semibold">cloud-monitoring</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">IaC Provisioner:</span>
+                <span className="text-neutral-200 font-semibold">Terraform (AWS)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Prometheus:</span>
+                <span className="text-cyan-400 font-semibold">Host &amp; Container Exporters</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Launcher Actions */}
+          <div className="pt-1.5 border-t border-white/10 flex items-center justify-between gap-1.5">
+            <button
+              type="button"
+              onClick={() => onOpenApp('terminal')}
+              className="flex-1 py-1 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10 active:scale-95"
+            >
+              <Terminal className="w-3 h-3 text-emerald-400" />
+              <span>Terminal</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenApp('projects')}
+              className="flex-1 py-1 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10 active:scale-95"
+            >
+              <Folder className="w-3 h-3 text-amber-400" />
+              <span>Projects</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenApp('resume')}
+              className="flex-1 py-1 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10 active:scale-95"
+            >
+              <FileText className="w-3 h-3 text-sky-400" />
+              <span>CV</span>
+            </button>
           </div>
         </div>
-
-        {/* RAM & Storage */}
-        <div className="space-y-2 pt-2 border-t border-white/10">
-          {/* RAM */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-neutral-400">
-              <span>RAM (DDR5)</span>
-              <span className="text-neutral-200">4.24G / 15.6G (27.1%)</span>
-            </div>
-            <div className="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-emerald-500 h-full transition-all rounded-full"
-                style={{ width: `${memUsage}%` }}
-              />
-            </div>
-          </div>
-
-          {/* NVMe Storage */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-neutral-400">
-              <span>NVMe (/dev/nvme0n1p2)</span>
-              <span className="text-neutral-200">142G / 512G (28%)</span>
-            </div>
-            <div className="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-sky-500 h-full rounded-full" style={{ width: '28%' }} />
-            </div>
-          </div>
-        </div>
-
-        {/* AWS Cloud Node Health */}
-        <div className="space-y-1 pt-2 border-t border-white/10 text-[10.5px]">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="flex items-center gap-1.5">
-              <Server className="w-3.5 h-3.5 text-purple-400" />
-              <span>AWS Cloud Mesh</span>
-            </span>
-            <span className="text-emerald-400 font-bold">ap-south-1 ({ping}ms)</span>
-          </div>
-          <div className="p-2 rounded bg-neutral-900/90 border border-white/5 text-[10px] text-neutral-300 space-y-0.5">
-            <div className="flex justify-between">
-              <span>VPC Status:</span>
-              <span className="text-emerald-400 font-semibold">Active (Multi-AZ)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Prometheus Telemetry:</span>
-              <span className="text-cyan-400 font-semibold">10+ Targets OK</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Launcher Pills */}
-        <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1.5">
-          <button
-            type="button"
-            onClick={() => onOpenApp('terminal')}
-            className="flex-1 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-white text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10"
-          >
-            <Terminal className="w-3 h-3 text-emerald-400" />
-            <span>Terminal</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpenApp('files')}
-            className="flex-1 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-white text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10"
-          >
-            <Folder className="w-3 h-3 text-amber-400" />
-            <span>Projects</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpenApp('resume')}
-            className="flex-1 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-white text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-white/10"
-          >
-            <FileText className="w-3 h-3 text-sky-400" />
-            <span>CV</span>
-          </button>
-        </div>
-      </div>
+      )}
     </aside>
   );
 };

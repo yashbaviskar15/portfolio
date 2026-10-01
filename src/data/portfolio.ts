@@ -24,7 +24,28 @@ export interface SkillCategory {
   category: string;
   icon: string;
   items: string[];
-  skills: { name: string; level: string; desc: string }[];
+  skills: { name: string; level: number; desc: string }[];
+}
+
+export interface ExperienceMilestone {
+  id: string;
+  year: string;
+  title: string;
+  subtitle: string;
+  category: 'education' | 'project-release';
+  desc: string;
+  points: string[];
+  date: string;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issuedDate: string;
+  expiryDate?: string;
+  verifyUrl: string;
+  badgeImageUrl: string;
 }
 
 export interface PortfolioData {
@@ -175,7 +196,7 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [
     {
-      id: '3-tier-app',
+      id: 'aws-three-tier',
       name: 'AWS Three-Tier Web Application Infrastructure',
       category: 'Cloud & IaC',
       status: 'Completed – 2024',

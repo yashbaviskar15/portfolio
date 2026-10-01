@@ -10,19 +10,19 @@ export const dockSpring: Transition = {
 
 export const windowSpring: Transition = {
   type: 'spring',
-  stiffness: 300,
-  damping: 24,
-  mass: 0.8,
+  stiffness: 420,
+  damping: 28,
+  mass: 0.6,
 };
 
 export const gnomeFastSpring: Transition = {
   type: 'spring',
-  stiffness: 450,
-  damping: 26,
+  stiffness: 480,
+  damping: 28,
 };
 
 export const gnomeSmoothEase: Transition = {
-  duration: 0.25,
+  duration: 0.18,
   ease: [0.4, 0, 0.2, 1],
 };
 
@@ -32,9 +32,9 @@ export const springSmooth: Transition = gnomeSmoothEase;
 
 // 1. Dock Magnification & Launch Squash-Stretch Bounce
 export const dockLaunchBounce = {
-  scaleY: [1, 0.85, 1.12, 1],
-  scaleX: [1, 1.12, 0.92, 1],
-  transition: { duration: 0.4, ease: 'easeInOut' },
+  scaleY: [1, 0.88, 1.08, 1],
+  scaleX: [1, 1.08, 0.94, 1],
+  transition: { duration: 0.25, ease: 'easeOut' },
 };
 
 export const dockIndicatorVariants: Variants = {
@@ -49,7 +49,7 @@ export const dockIndicatorVariants: Variants = {
 // 2. Window Spawn from exact Screen Coordinates of Icon & Close to Origin
 export const windowSpawnVariants: Variants = {
   initial: (origin?: { x: number; y: number }) => ({
-    scale: 0.25,
+    scale: 0.65,
     opacity: 0,
     transformOrigin: origin ? `${origin.x}px ${origin.y}px` : 'center center',
   }),
@@ -58,17 +58,17 @@ export const windowSpawnVariants: Variants = {
     opacity: 1,
     transition: {
       type: 'spring',
-      stiffness: 300,
-      damping: 24,
-      mass: 0.8,
+      stiffness: 420,
+      damping: 28,
+      mass: 0.6,
     },
   },
   exit: (origin?: { x: number; y: number }) => ({
-    scale: 0.25,
+    scale: 0.85,
     opacity: 0,
     transformOrigin: origin ? `${origin.x}px ${origin.y}px` : 'center center',
     transition: {
-      duration: 0.25,
+      duration: 0.15,
       ease: [0.4, 0, 0.2, 1],
     },
   }),
@@ -77,7 +77,7 @@ export const windowSpawnVariants: Variants = {
 // 3. Mobile Window Slide-Up-Fade
 export const mobileWindowVariants: Variants = {
   initial: {
-    y: 40,
+    y: 30,
     opacity: 0,
   },
   animate: {
@@ -85,15 +85,15 @@ export const mobileWindowVariants: Variants = {
     opacity: 1,
     transition: {
       type: 'spring',
-      stiffness: 350,
-      damping: 26,
+      stiffness: 420,
+      damping: 28,
     },
   },
   exit: {
-    y: 40,
+    y: 20,
     opacity: 0,
     transition: {
-      duration: 0.2,
+      duration: 0.15,
       ease: [0.4, 0, 0.2, 1],
     },
   },

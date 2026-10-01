@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { Terminal, Folder, Globe, Mail, User, FileText, Activity, AppWindow, FolderGit2, Zap, Clock } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Terminal,
+  Folder,
+  Globe,
+  Mail,
+  User,
+  FileText,
+  Activity,
+  AppWindow,
+  FolderGit2,
+  Zap,
+  Clock,
+  FileCode,
+  Image as ImageIcon,
+  LayoutGrid,
+  Calculator as CalcIcon,
+  CloudSun,
+} from 'lucide-react';
 import { Toaster } from 'sonner';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useShortcutIsolation } from '../../hooks/useShortcutIsolation';
 import { WindowId } from '../../types/gnome';
 import { UbuntuWallpaper } from './UbuntuWallpaper';
 import { ShutdownScreen } from './ShutdownScreen';
 import { BootScreen } from './BootScreen';
+import { LoginScreen } from './LoginScreen';
+import { LockScreen } from './LockScreen';
 import { ContextMenu } from './ContextMenu';
 import { TopBar } from './TopBar';
 import { Dock } from './Dock';
@@ -19,6 +39,7 @@ import { ShortcutsModal } from './ShortcutsModal';
 import { WallpaperModal } from './WallpaperModal';
 import { GuidedTour } from './GuidedTour';
 import { DesktopSignature } from './DesktopSignature';
+import { RecruiterView } from './RecruiterView';
 import { TerminalApp } from './Apps/TerminalApp';
 import { FilesApp } from './Apps/FilesApp';
 import { AboutApp } from './Apps/AboutApp';
@@ -29,17 +50,36 @@ import { SystemMonitorApp } from './Apps/SystemMonitorApp';
 import { ProjectsApp } from './Apps/ProjectsApp';
 import { SkillsApp } from './Apps/SkillsApp';
 import { TimelineApp } from './Apps/TimelineApp';
+import { TextEditorApp } from './Apps/TextEditorApp';
+import { ImageViewerApp } from './Apps/ImageViewerApp';
+import { SoftwareCenterApp } from './Apps/SoftwareCenterApp';
+import { CalculatorApp } from './Apps/CalculatorApp';
+import { ClocksApp } from './Apps/ClocksApp';
+import { WeatherApp } from './Apps/WeatherApp';
 import { useGnomeStore } from '../../store/useGnomeStore';
 
 export const GnomeDesktop: React.FC = () => {
   const {
+    isBooted,
+    setBooted,
+    isLoggedIn,
+    setLoggedIn,
+    isLocked,
+    setLocked,
+    isSuspended,
+    setSuspended,
     isShutdown,
     setShutdown,
+    activeWorkspace,
+    switchWorkspace,
     isShortcutsHelpOpen,
     toggleShortcutsHelp,
+    isRecruiterViewOpen,
+    setRecruiterViewOpen,
     windows,
     activeWindowId,
     windowOrigins,
+    activeSnapPreview,
     isActivitiesOpen,
     themeMode,
     accentColor,
@@ -52,6 +92,7 @@ export const GnomeDesktop: React.FC = () => {
     updateWindowBounds,
     nudgeActiveWindow,
     snapActiveWindow,
+    takeScreenshot,
     toggleActivities,
     setActivitiesOpen,
   } = useGnomeStore();
@@ -71,6 +112,12 @@ export const GnomeDesktop: React.FC = () => {
     }
   }, [themeMode]);
 
+  // Isolate keyboard shortcuts & prevent unwanted browser interception
+  useShortcutIsolation({
+    onTriggerHelp: toggleShortcutsHelp,
+    onTriggerFind: toggleActivities,
+  });
+
   // Global Scoped Hotkeys
   // 1. App Launchers
   useHotkeys('ctrl+alt+t', (e) => { e.preventDefault(); openApp('terminal'); });
@@ -81,16 +128,22 @@ export const GnomeDesktop: React.FC = () => {
   useHotkeys('ctrl+alt+p', (e) => { e.preventDefault(); openApp('projects'); });
   useHotkeys('ctrl+alt+s', (e) => { e.preventDefault(); openApp('skills'); });
 
-  // 2. Activities & Help Modal
-  useHotkeys('ctrl+space, meta', (e) => { e.preventDefault(); toggleActivities(); });
+  // 2. Workspaces & Screenshot Hotkeys
+  useHotkeys('ctrl+alt+left', (e) => { e.preventDefault(); switchWorkspace(1); });
+  useHotkeys('ctrl+alt+right', (e) => { e.preventDefault(); switchWorkspace(2); });
+  useHotkeys('meta+l, super+l', (e) => { e.preventDefault(); setLocked(true); });
+  useHotkeys('printscreen', (e) => { e.preventDefault(); takeScreenshot(); });
+
+  // 3. Activities & Help Modal
+  useHotkeys('ctrl+space, meta, super, ctrl+k', (e) => { e.preventDefault(); toggleActivities(); });
+  useHotkeys('meta+a, super+a', (e) => { e.preventDefault(); toggleActivities(); });
   useHotkeys('shift+/', (e) => {
-    // '?' key
     if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')) return;
     e.preventDefault();
     toggleShortcutsHelp();
   });
 
-  // 3. Active Window Management
+  // 4. Active Window Management
   useHotkeys('ctrl+w', (e) => {
     if (activeWindowId) {
       e.preventDefault();
@@ -112,21 +165,38 @@ export const GnomeDesktop: React.FC = () => {
     }
   });
 
-  // 4. Window Nudging (Ctrl + Arrow Keys)
+  // 5. Window Nudging (Ctrl + Arrow Keys)
   useHotkeys('ctrl+up', (e) => { e.preventDefault(); nudgeActiveWindow(0, -20); });
   useHotkeys('ctrl+down', (e) => { e.preventDefault(); nudgeActiveWindow(0, 20); });
   useHotkeys('ctrl+left', (e) => { e.preventDefault(); nudgeActiveWindow(-20, 0); });
   useHotkeys('ctrl+right', (e) => { e.preventDefault(); nudgeActiveWindow(20, 0); });
 
-  // 5. Window Tiling (Ctrl + Alt + Shift + Arrows)
+  // 6. Window Tiling (Ctrl + Alt + Shift + Arrows)
   useHotkeys('ctrl+alt+shift+left', (e) => { e.preventDefault(); snapActiveWindow('left'); });
   useHotkeys('ctrl+alt+shift+right', (e) => { e.preventDefault(); snapActiveWindow('right'); });
   useHotkeys('ctrl+alt+shift+up', (e) => { e.preventDefault(); snapActiveWindow('top'); });
 
-  // 6. Escape Global Handler
+  // 7. Escape Global Handler (Dismiss overlays or close active window)
   useHotkeys('escape', (e) => {
-    setContextMenu(null);
-    setActivitiesOpen(false);
+    if (contextMenu) {
+      setContextMenu(null);
+      return;
+    }
+    if (isActivitiesOpen) {
+      setActivitiesOpen(false);
+      return;
+    }
+    if (isRecruiterViewOpen) {
+      setRecruiterViewOpen(false);
+      return;
+    }
+    if (isShortcutsHelpOpen) {
+      toggleShortcutsHelp();
+      return;
+    }
+    if (activeWindowId) {
+      closeApp(activeWindowId);
+    }
   });
 
   // Desktop Right-Click Context Menu
@@ -158,6 +228,18 @@ export const GnomeDesktop: React.FC = () => {
         return <BrowserApp />;
       case 'monitor':
         return <SystemMonitorApp />;
+      case 'text-editor':
+        return <TextEditorApp />;
+      case 'image-viewer':
+        return <ImageViewerApp />;
+      case 'software-center':
+        return <SoftwareCenterApp />;
+      case 'calculator':
+        return <CalculatorApp />;
+      case 'clocks':
+        return <ClocksApp />;
+      case 'weather':
+        return <WeatherApp />;
       default:
         return null;
     }
@@ -186,14 +268,63 @@ export const GnomeDesktop: React.FC = () => {
         return <Globe className="w-3.5 h-3.5 text-sky-400" />;
       case 'monitor':
         return <Activity className="w-3.5 h-3.5 text-rose-400" />;
+      case 'text-editor':
+        return <FileCode className="w-3.5 h-3.5 text-emerald-400" />;
+      case 'image-viewer':
+        return <ImageIcon className="w-3.5 h-3.5 text-sky-400" />;
+      case 'software-center':
+        return <LayoutGrid className="w-3.5 h-3.5 text-orange-400" />;
+      case 'calculator':
+        return <CalcIcon className="w-3.5 h-3.5 text-amber-400" />;
+      case 'clocks':
+        return <Clock className="w-3.5 h-3.5 text-purple-400" />;
+      case 'weather':
+        return <CloudSun className="w-3.5 h-3.5 text-amber-400" />;
       default:
         return <AppWindow className="w-3.5 h-3.5 text-neutral-300" />;
     }
   };
 
-  // Shutdown / Thank You Screen
-  if (isShutdown) {
-    return <ShutdownScreen onRestart={() => setShutdown(false)} />;
+  // 1. Boot Screen (BIOS -> GRUB -> Systemd -> Plymouth)
+  if (!isBooted) {
+    return (
+      <BootScreen
+        onBootComplete={() => setBooted(true)}
+        onOpenRecruiterView={() => setRecruiterViewOpen(true)}
+      />
+    );
+  }
+
+  // 2. GDM Login Screen
+  if (isBooted && !isLoggedIn) {
+    return (
+      <LoginScreen
+        onLogin={() => setLoggedIn(true)}
+        onOpenRecruiterView={() => setRecruiterViewOpen(true)}
+        onShutdown={() => setShutdown(true)}
+        onRestart={() => {
+          setBooted(false);
+          setLoggedIn(false);
+        }}
+        onSuspend={() => setSuspended(true)}
+      />
+    );
+  }
+
+  // 3. Power Off or Suspend Screen
+  if (isShutdown || isSuspended) {
+    return (
+      <ShutdownScreen
+        onRestart={() => {
+          setShutdown(false);
+          setSuspended(false);
+          setBooted(false);
+          setLoggedIn(false);
+        }}
+        isSuspended={isSuspended}
+        onWake={() => setSuspended(false)}
+      />
+    );
   }
 
   return (
@@ -216,36 +347,36 @@ export const GnomeDesktop: React.FC = () => {
         }}
       />
 
-      {/* Ubuntu Wallpaper with Animated Subtle Gradient Shift & Crossfade */}
+      {/* 2. Ubuntu Wallpaper with Animated Gradient Shift & Crossfade */}
       <UbuntuWallpaper />
 
-      {/* 4. Top Bar (Activities, Notification Center clock, Quick Settings cluster) */}
+      {/* 3. Top Bar (Activities, Notification Center clock, Quick Settings cluster) */}
       <TopBar
         isActivitiesOpen={isActivitiesOpen}
         onToggleActivities={toggleActivities}
         onOpenApp={openApp}
       />
 
-      {/* 5. Ubuntu Launcher Dock (Left on Desktop, Bottom on Mobile) */}
+      {/* 4. Ubuntu Launcher Dock (Left on Desktop, Bottom on Mobile) */}
       <Dock
-        openWindows={windows}
+        openWindows={windows.filter((w) => w.workspace === activeWorkspace || !w.workspace)}
         onOpenApp={openApp}
         onToggleActivities={toggleActivities}
       />
 
-      {/* 6. Desktop Surface Icons (with 3D mouse parallax + Arrow Key Navigation) */}
+      {/* 5. Desktop Surface Icons (with 3D mouse parallax + Keyboard Navigation) */}
       <DesktopIcons onOpenApp={openApp} isActivitiesOpen={isActivitiesOpen} />
 
-      {/* 6b. Ambient Calligraphy "Hello" Signature (behind windows, pointer-events: none) */}
+      {/* 5b. Ambient Calligraphy "Hello" Signature (behind windows, pointer-events: none) */}
       <DesktopSignature />
 
-      {/* 7. Linux Conky System Monitor Widget (Right) */}
+      {/* 6. Linux Conky System Monitor Widget (Right) */}
       <ConkyWidget onOpenApp={openApp} />
 
-      {/* 8. Active Windows Layer with react-rnd 8-direction resizing */}
+      {/* 7. Active Windows Layer with react-rnd 8-direction resizing */}
       <AnimatePresence>
         {windows
-          .filter((win) => win.isOpen && !win.isMinimized)
+          .filter((win) => win.isOpen && !win.isMinimized && (win.workspace === activeWorkspace || !win.workspace))
           .map((win) => (
             <Window
               key={win.id}
@@ -271,6 +402,22 @@ export const GnomeDesktop: React.FC = () => {
           ))}
       </AnimatePresence>
 
+      {/* 8. Window Snap Preview Ghost Overlay */}
+      {activeSnapPreview && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={`fixed pointer-events-none z-50 rounded-2xl bg-orange-500/15 border-2 border-orange-500/60 backdrop-blur-xs transition-all duration-150 ${
+            activeSnapPreview === 'left'
+              ? 'left-2 top-10 bottom-2 w-[calc(50vw-12px)]'
+              : activeSnapPreview === 'right'
+              ? 'right-2 top-10 bottom-2 w-[calc(50vw-12px)]'
+              : 'inset-2 top-10'
+          }`}
+        />
+      )}
+
       {/* 9. Alt+Tab Window Switcher Overlay */}
       <AltTabSwitcher />
 
@@ -285,6 +432,22 @@ export const GnomeDesktop: React.FC = () => {
 
       {/* 13. Keyboard Shortcuts Help Cheat Sheet Modal (?) */}
       <ShortcutsModal />
+
+      {/* 13b. Executive Recruiter ATS 1-Page Summary View */}
+      <RecruiterView
+        isOpen={isRecruiterViewOpen}
+        onClose={() => setRecruiterViewOpen(false)}
+      />
+
+      {/* 13c. Lock Screen (Super+L) */}
+      <AnimatePresence>
+        {isLocked && (
+          <LockScreen
+            onUnlock={() => setLocked(false)}
+            onOpenRecruiterView={() => setRecruiterViewOpen(true)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* 14. Desktop Right-Click Context Menu */}
       <AnimatePresence>

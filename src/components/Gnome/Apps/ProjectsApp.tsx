@@ -9,30 +9,10 @@ export const ProjectsApp: React.FC = () => {
   const strings = t();
   const projectsList = strings.projects.list || [];
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(projectsList[0]?.id || 'aws-three-tier');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Simulated brief GNOME skeleton loader
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, []);
 
   const toggleExpand = (id: string) => {
     setExpandedProjectId((prev) => (prev === id ? null : id));
   };
-
-  if (isLoading) {
-    return (
-      <div className={`p-6 space-y-4 ${themeMode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-neutral-100'}`}>
-        <div className="h-7 w-48 rounded-lg bg-neutral-800 animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-44 rounded-2xl bg-neutral-800/60 animate-pulse border border-white/5" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div

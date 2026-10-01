@@ -1,6 +1,6 @@
 /**
- * Real In-Memory Virtual File System for Linux GNOME Portfolio
- * Backs both the Terminal shell and Nautilus FilesApp
+ * YashOS 24.04 LTS (Portfolio Edition) — Reactive Virtual File System (VFS)
+ * Single Source of Truth for Terminal, Nautilus Files, gedit, Evince, and Desktop.
  */
 
 export interface VFSNode {
@@ -8,252 +8,1161 @@ export interface VFSNode {
   type: 'file' | 'folder';
   size?: string;
   permissions?: string;
+  owner?: string;
+  group?: string;
   updatedAt?: string;
   content?: string;
+  binaryUrl?: string;
+  isExecutable?: boolean;
+  isHidden?: boolean;
   meta?: Record<string, any>;
   children?: Record<string, VFSNode>;
 }
 
-export const initialFileSystem: VFSNode = {
-  name: '/',
-  type: 'folder',
-  permissions: 'drwxr-xr-x',
-  children: {
-    home: {
-      name: 'home',
-      type: 'folder',
-      permissions: 'drwxr-xr-x',
-      children: {
-        yash: {
-          name: 'yash',
-          type: 'folder',
-          permissions: 'drwxr-xr-x',
-          children: {
-            'summary.txt': {
-              name: 'summary.txt',
-              type: 'file',
-              size: '1.2 KB',
-              permissions: '-rw-r--r--',
-              updatedAt: 'Aug 30 10:44',
-              content: `YASH BAVISKAR — Cloud / DevOps Engineer
-Location: Jalgaon / Pune, Maharashtra, India
-Phone: +91 96231 66585 | Email: yashbaviskar0215@outlook.com
+export interface TrashItem {
+  id: string;
+  originalPath: string;
+  deletedAt: string;
+  node: VFSNode;
+}
 
-Professional Summary:
-Cloud / DevOps Engineer with hands-on project experience in AWS, Terraform, Docker, Kubernetes, and Linux. Built and deployed cloud infrastructure end-to-end – provisioning with Terraform, containerizing with Docker, and monitoring with Prometheus and Grafana. Comfortable with Bash scripting, YAML/JSON configuration, and CI/CD automation.`,
-            },
-            'resume.txt': {
-              name: 'resume.txt',
-              type: 'file',
-              size: '3.8 KB',
-              permissions: '-rw-r--r--',
-              updatedAt: 'Aug 30 10:44',
-              content: `================================================================================
-YASH BAVISKAR — Cloud / DevOps Engineer
-Contact: +91 96231 66585 | yashbaviskar0215@outlook.com
-Website: https://yashbaviskar.me | LinkedIn: linkedin.com/in/yashbaviskar15
+const STORAGE_KEY = 'yashos_vfs_v3';
+const TRASH_STORAGE_KEY = 'yashos_trash_v3';
+
+export const getInitialFileSystem = (): VFSNode => {
+  const hardwareConcurrency = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 8 : 8;
+  const deviceMemory = typeof (navigator as any) !== 'undefined' && (navigator as any).deviceMemory ? (navigator as any).deviceMemory : 16;
+
+  return {
+    name: '/',
+    type: 'folder',
+    permissions: 'drwxr-xr-x',
+    owner: 'root',
+    group: 'root',
+    updatedAt: 'Apr 24 08:00',
+    children: {
+      bin: {
+        name: 'bin',
+        type: 'folder',
+        permissions: 'drwxr-xr-x',
+        owner: 'root',
+        group: 'root',
+        updatedAt: 'Apr 24 08:00',
+        children: {
+          bash: { name: 'bash', type: 'file', size: '1.4 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true, content: '#!/bin/bash binary' },
+          ls: { name: 'ls', type: 'file', size: '142 KB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          cat: { name: 'cat', type: 'file', size: '43 KB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          grep: { name: 'grep', type: 'file', size: '280 KB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          docker: { name: 'docker', type: 'file', size: '78 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          kubectl: { name: 'kubectl', type: 'file', size: '52 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          terraform: { name: 'terraform', type: 'file', size: '84 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          aws: { name: 'aws', type: 'file', size: '36 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          python3: { name: 'python3', type: 'file', size: '5.8 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          git: { name: 'git', type: 'file', size: '4.2 MB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          htop: { name: 'htop', type: 'file', size: '320 KB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+          neofetch: { name: 'neofetch', type: 'file', size: '110 KB', permissions: '-rwxr-xr-x', owner: 'root', group: 'root', isExecutable: true },
+        },
+      },
+      etc: {
+        name: 'etc',
+        type: 'folder',
+        permissions: 'drwxr-xr-x',
+        owner: 'root',
+        group: 'root',
+        updatedAt: 'Apr 24 08:00',
+        children: {
+          hostname: {
+            name: 'hostname',
+            type: 'file',
+            size: '7 B',
+            permissions: '-rw-r--r--',
+            owner: 'root',
+            group: 'root',
+            content: 'yashos\n',
+          },
+          'os-release': {
+            name: 'os-release',
+            type: 'file',
+            size: '348 B',
+            permissions: '-rw-r--r--',
+            owner: 'root',
+            group: 'root',
+            content: `NAME="YashOS"
+VERSION="24.04 LTS (Noble Numbat - Portfolio Edition)"
+ID=yashos
+ID_LIKE=ubuntu
+PRETTY_NAME="YashOS 24.04 LTS (Portfolio Edition)"
+VERSION_ID="24.04"
+HOME_URL="https://yashbaviskar.me"
+SUPPORT_URL="mailto:yashbaviskar0215@outlook.com"
+BUG_REPORT_URL="https://github.com/yashbaviskar15/portfolio/issues"
+PRIVACY_POLICY_URL="https://yashbaviskar.me/privacy"
+UBUNTU_CODENAME=noble
+ENGINEER="Yash Baviskar — Cloud & DevOps Engineer"
+`,
+          },
+          motd: {
+            name: 'motd',
+            type: 'file',
+            size: '512 B',
+            permissions: '-rw-r--r--',
+            owner: 'root',
+            group: 'root',
+            content: `================================================================================
+  Welcome to YashOS 24.04 LTS (GNU/Linux 6.8.0-generic x86_64)
+  Interactive Cloud & DevOps Engineering Workstation
 ================================================================================
-
-[EDUCATION]
-Bachelor of Computer Applications (BCA)
-KCES's Institute of Management and Research, Jalgaon, India | 2023 – 2026 (Expected)
-
-[TECHNICAL SKILLS]
-- Cloud (AWS): EC2, S3, IAM, VPC, Route 53, RDS, ECS, ECR, ELB, CloudFront
-- IaC: Terraform (modular, provider-based, state-managed)
-- Containers & Orchestration: Docker, Kubernetes (Minikube, k3s), ECS, ECR
-- CI/CD: GitHub Actions, AWS CodePipeline, CodeBuild, CodeDeploy
-- Monitoring: Prometheus, Grafana, Alertmanager, Amazon CloudWatch
-- Linux: Ubuntu Server, Amazon Linux, systemd, cron, log analysis
-- Languages: Python, Bash, YAML, JSON, PostgreSQL
-
-[LANGUAGES]
-- English (B2) | German (A1)
-================================================================================`,
+  * Engineer:       Yash Baviskar (AWS, Terraform, Docker, K8s, CI/CD, Linux)
+  * Target Roles:   Junior Cloud Engineer / Junior DevOps Engineer (EU & Remote)
+  * Portfolio Web:  https://yashbaviskar.me
+  * Quick Actions:  Type 'help', 'neofetch', 'terraform plan', or 'resume'
+================================================================================
+`,
+          },
+          environment: {
+            name: 'environment',
+            type: 'file',
+            size: '96 B',
+            permissions: '-rw-r--r--',
+            owner: 'root',
+            group: 'root',
+            content: 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/yash/bin"\nLANG="en_US.UTF-8"\n',
+          },
+        },
+      },
+      proc: {
+        name: 'proc',
+        type: 'folder',
+        permissions: 'dr-xr-xr-x',
+        owner: 'root',
+        group: 'root',
+        updatedAt: 'Apr 24 08:00',
+        children: {
+          cpuinfo: {
+            name: 'cpuinfo',
+            type: 'file',
+            size: '0 B',
+            permissions: '-r--r--r--',
+            owner: 'root',
+            group: 'root',
+            content: `processor\t: 0..${hardwareConcurrency - 1}
+vendor_id\t: GenuineIntel / AMD
+model name\t: Cloud Virtual CPU @ 3.40GHz
+cpu cores\t: ${hardwareConcurrency}
+flags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor
+`,
+          },
+          meminfo: {
+            name: 'meminfo',
+            type: 'file',
+            size: '0 B',
+            permissions: '-r--r--r--',
+            owner: 'root',
+            group: 'root',
+            content: `MemTotal:       ${deviceMemory * 1048576} kB
+MemFree:        ${Math.round(deviceMemory * 1048576 * 0.42)} kB
+MemAvailable:   ${Math.round(deviceMemory * 1048576 * 0.68)} kB
+Buffers:          248192 kB
+Cached:          2184920 kB
+SwapTotal:       2097148 kB
+SwapFree:        2097148 kB
+`,
+          },
+          version: {
+            name: 'version',
+            type: 'file',
+            size: '0 B',
+            permissions: '-r--r--r--',
+            owner: 'root',
+            group: 'root',
+            content: 'Linux version 6.8.0-45-generic (buildd@lcy02-amd64-001) (x86_64-linux-gnu-gcc-13) #45-YashOS SMP PREEMPT_DYNAMIC\n',
+          },
+        },
+      },
+      var: {
+        name: 'var',
+        type: 'folder',
+        permissions: 'drwxr-xr-x',
+        owner: 'root',
+        group: 'root',
+        children: {
+          log: {
+            name: 'log',
+            type: 'folder',
+            permissions: 'drwxr-xr-x',
+            owner: 'root',
+            group: 'root',
+            children: {
+              syslog: {
+                name: 'syslog',
+                type: 'file',
+                size: '24 KB',
+                permissions: '-rw-r-----',
+                content: `Apr 24 08:00:01 yashos systemd[1]: Reached target Terraform-Provisioned Infrastructure.
+Apr 24 08:00:02 yashos systemd[1]: Started Docker Application Container Engine.
+Apr 24 08:00:03 yashos dockerd[1482]: Started containerd container runtime.
+Apr 24 08:00:04 yashos k3s[1520]: Node ip-10-0-1-42 ready for workload scheduling.
+Apr 24 08:00:05 yashos prometheus[1680]: Server is ready to receive web requests.
+Apr 24 08:00:06 yashos gdm[1720]: GDM Display Manager initialized successfully.
+`,
+              },
+              'auth.log': {
+                name: 'auth.log',
+                type: 'file',
+                size: '4.2 KB',
+                permissions: '-rw-r-----',
+                content: `Apr 24 08:00:07 yashos sshd[1820]: Accepted publickey for yash from 127.0.0.1 port 54220 ssh2: ED25519 SHA256:YashBaviskarCloudAuth\nApr 24 08:00:08 yashos sudo: yash : TTY=pts/0 ; PWD=/home/yash ; USER=root ; COMMAND=/usr/bin/systemctl status yash.service\n`,
+              },
+              'cloud-init.log': {
+                name: 'cloud-init.log',
+                type: 'file',
+                size: '8.8 KB',
+                permissions: '-rw-r--r--',
+                content: `Cloud-init v. 24.1.3 running 'init-local' at Apr 24 07:59:58 UTC.
+AWS EC2 instance i-0a89f3e1b7c89a712 metadata acquired.
+Provisioned VPC: vpc-07b941ec923a1f4b (10.0.0.0/16)
+Public Subnets: subnet-pub-1a (10.0.1.0/24), subnet-pub-1b (10.0.2.0/24)
+Private Subnets: subnet-priv-1a (10.0.10.0/24), subnet-priv-1b (10.0.20.0/24)
+NAT Gateway nat-0812fe76ba online. Application Load Balancer active.
+Cloud-init finished at Apr 24 08:00:01 UTC. Datasource DataSourceEc2Local. Up 3.42 seconds
+`,
+              },
             },
-            projects: {
-              name: 'projects',
-              type: 'folder',
-              permissions: 'drwxr-xr-x',
-              children: {
-                '3-tier-app.md': {
-                  name: '3-tier-app.md',
-                  type: 'file',
-                  size: '2.4 KB',
-                  permissions: '-rw-r--r--',
-                  updatedAt: 'Aug 30 09:12',
-                  content: `# AWS Three-Tier Web Application Infrastructure
-Status: Completed – 2024
+          },
+        },
+      },
+      tmp: {
+        name: 'tmp',
+        type: 'folder',
+        permissions: 'drwxrwxrwt',
+        owner: 'root',
+        group: 'root',
+        children: {},
+      },
+      home: {
+        name: 'home',
+        type: 'folder',
+        permissions: 'drwxr-xr-x',
+        owner: 'root',
+        group: 'root',
+        children: {
+          yash: {
+            name: 'yash',
+            type: 'folder',
+            permissions: 'drwxr-xr-x',
+            owner: 'yash',
+            group: 'yash',
+            updatedAt: 'Apr 24 08:00',
+            children: {
+              '.bashrc': {
+                name: '.bashrc',
+                type: 'file',
+                size: '1.8 KB',
+                permissions: '-rw-r--r--',
+                owner: 'yash',
+                group: 'yash',
+                isHidden: true,
+                content: `# ~/.bashrc: executed by bash(1) for non-login shells.
+export USER="yash"
+export HOSTNAME="yashos"
+export ROLE="Cloud / DevOps Engineer"
+export LOCATION="Jalgaon / Pune, India (Open to EU Relocation)"
+
+# Aliases
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
+alias k='kubectl'
+alias tf='terraform'
+alias d='docker'
+alias doc='docker compose'
+alias reload='source ~/.bashrc'
+alias cls='clear'
+
+# Bash prompt
+PS1='\\[\\033[01;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '
+
+# Welcome on interactive shell
+if [ -f /etc/motd ]; then
+  cat /etc/motd
+fi
+`,
+              },
+              '.bash_history': {
+                name: '.bash_history',
+                type: 'file',
+                size: '840 B',
+                permissions: '-rw-------',
+                owner: 'yash',
+                group: 'yash',
+                isHidden: true,
+                content: `terraform init
+terraform plan
+kubectl get pods -A
+docker ps
+systemctl status yash.service
+git status
+git log --oneline
+aws sts get-caller-identity
+neofetch
+cat Desktop/README.md
+`,
+              },
+              '.ssh': {
+                name: '.ssh',
+                type: 'folder',
+                permissions: 'drwx------',
+                owner: 'yash',
+                group: 'yash',
+                isHidden: true,
+                children: {
+                  'id_ed25519.pub': {
+                    name: 'id_ed25519.pub',
+                    type: 'file',
+                    size: '98 B',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClOUD3+0V7jW9uK4vQwP6zL0mNxYbAvIsKaR15 yash@yashos.local\n',
+                  },
+                },
+              },
+              Desktop: {
+                name: 'Desktop',
+                type: 'folder',
+                permissions: 'drwxr-xr-x',
+                owner: 'yash',
+                group: 'yash',
+                children: {
+                  'README.md': {
+                    name: 'README.md',
+                    type: 'file',
+                    size: '2.1 KB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: `# YashOS 24.04 LTS — Welcome to my Cloud & DevOps Workstation
+
+Hello! I am **Yash Baviskar**, an entry-level **Cloud / DevOps Engineer** specializing in AWS, Terraform (IaC), Docker, Kubernetes, CI/CD automation, and Linux systems administration.
+
+## Quick Terminal Commands to Try:
+- \`terraform plan\` -> Inspect live simulated IaC deployment for AWS 3-tier architecture
+- \`kubectl get pods -A\` -> View containerized microservices running on cluster
+- \`docker ps\` -> List running containerized services
+- \`git log --oneline\` inside \`~/experience\` -> Explore career and education history
+- \`neofetch\` -> Full system information and ASCII terminal badge
+- \`top\` or \`htop\` -> Live interactive system monitor TUI
+- \`systemctl status yash.service\` -> Check engineering availability and contact info
+- \`cmatrix\` or \`sl\` or \`cowsay\` -> Fun Linux Easter eggs!
+
+## Fast Actions:
+- **Recruiter View:** Click the sparkly "Recruiter View" button in the TopBar for a 1-page instant ATS evaluation with printable summary and CV downloads.
+- **Files App:** Double-click on projects in \`~/Projects\` to inspect Terraform configs and Dockerfiles.
+- **Resume:** Click Resume icon on desktop or type \`resume\` in Terminal.
+
+Feel free to explore, create files, edit configs, or test bash pipes!
+`,
+                  },
+                  'Resume.pdf': {
+                    name: 'Resume.pdf',
+                    type: 'file',
+                    size: '38 KB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    binaryUrl: '/YASH_BAVISKAR_CV.pdf',
+                    meta: { app: 'resume' },
+                  },
+                  'AWS-Topology.drawio.png': {
+                    name: 'AWS-Topology.drawio.png',
+                    type: 'file',
+                    size: '1.1 MB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    binaryUrl: '/hero-bg.png',
+                    meta: { app: 'image-viewer' },
+                  },
+                  'Contact-Yash.desktop': {
+                    name: 'Contact-Yash.desktop',
+                    type: 'file',
+                    size: '220 B',
+                    permissions: '-rwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    isExecutable: true,
+                    content: `[Desktop Entry]
+Name=Contact Yash Baviskar
+Comment=Send direct message or email
+Exec=yashos-contact
+Icon=mail
+Terminal=false
+Type=Application
+Categories=Communication;
+`,
+                    meta: { app: 'contact' },
+                  },
+                },
+              },
+              Documents: {
+                name: 'Documents',
+                type: 'folder',
+                permissions: 'drwxr-xr-x',
+                owner: 'yash',
+                group: 'yash',
+                children: {
+                  'YASH_BAVISKAR_CV.pdf': {
+                    name: 'YASH_BAVISKAR_CV.pdf',
+                    type: 'file',
+                    size: '38 KB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    binaryUrl: '/YASH_BAVISKAR_CV.pdf',
+                    meta: { app: 'resume' },
+                  },
+                  'cover-letter.md': {
+                    name: 'cover-letter.md',
+                    type: 'file',
+                    size: '1.9 KB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: `# Motivation & Cover Letter — Yash Baviskar
+**Target Role:** Junior Cloud Engineer / Junior DevOps Engineer  
+**Target Market:** Germany, Luxembourg, Netherlands, Poland, Switzerland & Remote
+
+Dear Hiring Manager,
+
+I am an entry-level Cloud and DevOps Engineer with practical experience designing, provisioning, containerizing, and monitoring cloud infrastructure across AWS.
+
+My core technical competencies include:
+1. **Cloud & IaC:** Provisioning modular, reusable AWS VPCs, Subnets, ALBs, EC2, and RDS MySQL with Terraform remote state locking.
+2. **Containers & Orchestration:** Building optimized multi-stage Docker images and deploying rolling-update Kubernetes manifests with health probes.
+3. **CI/CD Automation:** Constructing GitHub Actions pipelines that run linting, test suites, ECR pushes, and automated deployments on git push.
+4. **Observability:** Instrumenting Prometheus scraping exporters, PromQL query panels, and Grafana dashboards.
+5. **Linux Systems:** Strong Ubuntu Server administration, systemd service units, and Bash scripting.
+
+I hold a Bachelor of Computer Applications (BCA, Expected 2026), have professional working proficiency in English (B2) and active study in German (A1). I am eager to relocate to Europe and contribute reliably to your infrastructure engineering team.
+
+Sincerely,
+Yash Baviskar
+`,
+                  },
+                  certifications: {
+                    name: 'certifications',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {
+                      'aws-cloud-solutions.md': {
+                        name: 'aws-cloud-solutions.md',
+                        type: 'file',
+                        size: '820 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# AWS Cloud Architecture Practical Competency
+Status: Verified Projects & Active Preparation
+Focus Areas:
+- Multi-AZ VPC Network Topology (Public/Private Subnets, NAT Gateway, Internet Gateway, Route Tables)
+- Compute & Storage: EC2 Auto Scaling Groups, Elastic Load Balancing (ALB), S3 lifecycle policies
+- Database: Amazon RDS MySQL multi-AZ failover and automated snapshots
+- Identity & Access Management: IAM Least-Privilege roles, policies, MFA enforcement
+`,
+                      },
+                      'terraform-associate.md': {
+                        name: 'terraform-associate.md',
+                        type: 'file',
+                        size: '760 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# HashiCorp Terraform Infrastructure as Code Competency
+Status: Verified Codebase & Project Implementations
+Core Principles:
+- Declarative infrastructure specification with HCL syntax
+- Modular architecture with clear input variables, locals, and output parameters
+- Remote backend state management in AWS S3 with DynamoDB distributed state locking
+- Resource lifecycle management, dependency graphs, and drift detection
+`,
+                      },
+                      'docker-kubernetes.md': {
+                        name: 'docker-kubernetes.md',
+                        type: 'file',
+                        size: '720 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# Docker & Kubernetes Container Orchestration Competency
+Status: Verified Implementations
+Core Skills:
+- Multi-stage Dockerfile optimization (reducing image size from 800MB to 75MB)
+- Kubernetes Deployments, Services (ClusterIP, NodePort, Ingress), ConfigMaps, and Secrets
+- Zero-downtime rolling upgrades, ReplicaSets, and Liveness/Readiness probes
+`,
+                      },
+                    },
+                  },
+                },
+              },
+              Projects: {
+                name: 'Projects',
+                type: 'folder',
+                permissions: 'drwxr-xr-x',
+                owner: 'yash',
+                group: 'yash',
+                children: {
+                  'terraform-aws-infrastructure': {
+                    name: 'terraform-aws-infrastructure',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {
+                      'README.md': {
+                        name: 'README.md',
+                        type: 'file',
+                        size: '1.4 KB',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# Automated Cloud Infrastructure with Terraform (AWS)
 GitHub: https://github.com/yashbaviskar15/3-tier-app
 
-Key Architecture:
-- Built three-tier setup on AWS (public/private VPC subnets, ALB, EC2, RDS).
-- Complete modular Terraform IaC for one-command teardown and rebuild.
-- Least-privilege IAM policies, security groups, NACLs, and SSH key-only auth.`,
-                },
-                'cloud-monitoring.md': {
-                  name: 'cloud-monitoring.md',
-                  type: 'file',
-                  size: '2.1 KB',
-                  permissions: '-rw-r--r--',
-                  updatedAt: 'Aug 30 09:20',
-                  content: `# Cloud Infrastructure Monitoring with Prometheus & Grafana
-Status: Completed – 2024 – 2025
-GitHub: https://github.com/yashbaviskar15/cloud-monitoring
+## Architecture:
+- Complete 3-tier AWS architecture provisioned via modular Terraform code.
+- Custom VPC (10.0.0.0/16) across 2 Availability Zones with public/private subnets.
+- Internet Gateway, NAT Gateway, Application Load Balancer with health checks.
+- Auto-scaling EC2 instances and RDS MySQL private database subnet group.
+- Remote state management stored in AWS S3 with DynamoDB distributed locking.
+`,
+                      },
+                      'main.tf': {
+                        name: 'main.tf',
+                        type: 'file',
+                        size: '2.8 KB',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `terraform {
+  required_version = ">= 1.5.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  backend "s3" {
+    bucket         = "yash-terraform-remote-state-prod"
+    key            = "aws-3tier/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "terraform-state-locks"
+    encrypt        = true
+  }
+}
 
-Key Architecture:
-- Provisioned Prometheus monitoring stack on EC2 via Terraform.
-- Scraped 10+ containerized microservices and designed 5 Grafana dashboards.
-- Tuned Alertmanager rules, cutting MTTD from 15+ mins to <2 mins.`,
-                },
-                'cicd-pipeline.md': {
-                  name: 'cicd-pipeline.md',
-                  type: 'file',
-                  size: '1.9 KB',
-                  permissions: '-rw-r--r--',
-                  updatedAt: 'Aug 30 09:30',
-                  content: `# CI/CD Pipeline with Docker, Kubernetes & AWS
-Status: Completed – 2025
-GitHub: https://github.com/yashbaviskar15/cicd-pipeline
+provider "aws" {
+  region = var.aws_region
+  default_tags {
+    tags = {
+      Environment = "Production"
+      ManagedBy   = "Terraform"
+      Owner       = "Yash Baviskar"
+    }
+  }
+}
 
-Key Architecture:
-- Automated GitHub Actions build, test, and release workflow.
-- Docker multi-stage containerization with image push to Amazon ECR.
-- Zero-downtime rolling updates deployed to Kubernetes (k3s).`,
-                },
-                'acos.md': {
-                  name: 'acos.md',
-                  type: 'file',
-                  size: '2.5 KB',
-                  permissions: '-rw-r--r--',
-                  updatedAt: 'Aug 30 10:00',
-                  content: `# Aravanta CloudOS — Cloud Infrastructure Automation Platform
-Status: In Progress – 2025 – Present
+module "vpc" {
+  source             = "./modules/vpc"
+  cidr_block         = var.vpc_cidr
+  availability_zones = var.availability_zones
+}
+
+module "alb" {
+  source          = "./modules/alb"
+  vpc_id          = module.vpc.vpc_id
+  public_subnets  = module.vpc.public_subnet_ids
+  certificate_arn = var.ssl_certificate_arn
+}
+
+module "database" {
+  source          = "./modules/rds"
+  vpc_id          = module.vpc.vpc_id
+  private_subnets = module.vpc.private_subnet_ids
+  db_name         = "yash_app_db"
+  db_username     = var.db_username
+  db_password     = var.db_password
+}
+`,
+                      },
+                      'variables.tf': {
+                        name: 'variables.tf',
+                        type: 'file',
+                        size: '840 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `variable "aws_region" {
+  description = "Target AWS deployment region"
+  type        = string
+  default     = "eu-central-1"
+}
+
+variable "vpc_cidr" {
+  description = "CIDR IP block for VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "availability_zones" {
+  type    = list(string)
+  default = ["eu-central-1a", "eu-central-1b"]
+}
+`,
+                      },
+                    },
+                  },
+                  'docker-k8s-microservices': {
+                    name: 'docker-k8s-microservices',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {
+                      'README.md': {
+                        name: 'README.md',
+                        type: 'file',
+                        size: '1.2 KB',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# Containerized Microservices Deployment (Docker + Kubernetes)
 GitHub: https://github.com/yashbaviskar15/acos
 
-Key Architecture:
-- Self-service cloud provisioning platform built on Terraform IaC.
-- Backend powered by FastAPI and PostgreSQL, containerized with Docker.
-- Automated GitHub Actions CI/CD workflows.`,
+Multi-tier service containerization with multi-stage Docker builds, Kubernetes manifests, rolling updates, and Ingress routing.
+`,
+                      },
+                      'Dockerfile': {
+                        name: 'Dockerfile',
+                        type: 'file',
+                        size: '640 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# Stage 1: Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+# Stage 2: Minimal Production Runtime
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 yashapp
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+USER yashapp
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://localhost:3000/health || exit 1
+CMD ["node", "dist/index.js"]
+`,
+                      },
+                      'deployment.yaml': {
+                        name: 'deployment.yaml',
+                        type: 'file',
+                        size: '1.1 KB',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-api-deployment
+  namespace: production
+  labels:
+    app: cloud-api
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: cloud-api
+  template:
+    metadata:
+      labels:
+        app: cloud-api
+    spec:
+      containers:
+      - name: api
+        image: yashbaviskar15/cloud-api:v1.4.2
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+`,
+                      },
+                    },
+                  },
+                  'prometheus-grafana-monitoring': {
+                    name: 'prometheus-grafana-monitoring',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {
+                      'README.md': {
+                        name: 'README.md',
+                        type: 'file',
+                        size: '1.1 KB',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `# Infrastructure Monitoring Stack (Prometheus & Grafana)
+GitHub: https://github.com/yashbaviskar15/cloud-monitoring
+
+Observability stack tracking Node Exporter host telemetry, cAdvisor container metrics, PromQL query panels, and Alertmanager notification dispatching.
+`,
+                      },
+                      'prometheus.yml': {
+                        name: 'prometheus.yml',
+                        type: 'file',
+                        size: '780 B',
+                        permissions: '-rw-r--r--',
+                        owner: 'yash',
+                        group: 'yash',
+                        content: `global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+`,
+                      },
+                    },
+                  },
                 },
               },
-            },
-            scripts: {
-              name: 'scripts',
-              type: 'folder',
-              permissions: 'drwxr-xr-x',
-              children: {
-                'deploy.sh': {
-                  name: 'deploy.sh',
-                  type: 'file',
-                  size: '840 B',
-                  permissions: '-rwxr-xr-x',
-                  updatedAt: 'Aug 30 10:15',
-                  content: `#!/usr/bin/env bash
-set -e
-echo "Starting automated cloud deployment..."
-terraform plan -out=tfplan.binary
-terraform apply -auto-approve tfplan.binary
-echo "Deployment successful: All AWS resources healthy."`,
-                },
-                'healthcheck.py': {
-                  name: 'healthcheck.py',
-                  type: 'file',
-                  size: '1.1 KB',
-                  permissions: '-rwxr-xr-x',
-                  updatedAt: 'Aug 30 10:20',
-                  content: `import sys, time
-print("[HEALTHCHECK] Probing AWS ap-south-1 infrastructure targets...")
-time.sleep(0.3)
-print("[OK] VPC Subnets: Active (Multi-AZ)")
-print("[OK] RDS MySQL Cluster: Healthy")
-print("[OK] Prometheus Telemetry: 100% Targets Scraped")
-sys.exit(0)`,
+              Experience: {
+                name: 'Experience',
+                type: 'folder',
+                permissions: 'drwxr-xr-x',
+                owner: 'yash',
+                group: 'yash',
+                children: {
+                  '.git': {
+                    name: '.git',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    isHidden: true,
+                    children: {
+                      HEAD: { name: 'HEAD', type: 'file', size: '23 B', content: 'ref: refs/heads/main\n' },
+                    },
+                  },
+                  '01_education_bca.md': {
+                    name: '01_education_bca.md',
+                    type: 'file',
+                    size: '680 B',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: `# Bachelor of Computer Applications (BCA)
+Institution: KCES's Institute of Management and Research, Jalgaon (KBCNMU)
+Period: 2023 – 2026 (Expected)
+Focus: Computer Networking, Operating Systems (Linux), Cloud Computing Fundamentals, Python, Database Systems (RDBMS, SQL).
+`,
+                  },
+                  '02_cloud_projects.md': {
+                    name: '02_cloud_projects.md',
+                    type: 'file',
+                    size: '890 B',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: `# Cloud & DevOps Hands-On Projects
+- Architected modular Terraform AWS infrastructure with VPC, ALB, EC2, RDS, and S3 state locking.
+- Built automated GitHub Actions CI/CD pipelines with linting, container builds, and ECR synchronization.
+- Containerized microservices with Docker and deployed to Kubernetes clusters with health probes.
+- Configured Prometheus scraping and Grafana telemetry dashboards.
+`,
+                  },
+                  '03_devops_contributions.md': {
+                    name: '03_devops_contributions.md',
+                    type: 'file',
+                    size: '640 B',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    content: `# Open Source & DevOps Community
+Active GitHub repository publisher demonstrating clean Infrastructure as Code patterns, containerization standards, and Bash automation scripts.
+GitHub Profile: https://github.com/yashbaviskar15
+`,
+                  },
                 },
               },
-            },
-            'contact.md': {
-              name: 'contact.md',
-              type: 'file',
-              size: '950 B',
-              permissions: '-rw-r--r--',
-              updatedAt: 'Aug 30 10:30',
-              content: `---
-Name: Yash Baviskar
-Email: yashbaviskar0215@outlook.com
-Phone: +91 96231 66585
-Website: https://yashbaviskar.me
-LinkedIn: https://linkedin.com/in/yashbaviskar15
-GitHub: https://github.com/yashbaviskar15
----`,
+              Pictures: {
+                name: 'Pictures',
+                type: 'folder',
+                permissions: 'drwxr-xr-x',
+                owner: 'yash',
+                group: 'yash',
+                children: {
+                  'profile.jpg': {
+                    name: 'profile.jpg',
+                    type: 'file',
+                    size: '34 KB',
+                    permissions: '-rw-r--r--',
+                    owner: 'yash',
+                    group: 'yash',
+                    binaryUrl: '/profile.jpg',
+                    meta: { app: 'image-viewer' },
+                  },
+                  Screenshots: {
+                    name: 'Screenshots',
+                    type: 'folder',
+                    permissions: 'drwxr-xr-x',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {},
+                  },
+                },
+              },
+              '.local': {
+                name: '.local',
+                type: 'folder',
+                permissions: 'drwx------',
+                owner: 'yash',
+                group: 'yash',
+                isHidden: true,
+                children: {
+                  share: {
+                    name: 'share',
+                    type: 'folder',
+                    permissions: 'drwx------',
+                    owner: 'yash',
+                    group: 'yash',
+                    children: {
+                      Trash: {
+                        name: 'Trash',
+                        type: 'folder',
+                        permissions: 'drwx------',
+                        owner: 'yash',
+                        group: 'yash',
+                        children: {
+                          files: { name: 'files', type: 'folder', children: {} },
+                          info: { name: 'info', type: 'folder', children: {} },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
       },
     },
-  },
+  };
 };
 
-// VFS Helper Utilities
+/**
+ * VFS Class with reactive state sync
+ */
 export class VirtualFileSystem {
   private root: VFSNode;
+  private trash: TrashItem[] = [];
+  private listeners: (() => void)[] = [];
 
-  constructor(initialTree: VFSNode = initialFileSystem) {
-    this.root = initialTree;
+  constructor() {
+    this.root = this.loadFromStorage();
   }
 
-  public resolvePath(targetPath: string, cwd: string = '/home/yash'): string {
-    if (!targetPath || targetPath === '.') return cwd;
-    if (targetPath === '~') return '/home/yash';
-    if (targetPath.startsWith('~/')) {
-      targetPath = '/home/yash/' + targetPath.slice(2);
+  public subscribe(listener: () => void) {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener);
+    };
+  }
+
+  private notify() {
+    this.saveToStorage();
+    this.listeners.forEach((l) => l());
+  }
+
+  private loadFromStorage(): VFSNode {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = window.localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      }
+    } catch {}
+    return getInitialFileSystem();
+  }
+
+  public saveToStorage() {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.root));
+        window.localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(this.trash));
+      }
+    } catch {}
+  }
+
+  public resetToFactory() {
+    this.root = getInitialFileSystem();
+    this.trash = [];
+    this.notify();
+  }
+
+  public getRoot(): VFSNode {
+    return this.root;
+  }
+
+  public resolvePath(currentPath: string, targetPath: string): string {
+    if (!targetPath) return currentPath;
+    let path = targetPath.trim();
+
+    if (path.startsWith('~')) {
+      path = '/home/yash' + path.slice(1);
     }
 
-    const isAbsolute = targetPath.startsWith('/');
-    const baseParts = isAbsolute ? [] : cwd.split('/').filter(Boolean);
-    const targetParts = targetPath.split('/').filter(Boolean);
+    if (!path.startsWith('/')) {
+      path = `${currentPath === '/' ? '' : currentPath}/${path}`;
+    }
 
-    const resolvedParts = [...baseParts];
+    const segments = path.split('/').filter(Boolean);
+    const resolved: string[] = [];
 
-    for (const part of targetParts) {
-      if (part === '.') continue;
-      if (part === '..') {
-        resolvedParts.pop();
+    for (const seg of segments) {
+      if (seg === '.') continue;
+      if (seg === '..') {
+        resolved.pop();
       } else {
-        resolvedParts.push(part);
+        resolved.push(seg);
       }
     }
 
-    return '/' + resolvedParts.join('/');
+    return '/' + resolved.join('/');
   }
 
   public getNode(path: string): VFSNode | null {
-    if (path === '/' || path === '') return this.root;
+    const resolved = this.resolvePath('/', path);
+    if (resolved === '/') return this.root;
 
-    const parts = path.split('/').filter(Boolean);
-    let current: VFSNode = this.root;
+    const parts = resolved.split('/').filter(Boolean);
+    let curr: VFSNode = this.root;
 
     for (const part of parts) {
-      if (!current.children || !current.children[part]) {
+      if (!curr.children || !curr.children[part]) {
         return null;
       }
-      current = current.children[part];
+      curr = curr.children[part];
+    }
+    return curr;
+  }
+
+  public listDir(path: string, showHidden = false): VFSNode[] {
+    const node = this.getNode(path);
+    if (!node || node.type !== 'folder' || !node.children) {
+      return [];
+    }
+    return Object.values(node.children).filter((item) => (showHidden ? true : !item.name.startsWith('.')));
+  }
+
+  public createFile(path: string, content = '', binaryUrl?: string, meta?: Record<string, any>): boolean {
+    const resolved = this.resolvePath('/', path);
+    const lastSlash = resolved.lastIndexOf('/');
+    const dirPath = resolved.substring(0, lastSlash) || '/';
+    const fileName = resolved.substring(lastSlash + 1);
+
+    if (!fileName) return false;
+    const parent = this.getNode(dirPath);
+    if (!parent || parent.type !== 'folder') return false;
+
+    if (!parent.children) parent.children = {};
+    const sizeBytes = new Blob([content]).size;
+    const sizeFormatted = sizeBytes > 1024 ? `${(sizeBytes / 1024).toFixed(1)} KB` : `${sizeBytes} B`;
+
+    parent.children[fileName] = {
+      name: fileName,
+      type: 'file',
+      size: sizeFormatted,
+      permissions: '-rw-r--r--',
+      owner: 'yash',
+      group: 'yash',
+      updatedAt: 'Apr 24 10:00',
+      content,
+      binaryUrl,
+      isHidden: fileName.startsWith('.'),
+      meta,
+    };
+    this.notify();
+    return true;
+  }
+
+  public createFolder(path: string): boolean {
+    const resolved = this.resolvePath('/', path);
+    const lastSlash = resolved.lastIndexOf('/');
+    const dirPath = resolved.substring(0, lastSlash) || '/';
+    const folderName = resolved.substring(lastSlash + 1);
+
+    if (!folderName) return false;
+    const parent = this.getNode(dirPath);
+    if (!parent || parent.type !== 'folder') return false;
+
+    if (!parent.children) parent.children = {};
+    if (parent.children[folderName]) return false;
+
+    parent.children[folderName] = {
+      name: folderName,
+      type: 'folder',
+      permissions: 'drwxr-xr-x',
+      owner: 'yash',
+      group: 'yash',
+      updatedAt: 'Apr 24 10:00',
+      isHidden: folderName.startsWith('.'),
+      children: {},
+    };
+    this.notify();
+    return true;
+  }
+
+  public writeFile(path: string, content: string): boolean {
+    const node = this.getNode(path);
+    if (!node || node.type !== 'file') {
+      return this.createFile(path, content);
+    }
+    node.content = content;
+    const sizeBytes = new Blob([content]).size;
+    node.size = sizeBytes > 1024 ? `${(sizeBytes / 1024).toFixed(1)} KB` : `${sizeBytes} B`;
+    node.updatedAt = 'Apr 24 10:00';
+    this.notify();
+    return true;
+  }
+
+  public deleteNode(path: string, permanent = false): boolean {
+    const resolved = this.resolvePath('/', path);
+    if (resolved === '/' || resolved === '/home' || resolved === '/home/yash') return false;
+
+    const lastSlash = resolved.lastIndexOf('/');
+    const dirPath = resolved.substring(0, lastSlash) || '/';
+    const targetName = resolved.substring(lastSlash + 1);
+
+    const parent = this.getNode(dirPath);
+    if (!parent || !parent.children || !parent.children[targetName]) return false;
+
+    const removed = parent.children[targetName];
+    delete parent.children[targetName];
+
+    if (!permanent) {
+      this.trash.push({
+        id: `trash_${Date.now()}_${Math.random()}`,
+        originalPath: resolved,
+        deletedAt: new Date().toISOString(),
+        node: removed,
+      });
     }
 
-    return current;
+    this.notify();
+    return true;
   }
 
-  public listDirectory(path: string): VFSNode[] {
-    const node = this.getNode(path);
-    if (!node || node.type !== 'folder' || !node.children) return [];
-    return Object.values(node.children);
+  public renameNode(oldPath: string, newName: string): boolean {
+    if (!newName || newName.includes('/')) return false;
+    const resolved = this.resolvePath('/', oldPath);
+    const lastSlash = resolved.lastIndexOf('/');
+    const dirPath = resolved.substring(0, lastSlash) || '/';
+    const targetName = resolved.substring(lastSlash + 1);
+
+    const parent = this.getNode(dirPath);
+    if (!parent || !parent.children || !parent.children[targetName]) return false;
+
+    const node = parent.children[targetName];
+    delete parent.children[targetName];
+    node.name = newName;
+    node.isHidden = newName.startsWith('.');
+    parent.children[newName] = node;
+
+    this.notify();
+    return true;
   }
 
-  public readFile(path: string): string | null {
-    const node = this.getNode(path);
-    if (!node || node.type !== 'file') return null;
-    return node.content || '';
+  public copyNode(srcPath: string, destDirPath: string): boolean {
+    const srcNode = this.getNode(srcPath);
+    const destDir = this.getNode(destDirPath);
+    if (!srcNode || !destDir || destDir.type !== 'folder') return false;
+
+    if (!destDir.children) destDir.children = {};
+    const cloned = JSON.parse(JSON.stringify(srcNode));
+    destDir.children[cloned.name] = cloned;
+
+    this.notify();
+    return true;
+  }
+
+  public moveNode(srcPath: string, destDirPath: string): boolean {
+    const success = this.copyNode(srcPath, destDirPath);
+    if (success) {
+      return this.deleteNode(srcPath, true);
+    }
+    return false;
+  }
+
+  public getTrash(): TrashItem[] {
+    return this.trash;
+  }
+
+  public emptyTrash(): void {
+    this.trash = [];
+    this.notify();
   }
 }
 
-export const globalVFS = new VirtualFileSystem();
+export const vfs = new VirtualFileSystem();

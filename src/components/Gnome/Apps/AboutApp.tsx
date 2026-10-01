@@ -53,6 +53,12 @@ export const AboutApp: React.FC = () => {
     setAccentColor,
     soundEnabled,
     toggleSound,
+    fontSize,
+    setFontSize,
+    reducedMotion,
+    toggleReducedMotion,
+    resetDesktopLayout,
+    toggleRecruiterView,
     locale,
     setLocale,
     settingsPage,
@@ -102,7 +108,7 @@ export const AboutApp: React.FC = () => {
   const renderAppearancePage = () => (
     <div className="space-y-6">
       <h2 className="text-sm font-bold" style={{ color: accentColor }}>
-        {strings.about.desktopAppearance || 'Appearance'}
+        {strings.about.desktopAppearance || 'Appearance & Accessibility'}
       </h2>
 
       {/* Theme Mode */}
@@ -168,31 +174,109 @@ export const AboutApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Sound Effects */}
+      {/* Font Size Scaling */}
       <div
         className={`p-4 rounded-2xl border space-y-3 ${
           themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-white border-neutral-300 shadow-xs'
         }`}
       >
-        <span className="text-xs font-semibold block">{strings.about.soundFx || 'Sound'}</span>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-neutral-400">UI Sound Effects</span>
-          <button
-            type="button"
-            onClick={() => {
-              toggleSound();
-              toast.info(soundEnabled ? 'UI sounds muted' : 'UI sounds enabled');
-            }}
-            className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
-              soundEnabled ? 'bg-orange-600' : 'bg-neutral-600'
-            }`}
-          >
-            <motion.div
-              animate={{ x: soundEnabled ? 20 : 2 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
-            />
-          </button>
+        <span className="text-xs font-semibold block">UI Text Scaling</span>
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          {(['compact', 'standard', 'large'] as const).map((sz) => (
+            <button
+              key={sz}
+              type="button"
+              onClick={() => {
+                setFontSize(sz);
+                toast.success(`Font scaling: ${sz.toUpperCase()}`);
+              }}
+              className={`py-2 px-3 rounded-xl border text-center font-medium capitalize cursor-pointer transition-all ${
+                fontSize === sz
+                  ? 'border-orange-500 bg-orange-600/20 text-orange-400 font-bold'
+                  : themeMode === 'dark'
+                  ? 'border-white/10 hover:bg-white/5 text-neutral-400'
+                  : 'border-neutral-200 hover:bg-neutral-100 text-neutral-700'
+              }`}
+            >
+              {sz}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Accessibility & Motion */}
+      <div
+        className={`p-4 rounded-2xl border space-y-3 ${
+          themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-white border-neutral-300 shadow-xs'
+        }`}
+      >
+        <span className="text-xs font-semibold block">Accessibility & Desktop Controls</span>
+        <div className="space-y-3 divide-y divide-white/5">
+          {/* Sound Effects */}
+          <div className="flex items-center justify-between pt-1">
+            <div>
+              <span className="text-xs block font-medium">UI Sound Effects</span>
+              <span className="text-[11px] text-neutral-400">Audio feedback on window and key events</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                toggleSound();
+                toast.info(soundEnabled ? 'UI sounds muted' : 'UI sounds enabled');
+              }}
+              className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                soundEnabled ? 'bg-orange-600' : 'bg-neutral-600'
+              }`}
+            >
+              <motion.div
+                animate={{ x: soundEnabled ? 20 : 2 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
+              />
+            </button>
+          </div>
+
+          {/* Reduced Motion */}
+          <div className="flex items-center justify-between pt-3">
+            <div>
+              <span className="text-xs block font-medium">Reduced Motion</span>
+              <span className="text-[11px] text-neutral-400">Minimize animations and transitions</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                toggleReducedMotion();
+                toast.info(reducedMotion ? 'Animations restored' : 'Reduced motion enabled');
+              }}
+              className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                reducedMotion ? 'bg-orange-600' : 'bg-neutral-600'
+              }`}
+            >
+              <motion.div
+                animate={{ x: reducedMotion ? 20 : 2 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
+              />
+            </button>
+          </div>
+
+          {/* Reset Desktop Layout */}
+          <div className="flex items-center justify-between pt-3">
+            <div>
+              <span className="text-xs block font-medium">Window Layout</span>
+              <span className="text-[11px] text-neutral-400">Reset all window bounds and cascading positions</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                resetDesktopLayout();
+                toast.success('Desktop window layout reset!');
+              }}
+              className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold border border-white/10 cursor-pointer"
+            >
+              Reset Layout
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -401,6 +485,54 @@ export const AboutApp: React.FC = () => {
             <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>
               6.8.0-45-generic
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Portfolio Architecture & Built-With Tech Stack */}
+      <div
+        className={`p-4 rounded-2xl border space-y-3 ${
+          themeMode === 'dark' ? 'bg-neutral-900/90 border-white/10' : 'bg-white border-neutral-300 shadow-xs'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold block">Portfolio Tech Stack & Performance Architecture</span>
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-600/20 text-orange-400 border border-orange-500/30">
+            Production VFS
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Framework</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Next.js / React 18</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Development</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Turbopack / Vite</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Motion Engine</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Framer Motion</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">UI Framework</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Tailwind CSS</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Font Scripts</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Lucide Icons</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">PaaS & Edge</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Vercel Deploy</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Social / SEO</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Open Graph</span>
+          </div>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+            <span className="text-neutral-400 text-[10px] block uppercase font-bold">Performance</span>
+            <span className={`font-semibold ${themeMode === 'dark' ? 'text-white' : 'text-neutral-900'}`}>Priority Hints</span>
           </div>
         </div>
       </div>

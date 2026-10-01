@@ -1,3 +1,14 @@
+# Environment variables — NEVER commit secrets
+.env
+.env.local
+.env.*
+!.env.example
+.env.*.local
+
+# Lighthouse reports (generated locally, never commit)
+*.lighthouse.html
+*.lighthouse.json
+
 # Logs
 logs
 *.log
@@ -16,9 +27,11 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
+.trae
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+

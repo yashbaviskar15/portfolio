@@ -120,25 +120,8 @@
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.gnome-window-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.gnome-window-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.gnome-window-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 6px;
-}
-
-.gnome-window-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(233, 84, 32, 0.7);
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .gnome-mobile-window-content {
@@ -152,21 +135,8 @@
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.gnome-mobile-window-content::-webkit-scrollbar {
-  width: 5px;
-}
-
-.gnome-mobile-window-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.gnome-mobile-window-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* react-rnd 8-Direction Cursor States */
@@ -186,31 +156,31 @@ div[style*="cursor: e-resize"], div[style*="cursor: w-resize"], .react-rnd-handl
   cursor: ew-resize !important;
 }
 
-/* Slim Custom Linux GNOME Scrollbar */
-.gnome-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(233, 84, 32, 0.5) transparent;
+/* Complete Global Scrollbar Suppression: Zero visible scrollbars across whole portfolio */
+*, *::before, *::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-.gnome-scrollbar::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-track,
+.gnome-scrollbar::-webkit-scrollbar,
+.gnome-window-content::-webkit-scrollbar,
+.gnome-mobile-window-content::-webkit-scrollbar,
+.allow-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
-.gnome-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
-
-.gnome-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s ease;
-}
-
-.gnome-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e95420;
+.gnome-scrollbar,
+.gnome-window-content,
+.gnome-mobile-window-content,
+.allow-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* Desktop Icon Selection */
@@ -227,3 +197,41 @@ div[style*="cursor: e-resize"], div[style*="cursor: w-resize"], .react-rnd-handl
   background-color: rgba(233, 84, 32, 0.25);
   border-color: rgba(233, 84, 32, 0.5);
 }
+
+/* Print Optimization */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .gnome-topbar,
+  .gnome-dock,
+  .gnome-wallpaper,
+  #quick-settings-popover,
+  #calendar-popover,
+  #help-menu-popover,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Recruiter Modal Print Override */
+  .fixed.inset-0.z-\[120\] {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .recruiter-print-card {
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+}
+

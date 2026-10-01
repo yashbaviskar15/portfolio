@@ -8,7 +8,13 @@ export type WindowId =
   | 'monitor'
   | 'projects'
   | 'skills'
-  | 'timeline';
+  | 'timeline'
+  | 'text-editor'
+  | 'image-viewer'
+  | 'software-center'
+  | 'calculator'
+  | 'weather'
+  | 'clocks';
 
 export interface WindowPosition {
   x: number;
@@ -30,6 +36,8 @@ export interface WindowState {
   position: WindowPosition;
   size: WindowSize;
   iconName: string;
+  workspace?: number;
+  activeFilePath?: string;
 }
 
 export interface NotificationItem {
@@ -47,3 +55,5 @@ export interface WallpaperPreset {
   gradient: string;
   previewBg: string;
 }
+
+export type BootStage = 'bios' | 'grub' | 'systemd' | 'plymouth' | 'login' | 'desktop';

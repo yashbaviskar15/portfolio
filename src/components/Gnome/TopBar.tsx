@@ -7,10 +7,10 @@ import {
   VolumeX,
   Battery,
   Power,
+  Lock,
   Settings,
   Moon,
   Sun,
-  Calendar as CalendarIcon,
   MapPin,
   Bell,
   X,
@@ -21,6 +21,8 @@ import {
   Keyboard,
   Bluetooth,
   Laptop,
+  Sparkles,
+  Clock,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { dropdownMenuVariants, centerDropdownMenuVariants } from '../../lib/animations';
@@ -69,13 +71,16 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
     hasAutoDetectedLocale,
     setHasAutoDetectedLocale,
     setSettingsPage,
+    toggleRecruiterView,
+    setLocked,
+    reclampAllWindows,
     t,
   } = useGnomeStore();
 
   const network = useNetworkDevice();
 
   const [timeString, setTimeString] = useState<string>('');
-  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
+  const [notificationsCenterOpen, setNotificationsCenterOpen] = useState<boolean>(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState<boolean>(false);
   const [helpMenuOpen, setHelpMenuOpen] = useState<boolean>(false);
   const [volume, setVolume] = useState<number>(80);
@@ -85,11 +90,30 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
   const [powerDialog, setPowerDialog] = useState<boolean>(false);
 
   const quickSettingsRef = useRef<HTMLDivElement>(null);
-  const calendarRef = useRef<HTMLDivElement>(null);
+  const notificationsCenterRef = useRef<HTMLDivElement>(null);
   const helpMenuRef = useRef<HTMLDivElement>(null);
   const strings = t();
 
   const currentLang = SUPPORTED_LANGUAGES.find((l) => l.code === locale) || SUPPORTED_LANGUAGES[0];
+
+  // Window re-clamping on resize or mobile orientation change
+  useEffect(() => {
+    let resizeTimer: number;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        reclampAllWindows();
+      }, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [reclampAllWindows]);
 
   // Auto-detection toast on initial mount
   useEffect(() => {
@@ -140,11 +164,11 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
         setQuickSettingsOpen(false);
       }
       if (
-        calendarRef.current &&
-        !calendarRef.current.contains(target) &&
-        !document.getElementById('calendar-popover')?.contains(target)
+        notificationsCenterRef.current &&
+        !notificationsCenterRef.current.contains(target) &&
+        !document.getElementById('notifications-center-popover')?.contains(target)
       ) {
-        setCalendarOpen(false);
+        setNotificationsCenterOpen(false);
       }
       if (
         helpMenuRef.current &&
@@ -157,7 +181,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setQuickSettingsOpen(false);
-        setCalendarOpen(false);
+        setNotificationsCenterOpen(false);
         setHelpMenuOpen(false);
         setPowerDialog(false);
       }
@@ -188,7 +212,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
             : 'bg-[#f4f4f5]/90 text-neutral-800 border-neutral-300 shadow-xs'
         } backdrop-blur-xl`}
       >
-        {/* Left: Activities Button + Help Menu */}
+        {/* Left: Activities Button + Recruiter View Pill + Help Menu */}
         <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             type="button"
@@ -206,6 +230,18 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
             {strings.topbar.activities}
           </button>
 
+          {/* Recruiter Instant View Button */}
+          <button
+            type="button"
+            onClick={toggleRecruiterView}
+            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+            title="Open Executive Recruiter View (One-Page Resume Summary)"
+          >
+            <Sparkles className="w-3 h-3" />
+            <span className="hidden sm:inline">Recruiter View</span>
+            <span className="sm:hidden">CV</span>
+          </button>
+
           {/* Help Menu Icon */}
           <div className="relative" ref={helpMenuRef}>
             <button
@@ -213,7 +249,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
               onClick={() => {
                 setHelpMenuOpen(!helpMenuOpen);
                 setQuickSettingsOpen(false);
-                setCalendarOpen(false);
+                setNotificationsCenterOpen(false);
               }}
               className={`p-1 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
                 helpMenuOpen
@@ -231,22 +267,22 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
         </div>
 
         {/* Center: Date & Time Clock Trigger */}
-        <div ref={calendarRef}>
+        <div ref={notificationsCenterRef}>
           <button
             type="button"
             onClick={() => {
-              setCalendarOpen(!calendarOpen);
+              setNotificationsCenterOpen(!notificationsCenterOpen);
               setQuickSettingsOpen(false);
               setHelpMenuOpen(false);
             }}
             className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-0.5 rounded-full transition-all cursor-pointer text-[11px] sm:text-xs font-medium tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-              calendarOpen
+              notificationsCenterOpen
                 ? 'bg-white/20 font-semibold'
                 : themeMode === 'dark'
                 ? 'text-neutral-200 hover:bg-white/10'
                 : 'text-neutral-800 hover:bg-black/10'
             }`}
-            aria-label="Date, Calendar and Notification Center"
+            aria-label="Date, Time and Notification Center"
           >
             <span className="truncate max-w-[105px] sm:max-w-none">{timeString || 'Aug 30 10:44 AM'}</span>
             {notifications.length > 0 && (
@@ -275,7 +311,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
             type="button"
             onClick={() => {
               setQuickSettingsOpen(!quickSettingsOpen);
-              setCalendarOpen(false);
+              setNotificationsCenterOpen(false);
               setHelpMenuOpen(false);
             }}
             className={`flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-0.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
@@ -363,17 +399,17 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
           )}
         </AnimatePresence>
 
-        {/* 2. GNOME Calendar & Notification Center Popover (Perfect Viewport Centering) */}
+        {/* 2. GNOME Notification & Quick Status Popover (Centered) */}
         <AnimatePresence>
-          {calendarOpen && (
+          {notificationsCenterOpen && (
             <motion.div
-              id="calendar-popover"
+              id="notifications-center-popover"
               variants={centerDropdownMenuVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
               style={{ left: '50%' }}
-              className={`fixed top-9 w-[calc(100vw-16px)] max-w-sm sm:max-w-md rounded-2xl border shadow-2xl backdrop-blur-2xl p-3 sm:p-4 z-50 space-y-3 sm:space-y-4 font-sans max-h-[82vh] overflow-y-auto gnome-scrollbar ${
+              className={`fixed top-9 w-[calc(100vw-16px)] max-w-sm sm:max-w-md rounded-2xl border shadow-2xl backdrop-blur-2xl p-3 sm:p-4 z-50 space-y-3 font-sans max-h-[82vh] overflow-y-auto gnome-scrollbar ${
                 themeMode === 'dark'
                   ? 'bg-[#1e1e22]/95 border-white/15 text-neutral-200'
                   : 'bg-white/95 border-neutral-300 text-neutral-800'
@@ -382,12 +418,35 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
               {/* Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-2 gap-2">
                 <div className="flex items-center gap-2 text-xs font-bold min-w-0">
-                  <CalendarIcon className="w-4 h-4 text-orange-400 shrink-0" />
-                  <span className="truncate">{strings.topbar.notifications}</span>
+                  <Bell className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span className="truncate">Notifications &amp; System Center</span>
                 </div>
                 <span className="text-[10px] text-neutral-400 font-mono shrink-0">
                   {locale.toUpperCase()} • {network.devicePlatform}
                 </span>
+              </div>
+
+              {/* Quick Status Card */}
+              <div
+                className={`p-3 rounded-xl border flex items-center justify-between text-xs ${
+                  themeMode === 'dark' ? 'bg-neutral-900 border-white/5' : 'bg-neutral-50 border-neutral-200'
+                }`}
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-neutral-400 text-[11px] font-mono">
+                    <Laptop className="w-3.5 h-3.5 text-sky-400" />
+                    <span>{network.devicePlatform} • {network.networkName}</span>
+                  </div>
+                  <div className="text-xs font-bold text-white font-mono">YASH@PORTFOLIO</div>
+                  <div className="text-[10px] text-neutral-400 font-mono">
+                    Status: <span className="text-emerald-400 font-semibold">{network.isOnline ? 'Online (Ready)' : 'Offline'}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    ACTIVE
+                  </span>
+                </div>
               </div>
 
               {/* Weather Info Card */}
@@ -707,7 +766,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                 </AnimatePresence>
               </div>
 
-              {/* ── Bottom Row: Settings Gear + Power ── */}
+              {/* ── Bottom Row: Settings Gear + Lock + Power ── */}
               <div className="flex items-center justify-between pt-1 border-t border-white/10 text-xs">
                 <button
                   type="button"
@@ -725,6 +784,23 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                 >
                   <Settings className="w-3.5 h-3.5" />
                   <span>{strings.topbar.settings}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLocked(true);
+                    setQuickSettingsOpen(false);
+                  }}
+                  className={`p-2 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    themeMode === 'dark'
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
+                      : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800'
+                  }`}
+                  title="Lock Screen (Super+L)"
+                >
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Lock</span>
                 </button>
 
                 <button

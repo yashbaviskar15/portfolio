@@ -64,28 +64,25 @@ function detectNetworkDevice(): NetworkDeviceInfo {
   const nav = navigator as any;
   const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
 
-  // Detect Platform / Device
-  let devicePlatform = 'Linux Desktop';
-  let deviceName = 'Linux Host';
+  // Neutral Platform & Device Detection (no host-OS leakage)
+  let devicePlatform = 'Desktop Browser';
+  let deviceName = 'Web Client';
 
-  if (/iPhone/i.test(userAgent)) {
-    devicePlatform = 'Apple iOS';
-    deviceName = 'Apple iPhone';
-  } else if (/iPad/i.test(userAgent)) {
-    devicePlatform = 'iPadOS';
-    deviceName = 'Apple iPad';
-  } else if (/Macintosh|Mac OS X/i.test(userAgent)) {
-    devicePlatform = 'macOS';
-    deviceName = 'Apple Mac';
+  if (/iPhone|iPad|iPod/i.test(userAgent)) {
+    devicePlatform = 'Mobile Device';
+    deviceName = 'iOS Client';
   } else if (/Android/i.test(userAgent)) {
-    devicePlatform = 'Android';
-    deviceName = 'Android Device';
-  } else if (/Windows NT 10.0|Windows NT 11.0|Windows/i.test(userAgent)) {
-    devicePlatform = 'Windows 11';
-    deviceName = 'Windows PC';
+    devicePlatform = 'Mobile Device';
+    deviceName = 'Android Client';
+  } else if (/Macintosh|Mac OS X/i.test(userAgent)) {
+    devicePlatform = 'Desktop Browser';
+    deviceName = 'macOS Client';
+  } else if (/Windows/i.test(userAgent)) {
+    devicePlatform = 'Desktop Browser';
+    deviceName = 'Desktop Client';
   } else if (/Linux/i.test(userAgent)) {
-    devicePlatform = 'Ubuntu Linux';
-    deviceName = 'Ubuntu 24.04 Node';
+    devicePlatform = 'Desktop Browser';
+    deviceName = 'Linux Client';
   }
 
   // Detect Browser
@@ -96,26 +93,24 @@ function detectNetworkDevice(): NetworkDeviceInfo {
   else if (/Firefox/i.test(userAgent)) browserName = 'Firefox';
 
   // Detect Network Details
-  let connectionType = 'wifi';
+  let connectionType = 'network';
   let downlink: number | null = null;
   let rtt: number | null = null;
 
   if (connection) {
-    connectionType = connection.type || connection.effectiveType || 'wifi';
+    connectionType = connection.type || connection.effectiveType || 'network';
     downlink = connection.downlink || null;
     rtt = connection.rtt || null;
   }
 
-  // Generate authentic dynamic network name based on real device and connection
-  let networkName = 'Wi-Fi';
+  // Clean, neutral network label without truncation issues
+  let networkName = 'Online';
   if (!isOnline) {
-    networkName = 'Offline (Disconnected)';
-  } else if (downlink && downlink > 50) {
-    networkName = `Wi-Fi 5GHz (${deviceName})`;
+    networkName = 'Offline';
   } else if (downlink) {
-    networkName = `Wi-Fi (${downlink} Mbps · ${deviceName})`;
+    networkName = `Wi-Fi (${downlink} Mbps)`;
   } else {
-    networkName = `Wi-Fi (${deviceName})`;
+    networkName = 'Wi-Fi (Connected)';
   }
 
   return {

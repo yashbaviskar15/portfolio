@@ -6,14 +6,11 @@ import { useGnomeStore } from '../../../store/useGnomeStore';
 export const SkillsApp: React.FC = () => {
   const { themeMode, accentColor, t } = useGnomeStore();
   const [key, setKey] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const strings = t();
 
   useEffect(() => {
     // Replay animation on mount / locale change
     setKey((prev) => prev + 1);
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
   }, [strings]);
 
   const categoryIcons = [
@@ -22,19 +19,6 @@ export const SkillsApp: React.FC = () => {
     <Zap key="zap" className="w-4 h-4 text-amber-400" />,
     <Network key="net" className="w-4 h-4 text-sky-400" />,
   ];
-
-  if (isLoading) {
-    return (
-      <div className={`p-6 space-y-4 ${themeMode === 'dark' ? 'bg-[#1a1a1a]' : 'bg-neutral-100'}`}>
-        <div className="h-7 w-44 rounded-lg bg-neutral-800 animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-40 rounded-2xl bg-neutral-800/60 animate-pulse border border-white/5" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
