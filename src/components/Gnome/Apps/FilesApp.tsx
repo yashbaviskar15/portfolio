@@ -22,6 +22,7 @@ import {
 import { toast } from 'sonner';
 import { vfs, VFSNode } from '../../../lib/virtualFileSystem';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 export const FilesApp: React.FC = () => {
   const { themeMode, openFileInApp, openApp } = useGnomeStore();
@@ -143,33 +144,39 @@ export const FilesApp: React.FC = () => {
         }`}
       >
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={handleBack}
-            disabled={historyIndex === 0}
-            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
-            title="Back"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleForward}
-            disabled={historyIndex >= historyStack.length - 1}
-            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
-            title="Forward"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleUp}
-            disabled={currentPath === '/'}
-            className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
-            title="Parent Directory"
-          >
-            <ChevronUp className="w-4 h-4" />
-          </button>
+          <Tooltip content="Back" side="bottom">
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={historyIndex === 0}
+              className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+              aria-label="Back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Forward" side="bottom">
+            <button
+              type="button"
+              onClick={handleForward}
+              disabled={historyIndex >= historyStack.length - 1}
+              className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+              aria-label="Forward"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Parent Directory" side="bottom">
+            <button
+              type="button"
+              onClick={handleUp}
+              disabled={currentPath === '/'}
+              className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-40 transition-colors cursor-pointer"
+              aria-label="Parent Directory"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+          </Tooltip>
 
           {/* Breadcrumbs Path Bar */}
           <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-black/20 border border-white/10 text-xs font-mono">
@@ -213,47 +220,55 @@ export const FilesApp: React.FC = () => {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={handleCreateNewFolder}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="New Folder"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-
-          {selectedFile && (
+          <Tooltip content="New Folder" side="bottom">
             <button
               type="button"
-              onClick={handleDeleteSelected}
-              className="p-1.5 rounded-lg hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
-              title="Delete Selected"
+              onClick={handleCreateNewFolder}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+              aria-label="New Folder"
             >
-              <Trash2 className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
             </button>
+          </Tooltip>
+
+          {selectedFile && (
+            <Tooltip content="Delete Selected" side="bottom">
+              <button
+                type="button"
+                onClick={handleDeleteSelected}
+                className="p-1.5 rounded-lg hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+                aria-label="Delete Selected"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </Tooltip>
           )}
 
           <div className="flex items-center border border-white/15 rounded-lg overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 transition-colors ${
-                viewMode === 'grid' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
-              }`}
-              title="Grid View"
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('list')}
-              className={`p-1.5 transition-colors ${
-                viewMode === 'list' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
-              }`}
-              title="List View"
-            >
-              <ListIcon className="w-3.5 h-3.5" />
-            </button>
+            <Tooltip content="Grid View" side="bottom">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 transition-colors ${
+                  viewMode === 'grid' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
+                }`}
+                aria-label="Grid View"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
+            <Tooltip content="List View" side="bottom">
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 transition-colors ${
+                  viewMode === 'list' ? 'bg-orange-600 text-white' : 'hover:bg-white/10 text-neutral-400'
+                }`}
+                aria-label="List View"
+              >
+                <ListIcon className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -299,7 +314,6 @@ export const FilesApp: React.FC = () => {
                 <div
                   key={item.name}
                   onClick={() => handleItemClick(item)}
-                  title={`Click to open ${item.name}`}
                   className={`p-3 rounded-2xl flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
                     selectedFile?.name === item.name
                       ? 'bg-orange-600/30 border border-orange-500 text-white'
@@ -327,7 +341,6 @@ export const FilesApp: React.FC = () => {
                 <div
                   key={item.name}
                   onClick={() => handleItemClick(item)}
-                  title={`Click to open ${item.name}`}
                   className={`grid grid-cols-12 gap-2 px-3 py-2 rounded-xl items-center transition-colors cursor-pointer ${
                     selectedFile?.name === item.name
                       ? 'bg-orange-600/30 text-white'

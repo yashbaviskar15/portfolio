@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Lock, Power, Sparkles, Wifi, Battery, Volume2, ShieldCheck } from 'lucide-react';
 import { portfolioData } from '../../data/portfolio';
+import { Tooltip } from './Tooltip';
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -53,14 +54,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
 
           <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowPowerMenu(!showPowerMenu)}
-              className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white transition-colors cursor-pointer"
-              title="Power options"
-            >
-              <Power className="w-4 h-4 text-orange-400" />
-            </button>
+            <Tooltip content="Power options" side="bottom">
+              <button
+                type="button"
+                onClick={() => setShowPowerMenu(!showPowerMenu)}
+                className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white transition-colors cursor-pointer"
+              >
+                <Power className="w-4 h-4 text-orange-400" />
+              </button>
+            </Tooltip>
 
             {showPowerMenu && (
               <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-[#1e1e24] border border-white/15 shadow-2xl p-1.5 z-50 text-xs font-sans">
@@ -136,13 +138,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               autoFocus
               className="w-full px-4 py-2.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-neutral-400 text-xs focus:outline-none focus:border-orange-500 focus:bg-white/15 transition-all text-center"
             />
-            <button
-              type="submit"
-              className="absolute right-1.5 p-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer"
-              title="Log In"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <Tooltip content="Log In" shortcut="Enter" side="top">
+              <button
+                type="submit"
+                className="absolute right-1.5 p-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Tooltip>
           </div>
           <p className="text-[11px] text-neutral-400 font-mono">
             Hint: No password required — press <kbd className="px-1 py-0.5 rounded bg-white/10 text-neutral-300">Enter</kbd> or click arrow

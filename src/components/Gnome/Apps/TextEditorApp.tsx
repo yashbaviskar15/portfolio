@@ -3,6 +3,7 @@ import { Save, Plus, X, FileText, Check, AlertCircle, FileCode } from 'lucide-re
 import { toast } from 'sonner';
 import { vfs } from '../../../lib/virtualFileSystem';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 interface EditorTab {
   id: string;
@@ -120,7 +121,11 @@ export const TextEditorApp: React.FC = () => {
             >
               <FileCode className="w-3.5 h-3.5 text-orange-400 shrink-0" />
               <span className="truncate max-w-[140px]">{tab.filename}</span>
-              {tab.isDirty && <span className="w-1.5 h-1.5 rounded-full bg-orange-500" title="Unsaved changes" />}
+              {tab.isDirty && (
+                <Tooltip content="Unsaved changes" side="top">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 inline-block" />
+                </Tooltip>
+              )}
               {tabs.length > 1 && (
                 <button
                   type="button"
@@ -133,14 +138,15 @@ export const TextEditorApp: React.FC = () => {
             </div>
           ))}
 
-          <button
-            type="button"
-            onClick={handleNewTab}
-            className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-            title="New Document"
-          >
-            <Plus className="w-3.5 h-3.5" />
-          </button>
+          <Tooltip content="New Document" shortcut="Ctrl+N" side="bottom">
+            <button
+              type="button"
+              onClick={handleNewTab}
+              className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* Toolbar Save Button */}

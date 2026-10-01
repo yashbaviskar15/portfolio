@@ -3,6 +3,7 @@ import { Mail, Send, Copy, Check, ExternalLink, CheckCircle2, Phone, MapPin, Glo
 import { toast } from 'sonner';
 import { portfolioData } from '../../../data/portfolio';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 export const ContactApp: React.FC = () => {
   const { themeMode, accentColor, t } = useGnomeStore();
@@ -168,14 +169,15 @@ export const ContactApp: React.FC = () => {
                 </span>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleCopyEmail}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer shrink-0"
-              title="Copy email address"
-            >
-              {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-            </button>
+            <Tooltip content={copiedEmail ? 'Copied!' : 'Copy email address'} side="left">
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer shrink-0"
+              >
+                {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </Tooltip>
           </div>
 
           {/* Phone */}
@@ -199,14 +201,15 @@ export const ContactApp: React.FC = () => {
                 </span>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleCopyPhone}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer shrink-0"
-              title="Copy phone number"
-            >
-              {copiedPhone ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-            </button>
+            <Tooltip content={copiedPhone ? 'Copied!' : 'Copy phone number'} side="left">
+              <button
+                type="button"
+                onClick={handleCopyPhone}
+                className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer shrink-0"
+              >
+                {copiedPhone ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </Tooltip>
           </div>
         </div>
 

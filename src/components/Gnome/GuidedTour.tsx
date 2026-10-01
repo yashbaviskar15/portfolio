@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Compass, ArrowRight, ArrowLeft, X, Check, Sparkles } from 'lucide-react';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { springPhysics } from '../../lib/animations';
+import { Tooltip } from './Tooltip';
 
 interface TourStep {
   title: string;
@@ -160,14 +161,15 @@ export const GuidedTour: React.FC = () => {
               <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-neutral-400 font-mono text-[10px] hidden sm:inline">
                 {currentStepData.targetHint}
               </span>
-              <button
-                type="button"
-                onClick={endTour}
-                className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-                title="Exit Tour (Esc)"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <Tooltip content="Exit Tour" shortcut="Esc" side="bottom">
+                <button
+                  type="button"
+                  onClick={endTour}
+                  className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </Tooltip>
             </div>
           </div>
 

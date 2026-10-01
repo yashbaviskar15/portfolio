@@ -5,6 +5,7 @@ import { Minus, Square, Copy, X, ArrowLeft, RotateCcw, AlertTriangle } from 'luc
 import { mobileWindowVariants } from '../../lib/animations';
 import { WindowPosition, WindowSize } from '../../types/gnome';
 import { useGnomeStore } from '../../store/useGnomeStore';
+import { Tooltip } from './Tooltip';
 
 // Per-Window Error Boundary to prevent one crashed app from breaking the desktop
 interface WindowErrorBoundaryProps {
@@ -227,38 +228,44 @@ export const Window: React.FC<WindowProps> = ({
 
           {/* Traffic-Light Window Controls */}
           <div className="flex items-center gap-2 ml-2 shrink-0">
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onMinimize}
-              aria-label={`Minimize ${title} (Ctrl+M)`}
-              className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 text-neutral-200 flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-            >
-              <Minus className="w-3 h-3 stroke-[2.5]" />
-            </motion.button>
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onMaximizeToggle}
-              aria-label={`Restore ${title}`}
-              className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 text-neutral-200 flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-            >
-              <Copy className="w-3 h-3 stroke-[2.2]" />
-            </motion.button>
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              onMouseEnter={() => setIsCloseHovered(true)}
-              onMouseLeave={() => setIsCloseHovered(false)}
-              onClick={onClose}
-              aria-label={`Close ${title} (Ctrl+W / Esc)`}
-              className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] text-neutral-200 hover:text-white flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-            >
-              <X className="w-3.5 h-3.5 stroke-[2.5]" />
-            </motion.button>
+            <Tooltip content="Minimize" shortcut="Ctrl+M" side="bottom">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onMinimize}
+                aria-label={`Minimize ${title} (Ctrl+M)`}
+                className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 text-neutral-200 flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+              >
+                <Minus className="w-3 h-3 stroke-[2.5]" />
+              </motion.button>
+            </Tooltip>
+            <Tooltip content="Restore" side="bottom">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onMaximizeToggle}
+                aria-label={`Restore ${title}`}
+                className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 text-neutral-200 flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+              >
+                <Copy className="w-3 h-3 stroke-[2.2]" />
+              </motion.button>
+            </Tooltip>
+            <Tooltip content="Close" shortcut="Ctrl+W" side="bottom" align="end">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onMouseEnter={() => setIsCloseHovered(true)}
+                onMouseLeave={() => setIsCloseHovered(false)}
+                onClick={onClose}
+                aria-label={`Close ${title} (Ctrl+W / Esc)`}
+                className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] text-neutral-200 hover:text-white flex items-center justify-center cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+              >
+                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+              </motion.button>
+            </Tooltip>
           </div>
         </div>
 
@@ -358,49 +365,55 @@ export const Window: React.FC<WindowProps> = ({
 
               {/* Right Side: Standardized Traffic-Light Dots */}
               <div className="flex items-center gap-2 ml-2 shrink-0">
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onMinimize();
-                  }}
-                  aria-label={`Minimize ${title} (Ctrl+M)`}
-                  className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-200 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-                >
-                  <Minus className="w-3 h-3 stroke-[2.5]" />
-                </motion.button>
+                <Tooltip content="Minimize" shortcut="Ctrl+M" side="bottom">
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMinimize();
+                    }}
+                    aria-label={`Minimize ${title} (Ctrl+M)`}
+                    className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-200 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+                  >
+                    <Minus className="w-3 h-3 stroke-[2.5]" />
+                  </motion.button>
+                </Tooltip>
 
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onMaximizeToggle();
-                  }}
-                  aria-label={`Maximize ${title}`}
-                  className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-200 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-                >
-                  <Square className="w-2.5 h-2.5 stroke-[2.2]" />
-                </motion.button>
+                <Tooltip content="Maximize" side="bottom">
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMaximizeToggle();
+                    }}
+                    aria-label={`Maximize ${title}`}
+                    className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-neutral-600 active:bg-neutral-500 flex items-center justify-center text-neutral-200 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+                  >
+                    <Square className="w-2.5 h-2.5 stroke-[2.2]" />
+                  </motion.button>
+                </Tooltip>
 
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
-                  onMouseEnter={() => setIsCloseHovered(true)}
-                  onMouseLeave={() => setIsCloseHovered(false)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                  }}
-                  aria-label={`Close ${title} (Ctrl+W / Esc)`}
-                  className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] flex items-center justify-center text-neutral-200 hover:text-white transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
-                >
-                  <X className="w-3.5 h-3.5 stroke-[2.5]" />
-                </motion.button>
+                <Tooltip content="Close" shortcut="Ctrl+W" side="bottom" align="end">
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onMouseEnter={() => setIsCloseHovered(true)}
+                    onMouseLeave={() => setIsCloseHovered(false)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClose();
+                    }}
+                    aria-label={`Close ${title} (Ctrl+W / Esc)`}
+                    className="w-6 h-6 rounded-full bg-neutral-700/80 hover:bg-[#e95420] active:bg-[#c7162b] flex items-center justify-center text-neutral-200 hover:text-white transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 shadow-xs"
+                  >
+                    <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                  </motion.button>
+                </Tooltip>
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ZoomIn, ZoomOut, RotateCw, Maximize, ArrowLeft, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 export const ImageViewerApp: React.FC = () => {
   const { themeMode, windows } = useGnomeStore();
@@ -47,64 +48,70 @@ export const ImageViewerApp: React.FC = () => {
         }`}
       >
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="Previous Image"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
+          <Tooltip content="Previous Image" side="bottom">
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </Tooltip>
           <span className="text-xs font-semibold truncate max-w-[200px]">
             {currentImg.title}
           </span>
-          <button
-            type="button"
-            onClick={handleNext}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="Next Image"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <Tooltip content="Next Image" side="bottom">
+            <button
+              type="button"
+              onClick={handleNext}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* View Controls */}
         <div className="flex items-center gap-1.5 text-xs">
-          <button
-            type="button"
-            onClick={handleZoomIn}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
+          <Tooltip content="Zoom In" shortcut="+" side="bottom">
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </Tooltip>
           <span className="font-mono text-[11px] w-12 text-center text-neutral-400">
             {Math.round(scale * 100)}%
           </span>
-          <button
-            type="button"
-            onClick={handleZoomOut}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleRotate}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
-            title="Rotate 90deg"
-          >
-            <RotateCw className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleResetZoom}
-            className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-[11px] text-neutral-200 transition-colors cursor-pointer"
-            title="Fit to Window"
-          >
-            Reset
-          </button>
+          <Tooltip content="Zoom Out" shortcut="-" side="bottom">
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Rotate 90°" side="bottom">
+            <button
+              type="button"
+              onClick={handleRotate}
+              className="p-1.5 rounded-lg hover:bg-white/10 text-neutral-300 transition-colors cursor-pointer"
+            >
+              <RotateCw className="w-4 h-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Fit to Window" side="bottom">
+            <button
+              type="button"
+              onClick={handleResetZoom}
+              className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-[11px] text-neutral-200 transition-colors cursor-pointer"
+            >
+              Reset
+            </button>
+          </Tooltip>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { FileText, Download, Copy, Check, ExternalLink, Eye, Code, Sparkles } fr
 import { toast } from 'sonner';
 import { portfolioData } from '../../../data/portfolio';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 export const ResumeApp: React.FC = () => {
   const { themeMode, accentColor } = useGnomeStore();
@@ -141,42 +142,46 @@ English: B2 (Professional Working) | German: A1 (Elementary / Active Study)
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={handleCopyText}
-            className={`hidden sm:flex px-2.5 py-1 rounded-md text-xs font-medium items-center gap-1.5 transition-colors cursor-pointer border ${
-              themeMode === 'dark'
-                ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
-                : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-800 border-neutral-300'
-            }`}
-            title="Copy plain text"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied' : 'Copy Text'}</span>
-          </button>
+          <Tooltip content="Copy raw plain text to clipboard" side="bottom">
+            <button
+              type="button"
+              onClick={handleCopyText}
+              className={`hidden sm:flex px-2.5 py-1 rounded-md text-xs font-medium items-center gap-1.5 transition-colors cursor-pointer border ${
+                themeMode === 'dark'
+                  ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
+                  : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-800 border-neutral-300'
+              }`}
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Copied' : 'Copy Text'}</span>
+            </button>
+          </Tooltip>
 
-          <button
-            type="button"
-            onClick={() => handleDownload('pdf')}
-            className="px-3 py-1 rounded-md bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download PDF</span>
-          </button>
+          <Tooltip content="Download ATS-friendly PDF resume" side="bottom">
+            <button
+              type="button"
+              onClick={() => handleDownload('pdf')}
+              className="px-3 py-1 rounded-md bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </button>
+          </Tooltip>
 
-          <button
-            type="button"
-            onClick={() => handleDownload('docx')}
-            className={`hidden md:flex px-2.5 py-1 rounded-md text-xs font-semibold items-center gap-1.5 border transition-colors cursor-pointer ${
-              themeMode === 'dark'
-                ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
-                : 'bg-white hover:bg-neutral-200 text-neutral-800 border-neutral-300'
-            }`}
-            title="Download editable Word format"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Word (.docx)</span>
-          </button>
+          <Tooltip content="Download editable Word format (.docx)" side="bottom">
+            <button
+              type="button"
+              onClick={() => handleDownload('docx')}
+              className={`hidden md:flex px-2.5 py-1 rounded-md text-xs font-semibold items-center gap-1.5 border transition-colors cursor-pointer ${
+                themeMode === 'dark'
+                  ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
+                  : 'bg-white hover:bg-neutral-200 text-neutral-800 border-neutral-300'
+              }`}
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Word (.docx)</span>
+            </button>
+          </Tooltip>
         </div>
       </div>
 

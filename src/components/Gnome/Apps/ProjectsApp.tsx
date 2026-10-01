@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FolderGit2, ExternalLink, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Layers, Terminal, Sparkles } from 'lucide-react';
 import { portfolioData } from '../../../data/portfolio';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 export const ProjectsApp: React.FC = () => {
   const { themeMode, accentColor, t } = useGnomeStore();
@@ -126,17 +127,18 @@ export const ProjectsApp: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <a
-                    href={orig.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold flex items-center gap-1 transition-colors border border-white/10 cursor-pointer"
-                    title="Open GitHub Repository"
-                  >
-                    <span className="hidden sm:inline">{strings.projects.github}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  <Tooltip content="Open GitHub Repository" side="left">
+                    <a
+                      href={orig.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold flex items-center gap-1 transition-colors border border-white/10 cursor-pointer"
+                    >
+                      <span className="hidden sm:inline">{strings.projects.github}</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </Tooltip>
 
                   <button
                     type="button"

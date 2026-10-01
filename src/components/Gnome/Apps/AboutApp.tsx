@@ -35,6 +35,7 @@ import { toast } from 'sonner';
 import { portfolioData } from '../../../data/portfolio';
 import { useGnomeStore } from '../../../store/useGnomeStore';
 import { SUPPORTED_LANGUAGES, LocaleCode } from '../../../types/i18n';
+import { Tooltip } from '../Tooltip';
 
 type SettingsPage = 'appearance' | 'region' | 'about';
 
@@ -157,19 +158,19 @@ export const AboutApp: React.FC = () => {
         <span className="text-xs font-semibold block">{strings.about.accentColor || 'Accent Color'}</span>
         <div className="flex items-center gap-3">
           {accentColors.map((color) => (
-            <button
-              key={color.hex}
-              type="button"
-              onClick={() => handleAccentChange(color.hex, color.name)}
-              className={`w-8 h-8 rounded-full transition-transform hover:scale-110 cursor-pointer relative ${
-                accentColor === color.hex
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-neutral-900 scale-110'
-                  : ''
-              }`}
-              style={{ backgroundColor: color.hex }}
-              title={color.name}
-              aria-label={color.name}
-            />
+            <Tooltip key={color.hex} content={color.name} side="bottom">
+              <button
+                type="button"
+                onClick={() => handleAccentChange(color.hex, color.name)}
+                className={`w-8 h-8 rounded-full transition-transform hover:scale-110 cursor-pointer relative ${
+                  accentColor === color.hex
+                    ? 'ring-2 ring-white ring-offset-2 ring-offset-neutral-900 scale-110'
+                    : ''
+                }`}
+                style={{ backgroundColor: color.hex }}
+                aria-label={color.name}
+              />
+            </Tooltip>
           ))}
         </div>
       </div>

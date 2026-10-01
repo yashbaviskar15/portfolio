@@ -17,6 +17,7 @@ import {
 import { WindowId } from '../../types/gnome';
 import { useNetworkDevice } from '../../hooks/useNetworkDevice';
 import { useGnomeStore } from '../../store/useGnomeStore';
+import { Tooltip } from './Tooltip';
 
 interface ConkyWidgetProps {
   onOpenApp: (appId: WindowId) => void;
@@ -103,16 +104,17 @@ export const ConkyWidget: React.FC<ConkyWidgetProps> = ({ onOpenApp }) => {
       aria-label="System Monitor Widget"
     >
       {isCollapsed ? (
-        <button
-          type="button"
-          onClick={() => setIsCollapsed(false)}
-          className="p-2 rounded-xl bg-[#121214]/90 border border-white/10 backdrop-blur-md shadow-lg text-orange-400 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
-          title="Expand System Telemetry Widget"
-        >
-          <Activity className="w-4 h-4 text-orange-400" />
-          <span className="text-[10px] font-bold">SYSTEM TELEMETRY</span>
-          <ChevronLeft className="w-3.5 h-3.5" />
-        </button>
+        <Tooltip content="Expand System Telemetry Widget" side="left">
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(false)}
+            className="p-2 rounded-xl bg-[#121214]/90 border border-white/10 backdrop-blur-md shadow-lg text-orange-400 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Activity className="w-4 h-4 text-orange-400" />
+            <span className="text-[10px] font-bold">SYSTEM TELEMETRY</span>
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+        </Tooltip>
       ) : (
         <div className="w-76 p-3.5 rounded-xl bg-[#121214]/90 border border-white/10 backdrop-blur-md shadow-xl space-y-2.5 relative">
           {/* Header / Hostname + Collapse Button */}
@@ -125,14 +127,15 @@ export const ConkyWidget: React.FC<ConkyWidgetProps> = ({ onOpenApp }) => {
               <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
                 {fps} FPS
               </span>
-              <button
-                type="button"
-                onClick={() => setIsCollapsed(true)}
-                className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer"
-                title="Collapse widget"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <Tooltip content="Collapse widget" side="left">
+                <button
+                  type="button"
+                  onClick={() => setIsCollapsed(true)}
+                  className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </Tooltip>
             </div>
           </div>
 

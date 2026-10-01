@@ -30,6 +30,7 @@ import { WindowId } from '../../types/gnome';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { SUPPORTED_LANGUAGES } from '../../types/i18n';
 import { useNetworkDevice } from '../../hooks/useNetworkDevice';
+import { Tooltip } from './Tooltip';
 
 interface TopBarProps {
   onToggleActivities: () => void;
@@ -214,55 +215,58 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
       >
         {/* Left: Activities Button + Recruiter View Pill + Help Menu */}
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <button
-            type="button"
-            onClick={onToggleActivities}
-            className={`px-2.5 sm:px-3 py-0.5 rounded-full text-[11.5px] sm:text-xs font-semibold tracking-wide transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-              isActivitiesOpen
-                ? 'bg-orange-600 text-white shadow-xs'
-                : themeMode === 'dark'
-                ? 'text-neutral-200 hover:bg-white/15'
-                : 'text-neutral-800 hover:bg-black/10'
-            }`}
-            title="Toggle Activities Overview (Super / Ctrl+Space)"
-            aria-label="Activities Overview"
-          >
-            {strings.topbar.activities}
-          </button>
+          <Tooltip content="Activities Overview" shortcut="Super" side="bottom" align="start">
+            <button
+              type="button"
+              onClick={onToggleActivities}
+              className={`px-2.5 sm:px-3 py-0.5 rounded-full text-[11.5px] sm:text-xs font-semibold tracking-wide transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
+                isActivitiesOpen
+                  ? 'bg-orange-600 text-white shadow-xs'
+                  : themeMode === 'dark'
+                  ? 'text-neutral-200 hover:bg-white/15'
+                  : 'text-neutral-800 hover:bg-black/10'
+              }`}
+              aria-label="Activities Overview"
+            >
+              {strings.topbar.activities}
+            </button>
+          </Tooltip>
 
           {/* Recruiter Instant View Button */}
-          <button
-            type="button"
-            onClick={toggleRecruiterView}
-            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-            title="Open Executive Recruiter View (One-Page Resume Summary)"
-          >
-            <Sparkles className="w-3 h-3" />
-            <span className="hidden sm:inline">Recruiter View</span>
-            <span className="sm:hidden">CV</span>
-          </button>
+          <Tooltip content="One-Page Resume Summary" side="bottom">
+            <button
+              type="button"
+              onClick={toggleRecruiterView}
+              className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span className="hidden sm:inline">Recruiter View</span>
+              <span className="sm:hidden">CV</span>
+            </button>
+          </Tooltip>
 
           {/* Help Menu Icon */}
           <div className="relative" ref={helpMenuRef}>
-            <button
-              type="button"
-              onClick={() => {
-                setHelpMenuOpen(!helpMenuOpen);
-                setQuickSettingsOpen(false);
-                setNotificationsCenterOpen(false);
-              }}
-              className={`p-1 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-                helpMenuOpen
-                  ? 'bg-white/20'
-                  : themeMode === 'dark'
-                  ? 'text-neutral-400 hover:bg-white/10 hover:text-white'
-                  : 'text-neutral-600 hover:bg-black/10 hover:text-neutral-900'
-              }`}
-              title="Help & Tour"
-              aria-label="Help Menu"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-            </button>
+            <Tooltip content="Help & Guided Tour" side="bottom">
+              <button
+                type="button"
+                onClick={() => {
+                  setHelpMenuOpen(!helpMenuOpen);
+                  setQuickSettingsOpen(false);
+                  setNotificationsCenterOpen(false);
+                }}
+                className={`p-1 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
+                  helpMenuOpen
+                    ? 'bg-white/20'
+                    : themeMode === 'dark'
+                    ? 'text-neutral-400 hover:bg-white/10 hover:text-white'
+                    : 'text-neutral-600 hover:bg-black/10 hover:text-neutral-900'
+                }`}
+                aria-label="Help Menu"
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           </div>
         </div>
 
@@ -294,36 +298,37 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
         {/* Right: System Indicators Pill */}
         <div className="flex items-center gap-1 sm:gap-1.5 relative" ref={quickSettingsRef}>
           {/* Compact "EN" language indicator */}
-          <button
-            type="button"
-            onClick={openRegionSettings}
-            className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono transition-colors cursor-pointer ${
-              themeMode === 'dark'
-                ? 'text-neutral-400 hover:text-white hover:bg-white/10'
-                : 'text-neutral-600 hover:text-neutral-900 hover:bg-black/5'
-            }`}
-            title={`Language: ${currentLang.nativeName} — Click to open Region & Language settings`}
-          >
-            {currentLang.shortCode}
-          </button>
+          <Tooltip content={`Language: ${currentLang.nativeName}`} side="bottom">
+            <button
+              type="button"
+              onClick={openRegionSettings}
+              className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono transition-colors cursor-pointer ${
+                themeMode === 'dark'
+                  ? 'text-neutral-400 hover:text-white hover:bg-white/10'
+                  : 'text-neutral-600 hover:text-neutral-900 hover:bg-black/5'
+              }`}
+            >
+              {currentLang.shortCode}
+            </button>
+          </Tooltip>
 
-          <button
-            type="button"
-            onClick={() => {
-              setQuickSettingsOpen(!quickSettingsOpen);
-              setNotificationsCenterOpen(false);
-              setHelpMenuOpen(false);
-            }}
-            className={`flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-0.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
-              quickSettingsOpen
-                ? 'bg-white/20 font-semibold'
-                : themeMode === 'dark'
-                ? 'text-neutral-200 hover:bg-white/10'
-                : 'text-neutral-800 hover:bg-black/10'
-            }`}
-            title={strings.topbar.quickSettings}
-            aria-label={strings.topbar.quickSettings}
-          >
+          <Tooltip content={strings.topbar.quickSettings} side="bottom" align="end">
+            <button
+              type="button"
+              onClick={() => {
+                setQuickSettingsOpen(!quickSettingsOpen);
+                setNotificationsCenterOpen(false);
+                setHelpMenuOpen(false);
+              }}
+              className={`flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-0.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
+                quickSettingsOpen
+                  ? 'bg-white/20 font-semibold'
+                  : themeMode === 'dark'
+                  ? 'text-neutral-200 hover:bg-white/10'
+                  : 'text-neutral-800 hover:bg-black/10'
+              }`}
+              aria-label={strings.topbar.quickSettings}
+            >
             <motion.div
               animate={{ opacity: [1, 0.7, 1] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
@@ -349,6 +354,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
 
             <Power className="w-3 h-3 text-orange-400" />
           </button>
+        </Tooltip>
         </div>
       </header>
 
@@ -532,14 +538,16 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                                 {notif.message}
                               </p>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => dismissNotification(notif.id)}
-                              className="p-1 rounded hover:bg-white/10 text-neutral-500 hover:text-white cursor-pointer"
-                              title="Dismiss"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
+                            <Tooltip content="Dismiss" side="left">
+                              <button
+                                type="button"
+                                onClick={() => dismissNotification(notif.id)}
+                                className="p-1 rounded hover:bg-white/10 text-neutral-500 hover:text-white cursor-pointer"
+                                aria-label="Dismiss notification"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </Tooltip>
                           </motion.div>
                         );
                       })}
@@ -702,14 +710,16 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                   </span>
                   <div className="flex items-center gap-1.5">
                     <span className="font-mono text-[10px]">{volume}%</span>
-                    <button
-                      type="button"
-                      onClick={() => setSoundExpanded(!soundExpanded)}
-                      className="p-0.5 rounded hover:bg-white/10 cursor-pointer transition-colors"
-                      title="Output device"
-                    >
-                      <ChevronDown className={`w-3 h-3 transition-transform ${soundExpanded ? 'rotate-180' : ''}`} />
-                    </button>
+                    <Tooltip content="Output device" side="top">
+                      <button
+                        type="button"
+                        onClick={() => setSoundExpanded(!soundExpanded)}
+                        className="p-0.5 rounded hover:bg-white/10 cursor-pointer transition-colors"
+                        aria-label="Output device"
+                      >
+                        <ChevronDown className={`w-3 h-3 transition-transform ${soundExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
                 <input
@@ -780,7 +790,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                       ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
                       : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800'
                   }`}
-                  title="System Settings"
+                  aria-label="System Settings"
                 >
                   <Settings className="w-3.5 h-3.5" />
                   <span>{strings.topbar.settings}</span>
@@ -797,7 +807,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                       ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
                       : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-800'
                   }`}
-                  title="Lock Screen (Super+L)"
+                  aria-label="Lock Screen (Super+L)"
                 >
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
                   <span>Lock</span>
@@ -810,7 +820,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleActivities, isActivities
                     setQuickSettingsOpen(false);
                   }}
                   className="p-2 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 flex items-center gap-1.5 transition-colors cursor-pointer"
-                  title="Power Off / Shut Down"
+                  aria-label="Power Off / Shut Down"
                 >
                   <Power className="w-3.5 h-3.5" />
                   <span>{strings.topbar.powerOff}</span>

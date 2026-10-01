@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Terminal as TerminalIcon, Plus, X, Maximize2, Minimize2, Copy, Check, Sparkles, ChevronRight, Shield, RefreshCw } from 'lucide-react';
 import { bashInterpreter, ShellResult } from '../../../lib/bashInterpreter';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 interface TerminalTab {
   id: string;
@@ -310,50 +311,54 @@ export const TerminalApp: React.FC = () => {
     >
       {/* Floating Minimal Tooltip Controls (Theme / Font / Copy) */}
       <div className="absolute top-2.5 right-3.5 flex items-center gap-1.5 text-xs text-neutral-400 z-10 opacity-40 hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-white/10 select-none">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setFontSize(Math.max(10, fontSize - 1));
-          }}
-          className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 transition-colors cursor-pointer"
-          title="Decrease Font Size"
-        >
-          A-
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setFontSize(Math.min(18, fontSize + 1));
-          }}
-          className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 transition-colors cursor-pointer"
-          title="Increase Font Size"
-        >
-          A+
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setTheme(theme === 'yaru' ? 'matrix' : theme === 'matrix' ? 'dracula' : 'yaru');
-          }}
-          className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 font-mono transition-colors cursor-pointer"
-          title="Toggle Terminal Theme"
-        >
-          {theme.toUpperCase()}
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCopyOutput();
-          }}
-          className="p-1 rounded hover:bg-white/15 text-neutral-300 transition-colors cursor-pointer"
-          title="Copy Output"
-        >
-          {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-        </button>
+        <Tooltip content="Decrease Font Size" side="bottom">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setFontSize(Math.max(10, fontSize - 1));
+            }}
+            className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 transition-colors cursor-pointer"
+          >
+            A-
+          </button>
+        </Tooltip>
+        <Tooltip content="Increase Font Size" side="bottom">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setFontSize(Math.min(18, fontSize + 1));
+            }}
+            className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 transition-colors cursor-pointer"
+          >
+            A+
+          </button>
+        </Tooltip>
+        <Tooltip content="Toggle Terminal Theme" side="bottom">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setTheme(theme === 'yaru' ? 'matrix' : theme === 'matrix' ? 'dracula' : 'yaru');
+            }}
+            className="px-1.5 py-0.5 rounded hover:bg-white/15 text-[10px] text-neutral-300 font-mono transition-colors cursor-pointer"
+          >
+            {theme.toUpperCase()}
+          </button>
+        </Tooltip>
+        <Tooltip content="Copy Output" side="bottom" align="end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopyOutput();
+            }}
+            className="p-1 rounded hover:bg-white/15 text-neutral-300 transition-colors cursor-pointer"
+          >
+            {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+          </button>
+        </Tooltip>
       </div>
 
       {/* Tabs Header - ONLY visible when user creates 2 or more tabs */}
@@ -384,17 +389,18 @@ export const TerminalApp: React.FC = () => {
                 </button>
               </div>
             ))}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCreateTab();
-              }}
-              className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-              title="New Tab (Ctrl+Shift+T)"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
+            <Tooltip content="New Tab" shortcut="Ctrl+Shift+T" side="bottom">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCreateTab();
+                }}
+                className="p-1 rounded hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           </div>
         </div>
       )}

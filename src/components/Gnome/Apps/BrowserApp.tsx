@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { portfolioData } from '../../../data/portfolio';
 import { useGnomeStore } from '../../../store/useGnomeStore';
+import { Tooltip } from '../Tooltip';
 
 const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -103,34 +104,37 @@ export const BrowserApp: React.FC = () => {
       {/* GNOME Web URL & Navigation Bar */}
       <div className="h-11 px-3 border-b border-white/10 bg-neutral-950/90 flex items-center gap-2 text-xs shrink-0">
         <div className="flex items-center gap-1 text-neutral-400">
-          <button
-            type="button"
-            onClick={handleBack}
-            disabled={historyIdx <= 0}
-            className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer"
-            title="Back"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={handleForward}
-            disabled={historyIdx >= history.length - 1}
-            className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer"
-            title="Forward"
-          >
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={handleReload}
-            className={`p-1.5 rounded-lg hover:bg-white/10 hover:text-white cursor-pointer ${
-              isReloading ? 'animate-spin text-orange-400' : ''
-            }`}
-            title="Reload Page"
-          >
-            <RotateCw className="w-3.5 h-3.5" />
-          </button>
+          <Tooltip content="Back" side="bottom">
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={historyIdx <= 0}
+              className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Forward" side="bottom">
+            <button
+              type="button"
+              onClick={handleForward}
+              disabled={historyIdx >= history.length - 1}
+              className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white disabled:opacity-30 cursor-pointer"
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Reload Page" shortcut="Ctrl+R" side="bottom">
+            <button
+              type="button"
+              onClick={handleReload}
+              className={`p-1.5 rounded-lg hover:bg-white/10 hover:text-white cursor-pointer ${
+                isReloading ? 'animate-spin text-orange-400' : ''
+              }`}
+            >
+              <RotateCw className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* URL Bar Form */}
@@ -145,15 +149,16 @@ export const BrowserApp: React.FC = () => {
           />
         </form>
 
-        <a
-          href="https://github.com/yashbaviskar15"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-neutral-200 text-xs flex items-center gap-1 transition-colors cursor-pointer"
-          title="Open in external browser"
-        >
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
+        <Tooltip content="Open in external browser" side="bottom">
+          <a
+            href="https://github.com/yashbaviskar15"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-neutral-200 text-xs flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </Tooltip>
       </div>
 
       {/* Bookmarks Bar */}

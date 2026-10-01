@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { portfolioData } from '../../data/portfolio';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { springPhysics } from '../../lib/animations';
+import { Tooltip } from './Tooltip';
 
 const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -120,19 +121,20 @@ export const RecruiterView: React.FC<RecruiterViewProps> = ({ isOpen, onClose })
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
-                    themeMode === 'dark'
-                      ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
-                      : 'bg-white hover:bg-neutral-200 text-neutral-800 border-neutral-300'
-                  }`}
-                  title="Print summary"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Print</span>
-                </button>
+                <Tooltip content="Print summary" shortcut="Ctrl+P" side="bottom">
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
+                      themeMode === 'dark'
+                        ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border-white/10'
+                        : 'bg-white hover:bg-neutral-200 text-neutral-800 border-neutral-300'
+                    }`}
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print</span>
+                  </button>
+                </Tooltip>
 
                 <div className="flex items-center gap-1.5">
                   <button
