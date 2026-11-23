@@ -294,7 +294,7 @@ export const ContactApp: React.FC = () => {
               </label>
               <input
                 type="text"
-                placeholder="Cloud / DevOps Opportunity"
+                placeholder="Cloud Support Opportunity"
                 value={form.subject}
                 onChange={(e) => setForm({ ...form, subject: e.target.value })}
                 className={`w-full p-2.5 rounded-xl border text-xs transition-colors focus:outline-none ${

@@ -83,7 +83,7 @@ export const SoftwareCenterApp: React.FC = () => {
       version: '3.4.0',
       rating: 4.9,
       size: '18.4 MB',
-      description: 'Automated Continuous Integration and Continuous Deployment pipelines triggered on commit to test, build, lint, and deploy container images to AWS ECR/ECS.',
+      description: 'Continuous Integration and Continuous Delivery workflow that lints and tests code, then builds and publishes container images.',
       icon: <Sparkles className="w-6 h-6 text-purple-400" />,
       tags: ['Workflows', 'ECR Push', 'Automated Testing'],
       projectAction: 'projects',

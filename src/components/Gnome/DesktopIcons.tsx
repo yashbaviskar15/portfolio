@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FolderGit2, FileText, Terminal, Mail, Zap, Clock } from 'lucide-react';
 import { WindowId } from '../../types/gnome';
@@ -24,7 +24,7 @@ export const DesktopIcons: React.FC<DesktopIconsProps> = ({ onOpenApp, isActivit
   const iconRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const strings = t();
 
-  const desktopItems: DesktopItem[] = [
+  const desktopItems = useMemo<DesktopItem[]>(() => [
     {
       id: 'projects',
       label: strings.desktop.projects,
@@ -91,7 +91,7 @@ export const DesktopIcons: React.FC<DesktopIconsProps> = ({ onOpenApp, isActivit
         </div>
       ),
     },
-  ];
+  ], [strings]);
 
   // Mouse Parallax for 3D spatial depth (desktop only)
   useEffect(() => {

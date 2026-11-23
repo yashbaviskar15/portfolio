@@ -824,7 +824,7 @@ Focus: Computer Networking, Operating Systems (Linux), Cloud Computing Fundament
                     permissions: '-rw-r--r--',
                     owner: 'yash',
                     group: 'yash',
-                    content: `# Cloud & DevOps Hands-On Lab Projects
+                    content: `# Cloud Support & Hands-On Lab Projects
 - Designed modular Terraform AWS infrastructure with VPC, ALB, EC2, RDS, and S3 state locking (validated with terraform plan/validate — not applied on AWS).
 - Designed GitHub Actions CI/CD pipelines with linting and container build steps.
 - Containerized microservices with Docker; defined Kubernetes manifests while learning Kubernetes basics.

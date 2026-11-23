@@ -62,7 +62,7 @@ export const GuidedTour: React.FC = () => {
     },
     {
       title: 'Skills Visualizer',
-      description: 'Watch your skill bars animate — grouped by Cloud, DevOps, Monitoring, and Automation categories.',
+      description: 'Watch your skill bars animate — grouped by Cloud Support, IaC & CI/CD, Containers & Observability, and Linux categories.',
       targetHint: 'Skills App',
     },
     {

@@ -1222,7 +1222,7 @@ Type 'projects', 'skills', or 'resume' to explore work or open CV.
         return {
           stdout: `YashOS 24.04 LTS — Interactive Bash Shell Guide:
   File Operations:   ls, cd, pwd, cat, head, tail, grep, find, wc, tree, mkdir, rm, cp, mv, touch
-  DevOps Tools:      terraform [plan|init], kubectl [get pods|nodes], docker [ps|images], aws sts, git log
+  Cloud & Container Tools: terraform [plan|init], kubectl [get pods|nodes], docker [ps|images], aws sts, git log
   System Commands:   neofetch, top, htop, uptime, free, df, ip a, ping, systemctl status yash.service, crontab -l
   Portfolio Links:   resume, contact, skills, projects, open <file>
   Pipes & Features:  Supports pipes '|', redirects '>', '>>', '<', '&&', '||', variables '$VAR', globbing '*'

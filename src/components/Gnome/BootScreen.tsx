@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Terminal, Shield, ArrowRight, Play, Power, CheckCircle2 } from 'lucide-react';
 import { BootStage } from '../../types/gnome';
@@ -9,6 +9,28 @@ interface BootScreenProps {
   onOpenRecruiterView: () => void;
 }
 
+const grubOptions = [
+  'YashOS 24.04 LTS (Portfolio Edition) - Linux 6.8.0-generic',
+  'Advanced options for YashOS',
+  'Executive Recruiter Mode (Skip boot & open instant ATS summary)',
+];
+
+const systemdLogs = [
+  'Started Linux Kernel 6.8.0-45-generic x86_64',
+  'Mounted Root Virtual Filesystem (VFS) with /home/yash single source of truth',
+  'Reached target Local Encrypted Storage & S3 State Locks',
+  'Started Docker Application Container Engine (dockerd 26.0.1)',
+  'Started containerd container runtime engine',
+  'Reached target Documented Multi-AZ AWS Architecture (Terraform validated)',
+  'Initialized Kubernetes (k3s) Node & CoreDNS mesh',
+  'Started Prometheus Telemetry Node Exporter (port 9100)',
+  'Started Grafana Observability Dashboard Service (port 3000)',
+  'Reached target Network Time & AWS CloudWatch Daemon',
+  'Started OpenSSH Server (sshd - ED25519 cloud access)',
+  'Reached target Multi-AZ Architecture Documentation & Lab Environment',
+  'Starting GNOME Display Manager (GDM 46.0)...',
+];
+
 export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete, onOpenRecruiterView }) => {
   const [stage, setStage] = useState<BootStage>('bios');
   const [grubIndex, setGrubIndex] = useState<number>(0);
@@ -16,27 +38,21 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete, onOpenRe
   const [systemdLogIndex, setSystemdLogIndex] = useState<number>(0);
   const { setRecruiterViewOpen } = useGnomeStore();
 
-  const grubOptions = [
-    'YashOS 24.04 LTS (Portfolio Edition) - Linux 6.8.0-generic',
-    'Advanced options for YashOS',
-    'Executive Recruiter Mode (Skip boot & open instant ATS summary)',
-  ];
-
-  const systemdLogs = [
-    'Started Linux Kernel 6.8.0-45-generic x86_64',
-    'Mounted Root Virtual Filesystem (VFS) with /home/yash single source of truth',
-    'Reached target Local Encrypted Storage & S3 State Locks',
-    'Started Docker Application Container Engine (dockerd 26.0.1)',
-    'Started containerd container runtime engine',
-    'Reached target Documented Multi-AZ AWS Architecture (Terraform validated)',
-    'Initialized Kubernetes (k3s) Node & CoreDNS mesh',
-    'Started Prometheus Telemetry Node Exporter (port 9100)',
-    'Started Grafana Observability Dashboard Service (port 3000)',
-    'Reached target Network Time & AWS CloudWatch Daemon',
-    'Started OpenSSH Server (sshd - ED25519 cloud access)',
-    'Reached target Multi-AZ Architecture Documentation & Lab Environment',
-    'Starting GNOME Display Manager (GDM 46.0)...',
-  ];
+  const proceedFromGrub = useCallback(
+    (idx: number) => {
+      if (idx === 2) {
+        // Recruiter option
+        try {
+          window.sessionStorage.setItem('yashos_boot_done', 'true');
+        } catch {}
+        onBootComplete();
+        onOpenRecruiterView();
+        return;
+      }
+      setStage('systemd');
+    },
+    [onBootComplete, onOpenRecruiterView]
+  );
 
   // 1. BIOS Stage -> GRUB
   useEffect(() => {
@@ -92,20 +108,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete, onOpenRe
       clearInterval(timer);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [stage, grubIndex]);
-
-  const proceedFromGrub = (idx: number) => {
-    if (idx === 2) {
-      // Recruiter option
-      try {
-        window.sessionStorage.setItem('yashos_boot_done', 'true');
-      } catch {}
-      onBootComplete();
-      onOpenRecruiterView();
-      return;
-    }
-    setStage('systemd');
-  };
+  }, [stage, grubIndex, proceedFromGrub]);
 
   // 3. Systemd Scrolling Logs
   useEffect(() => {
