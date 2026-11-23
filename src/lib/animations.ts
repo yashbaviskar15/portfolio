@@ -3,22 +3,22 @@ import { Variants, Transition } from 'framer-motion';
 // Authentic GNOME Shell 46 snappy spring physics (stiffness: 400, damping: 17 for dock / stiffness: 300, damping: 24 for windows)
 export const dockSpring: Transition = {
   type: 'spring',
-  stiffness: 400,
-  damping: 17,
-  mass: 0.8,
+  stiffness: 480,
+  damping: 22,
+  mass: 0.7,
 };
 
 export const windowSpring: Transition = {
   type: 'spring',
-  stiffness: 420,
-  damping: 28,
-  mass: 0.6,
+  stiffness: 480,
+  damping: 30,
+  mass: 0.55,
 };
 
 export const gnomeFastSpring: Transition = {
   type: 'spring',
-  stiffness: 480,
-  damping: 28,
+  stiffness: 560,
+  damping: 30,
 };
 
 export const gnomeSmoothEase: Transition = {

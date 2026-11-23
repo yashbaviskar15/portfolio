@@ -145,7 +145,7 @@ export const DesktopIcons: React.FC<DesktopIconsProps> = ({ onOpenApp, isActivit
     <motion.div
       animate={{ x: mouseOffset.x, y: mouseOffset.y }}
       transition={{ type: 'spring', stiffness: 100, damping: 30 }}
-      className="hidden md:grid grid-cols-1 gap-3 absolute top-12 left-5 sm:left-6 lg:left-[104px] z-10 select-none"
+      className="hidden md:grid grid-cols-1 gap-3 absolute top-12 left-5 sm:left-6 lg:left-[140px] z-10 select-none"
     >
       {desktopItems.map((item, idx) => {
         const isSelected = selectedDesktopIndex === idx;
