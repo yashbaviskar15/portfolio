@@ -2,6 +2,9 @@
   "name": "yash-portfolio",
   "private": true,
   "version": "2.0.0",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
