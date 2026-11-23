@@ -412,10 +412,10 @@ export const GnomeDesktop: React.FC = () => {
           exit={{ opacity: 0 }}
           className={`fixed pointer-events-none z-50 rounded-2xl bg-orange-500/15 border-2 border-orange-500/60 backdrop-blur-xs transition-all duration-150 ${
             activeSnapPreview === 'left'
-              ? 'left-2 top-10 bottom-2 w-[calc(50vw-12px)]'
+              ? 'left-2 top-10 bottom-2 w-[calc(50vw-12px)] lg:left-[92px] lg:w-[calc((100vw-100px)/2)]'
               : activeSnapPreview === 'right'
-              ? 'right-2 top-10 bottom-2 w-[calc(50vw-12px)]'
-              : 'inset-2 top-10'
+              ? 'right-2 top-10 bottom-2 w-[calc(50vw-12px)] lg:w-[calc((100vw-100px)/2)]'
+              : 'inset-2 top-10 lg:left-[92px]'
           }`}
         />
       )}

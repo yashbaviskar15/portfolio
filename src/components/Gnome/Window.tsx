@@ -3,6 +3,7 @@ import { Rnd } from 'react-rnd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Minus, Square, Copy, X, ArrowLeft, RotateCcw, AlertTriangle } from 'lucide-react';
 import { mobileWindowVariants } from '../../lib/animations';
+import { LEFT_DOCK_INSET, BOTTOM_DOCK_INSET, TOP_INSET } from '../../lib/layout';
 import { WindowPosition, WindowSize } from '../../types/gnome';
 import { useGnomeStore } from '../../store/useGnomeStore';
 import { Tooltip } from './Tooltip';
@@ -101,6 +102,7 @@ export const Window: React.FC<WindowProps> = ({
   children,
 }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isWide, setIsWide] = useState<boolean>(false);
   const [isCloseHovered, setIsCloseHovered] = useState<boolean>(false);
   const { themeMode, accentColor } = useGnomeStore();
 
@@ -108,6 +110,7 @@ export const Window: React.FC<WindowProps> = ({
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
+      setIsWide(window.innerWidth >= 1024);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -130,7 +133,7 @@ export const Window: React.FC<WindowProps> = ({
           left: '0px',
           right: '0px',
           width: '100vw',
-          height: 'calc(100dvh - 32px - 56px)',
+          height: `calc(100dvh - 32px - ${BOTTOM_DOCK_INSET}px)`,
           zIndex: zIndex + 30,
         }}
         onClick={onFocus}
@@ -187,8 +190,13 @@ export const Window: React.FC<WindowProps> = ({
     );
   }
 
-  // Desktop Maximized Mode: Respectful margins (leaves dock visible & accessible at the bottom!)
+  // Desktop Maximized Mode: Respectful margins (leaves the dock visible & accessible!)
+  // On wide viewports the dock is on the left, so we inset from the left and reclaim
+  // the bottom space; on narrower viewports we keep the bottom dock clearance.
   if (isMaximized) {
+    const maxLeft = isWide ? LEFT_DOCK_INSET : 14;
+    const maxRight = 14;
+    const maxBottom = isWide ? 16 : BOTTOM_DOCK_INSET;
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -197,11 +205,10 @@ export const Window: React.FC<WindowProps> = ({
         transition={{ type: 'spring', stiffness: 520, damping: 32 }}
         style={{
           position: 'fixed',
-          top: '38px',
-          left: '14px',
-          right: '14px',
-          width: 'calc(100vw - 28px)',
-          height: 'calc(100vh - 38px - 74px)',
+          top: `${TOP_INSET}px`,
+          left: `${maxLeft}px`,
+          width: `calc(100vw - ${maxLeft + maxRight}px)`,
+          height: `calc(100vh - ${TOP_INSET}px - ${maxBottom}px)`,
           zIndex,
         }}
         onClick={onFocus}

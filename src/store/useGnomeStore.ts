@@ -4,6 +4,7 @@ import { LocaleCode, TranslationSchema, SUPPORTED_LANGUAGES } from '../types/i18
 import { translations, detectBrowserLocale } from '../locales/translations';
 import { sounds } from '../lib/soundEffects';
 import { vfs } from '../lib/virtualFileSystem';
+import { LG_BREAKPOINT, LEFT_DOCK_INSET, BOTTOM_DOCK_INSET, TOP_INSET } from '../lib/layout';
 
 export const wallpaperPresets: WallpaperPreset[] = [
   {
@@ -64,9 +65,11 @@ const createInitialNotifications = (): NotificationItem[] => {
 
 const getCenteredPosition = (w = 780, h = 490): { x: number; y: number } => {
   if (typeof window !== 'undefined') {
-    const width = Math.min(w, window.innerWidth - 80);
+    const wide = window.innerWidth >= LG_BREAKPOINT;
+    const minX = wide ? LEFT_DOCK_INSET : 70;
+    const width = Math.min(w, window.innerWidth - (wide ? LEFT_DOCK_INSET + 36 : 80));
     const height = Math.min(h, window.innerHeight - 80);
-    const x = Math.max(70, Math.floor((window.innerWidth - width) / 2));
+    const x = Math.max(minX, Math.floor((window.innerWidth - width) / 2));
     const y = Math.max(45, Math.floor((window.innerHeight - height) / 2));
     return { x, y };
   }
@@ -512,11 +515,16 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
               if (w.id === id) {
                 const screenW = typeof window !== 'undefined' ? window.innerWidth : 1280;
                 const screenH = typeof window !== 'undefined' ? window.innerHeight : 800;
-                const standardW = Math.min(780, Math.max(480, screenW < 1200 ? screenW - 60 : Math.floor(screenW * 0.54)));
-                const standardH = Math.min(500, Math.max(340, screenH - 120));
+                const wide = screenW >= LG_BREAKPOINT;
+                const availableW = screenW - (wide ? LEFT_DOCK_INSET : 0);
+                const standardW = Math.min(780, Math.max(460, wide ? Math.floor(availableW * 0.6) : screenW - 56));
+                const standardH = Math.min(520, Math.max(340, screenH - 130));
                 const centered = getCenteredPosition(standardW, standardH);
-                const initialX = Math.min(Math.max(28, centered.x + cascadeOffsetX), Math.max(28, screenW - standardW - 20));
-                const initialY = Math.min(Math.max(40, centered.y + cascadeOffsetY), Math.max(40, screenH - standardH - 74));
+                const minX = wide ? LEFT_DOCK_INSET + 8 : 20;
+                const minY = wide ? TOP_INSET + 6 : 40;
+                const bottomReserve = wide ? 16 : BOTTOM_DOCK_INSET;
+                const initialX = Math.min(Math.max(minX, centered.x + cascadeOffsetX), Math.max(minX, screenW - standardW - 20));
+                const initialY = Math.min(Math.max(minY, centered.y + cascadeOffsetY), Math.max(minY, screenH - standardH - bottomReserve));
 
                 return {
                   ...w,
@@ -588,8 +596,11 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
         set((state) => {
           const screenW = typeof window !== 'undefined' ? window.innerWidth : 1280;
           const screenH = typeof window !== 'undefined' ? window.innerHeight : 800;
-          const clampedX = Math.max(0, Math.min(position.x, screenW - 80));
-          const clampedY = Math.max(32, Math.min(position.y, screenH - 50));
+          const wide = screenW >= LG_BREAKPOINT;
+          const minX = wide ? LEFT_DOCK_INSET : 0;
+          const minY = wide ? TOP_INSET : 32;
+          const clampedX = Math.max(minX, Math.min(position.x, screenW - 80));
+          const clampedY = Math.max(minY, Math.min(position.y, screenH - 50));
 
           return {
             windows: state.windows.map((w) =>
@@ -598,8 +609,8 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
                     ...w,
                     position: { x: clampedX, y: clampedY },
                     size: {
-                      width: Math.min(size.width, screenW),
-                      height: Math.min(size.height, screenH - 32),
+                      width: Math.min(size.width, screenW - minX),
+                      height: Math.min(size.height, screenH - minY),
                     },
                   }
                 : w
@@ -634,12 +645,15 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
           return;
         }
 
-        const topMargin = 34;
-        const bottomMargin = 74;
-        const sideMargin = 14;
+        const wide = screenW >= LG_BREAKPOINT;
+        const topMargin = wide ? TOP_INSET : 34;
+        const bottomMargin = wide ? 16 : BOTTOM_DOCK_INSET;
+        const sideMargin = wide ? LEFT_DOCK_INSET + 8 : 14;
+        const rightMargin = 14;
         const gutter = 10;
         const availableHeight = Math.max(300, screenH - topMargin - bottomMargin);
-        const halfWidth = Math.max(340, Math.floor((screenW - sideMargin * 2 - gutter) / 2));
+        const availWidth = screenW - sideMargin - rightMargin;
+        const halfWidth = Math.max(320, Math.floor((availWidth - gutter) / 2));
 
         if (direction === 'left') {
           updateWindowBounds(
@@ -650,7 +664,7 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
         } else if (direction === 'right') {
           updateWindowBounds(
             activeWindowId,
-            { x: screenW - sideMargin - halfWidth, y: topMargin },
+            { x: screenW - rightMargin - halfWidth, y: topMargin },
             { width: halfWidth, height: availableHeight }
           );
         }
@@ -713,13 +727,16 @@ export const useGnomeStore = create<GnomeStore>()((set, get) => ({
         if (typeof window === 'undefined') return;
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
+        const wide = screenW >= LG_BREAKPOINT;
+        const minX = wide ? LEFT_DOCK_INSET : 0;
+        const minY = wide ? TOP_INSET : 32;
 
         set((state) => ({
           windows: state.windows.map((w) => {
-            const clampedX = Math.max(0, Math.min(w.position.x, Math.max(0, screenW - 100)));
-            const clampedY = Math.max(32, Math.min(w.position.y, Math.max(32, screenH - 60)));
-            const clampedW = Math.min(w.size.width, Math.max(280, screenW - 20));
-            const clampedH = Math.min(w.size.height, Math.max(200, screenH - 50));
+            const clampedX = Math.max(minX, Math.min(w.position.x, Math.max(minX, screenW - 100)));
+            const clampedY = Math.max(minY, Math.min(w.position.y, Math.max(minY, screenH - 60)));
+            const clampedW = Math.min(w.size.width, Math.max(280, screenW - minX - 16));
+            const clampedH = Math.min(w.size.height, Math.max(200, screenH - minY - 16));
 
             return {
               ...w,
