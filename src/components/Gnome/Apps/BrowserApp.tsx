@@ -186,7 +186,7 @@ export const BrowserApp: React.FC = () => {
             <div className="p-5 rounded-2xl bg-neutral-900 border border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
-                  <Github className="w-6 h-6" />
+                  <GithubIcon className="w-6 h-6" />
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-white font-heading">github.com/yashbaviskar15</h2>

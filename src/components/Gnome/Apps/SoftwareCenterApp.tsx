@@ -70,9 +70,9 @@ export const SoftwareCenterApp: React.FC = () => {
       version: '26.0.1-k3s',
       rating: 4.8,
       size: '112 MB',
-      description: 'Multi-stage Dockerfile optimization, Kubernetes declarative deployments, ClusterIP/NodePort/Ingress routing, and zero-downtime rolling updates.',
+      description: 'Multi-stage Dockerfile optimization, Kubernetes declarative manifests (learning basics), and ClusterIP/NodePort/Ingress routing concepts.',
       icon: <Server className="w-6 h-6 text-sky-400" />,
-      tags: ['Multi-Stage', 'k3s', 'Rolling Updates', 'Probes'],
+      tags: ['Multi-Stage', 'k3s', 'Manifests', 'Probes'],
       projectAction: 'projects',
     },
     {

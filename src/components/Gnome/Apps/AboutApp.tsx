@@ -8,7 +8,6 @@ import {
   Terminal,
   Server,
   CheckCircle2,
-  Phone,
   Mail,
   Globe,
   Languages,
@@ -100,7 +99,7 @@ export const AboutApp: React.FC = () => {
   const sidebarItems: SidebarItem[] = [
     { id: 'appearance', label: strings.about.desktopAppearance || 'Appearance', shortLabel: 'Appearance', icon: <Palette className="w-4 h-4" /> },
     { id: 'region', label: strings.about.regionalLanguage || 'Region & Language', shortLabel: 'Language', icon: <Languages className="w-4 h-4" /> },
-    { id: 'about', label: strings.about.aboutTitle || 'About', shortLabel: 'About', icon: <Info className="w-4 h-4" /> },
+    { id: 'about', label: strings.about.title || 'About', shortLabel: 'About', icon: <Info className="w-4 h-4" /> },
   ];
 
   const currentLang = SUPPORTED_LANGUAGES.find((l) => l.code === locale) || SUPPORTED_LANGUAGES[0];
@@ -378,7 +377,7 @@ export const AboutApp: React.FC = () => {
   const renderAboutPage = () => (
     <div className="space-y-6">
       <h2 className="text-sm font-bold" style={{ color: accentColor }}>
-        {strings.about.aboutTitle || 'About'}
+        {strings.about.title || 'About'}
       </h2>
 
       {/* Profile Card — avatar with green status ring (no separate floating dot) */}
@@ -442,10 +441,6 @@ export const AboutApp: React.FC = () => {
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3 text-rose-400" />
               <span>{portfolioData.developer.location}</span>
-            </span>
-            <span className="flex items-center gap-1">
-              <Phone className="w-3 h-3 text-emerald-400" />
-              <span>{portfolioData.developer.phone}</span>
             </span>
             <span className="flex items-center gap-1">
               <Mail className="w-3 h-3 text-sky-400" />

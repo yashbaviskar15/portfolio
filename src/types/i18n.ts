@@ -76,6 +76,7 @@ export interface TranslationSchema {
     browser: string;
     monitor: string;
     settings: string;
+    showApps: string;
   };
   desktop: {
     projects: string;

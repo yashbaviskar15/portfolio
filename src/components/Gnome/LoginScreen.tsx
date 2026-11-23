@@ -155,7 +155,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
       {/* Bottom Footer */}
       <div className="text-center text-[11.5px] text-neutral-500 font-mono">
-        Ubuntu Yaru Desktop • Cloud &amp; DevOps Engineer Portfolio Edition
+        Ubuntu Yaru Desktop • Cloud Support Engineer Portfolio Edition
       </div>
     </div>
   );

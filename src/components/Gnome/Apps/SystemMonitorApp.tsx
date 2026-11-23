@@ -373,8 +373,8 @@ export const SystemMonitorApp: React.FC = () => {
                 </button>
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                Full-stack observability infrastructure provisioned on AWS using Terraform and Docker. Collects
-                host metrics via Node Exporter, container telemetry via cAdvisor, and dispatches alerts via Prometheus Alertmanager.
+                Hands-on lab observability setup defined with Terraform and Docker. Collects host metrics via
+                Node Exporter, container telemetry via cAdvisor, and dispatches alerts via Prometheus Alertmanager.
               </p>
             </div>
 
@@ -427,9 +427,9 @@ export const SystemMonitorApp: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-2xl bg-neutral-950/80 border border-white/10 space-y-2">
-                <span className="text-neutral-400 text-[11px]">Mean Time to Detect (MTTD)</span>
-                <div className="text-xl font-extrabold text-purple-400">&lt; 2 minutes</div>
-                <p className="text-[10px] text-neutral-500">Automated Alertmanager routing</p>
+                <span className="text-neutral-400 text-[11px]">Alert Routing</span>
+                <div className="text-xl font-extrabold text-purple-400">Alertmanager</div>
+                <p className="text-[10px] text-neutral-500">Lab-configured routing rules</p>
               </div>
             </div>
           </div>

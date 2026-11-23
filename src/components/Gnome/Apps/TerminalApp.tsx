@@ -24,10 +24,10 @@ export const TerminalApp: React.FC = () => {
           type: 'output',
           text: `\x1b[1;36m================================================================================
   Welcome to YashOS 24.04 LTS (GNU/Linux 6.8.0-generic x86_64)
-  Interactive Cloud & DevOps Engineering Workstation
+  Interactive Cloud Support Engineering Workstation
 ================================================================================\x1b[0m
-  * Engineer:       Yash Baviskar (AWS, Terraform, Docker, K8s, CI/CD, Linux)
-  * Target Roles:   Junior Cloud Engineer / Junior DevOps Engineer (EU & Remote)
+  * Engineer:       Yash Baviskar (AWS, Linux, Terraform, Docker)
+  * Target Roles:   Cloud Support Engineer (EU & Remote)
   * Status:         \x1b[1;32mAvailable for Hire\x1b[0m
   * Quick Tips:     Type \x1b[1;33m'terraform plan'\x1b[0m, \x1b[1;33m'kubectl get pods'\x1b[0m, \x1b[1;33m'neofetch'\x1b[0m, or \x1b[1;33m'help'\x1b[0m
 ================================================================================

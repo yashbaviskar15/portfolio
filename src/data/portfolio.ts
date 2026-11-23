@@ -1,7 +1,8 @@
 /**
- * Official CV and Portfolio * Yash Baviskar — Portfolio Data
- * Cloud / DevOps Engineer
- * Sourced directly from official CV PDF
+ * Yash Baviskar — Portfolio Data
+ * Cloud Support Engineer
+ * Content aligned with the official CV. Terraform / CI-CD / monitoring work is
+ * described as designed / defined / validated (NOT provisioned or deployed on AWS).
  */
 
 export interface Project {
@@ -24,7 +25,16 @@ export interface SkillCategory {
   category: string;
   icon: string;
   items: string[];
-  skills: { name: string; level: number; desc: string }[];
+  skills: { name: string; level: string; desc: string }[];
+}
+
+export interface ExperienceItem {
+  id: string;
+  role: string;
+  company: string;
+  location: string;
+  period: string;
+  bullets: string[];
 }
 
 export interface ExperienceMilestone {
@@ -53,7 +63,6 @@ export interface PortfolioData {
     name: string;
     handle: string;
     role: string;
-    phone: string;
     email: string;
     website: string;
     linkedin: string;
@@ -71,8 +80,10 @@ export interface PortfolioData {
     institution: string;
     location: string;
     period: string;
+    cgpa: string;
     coursework: string[];
   };
+  experience: ExperienceItem[];
   languages: { language: string; proficiency: string }[];
   technicalSkills: {
     cloudAWS: string[];
@@ -104,26 +115,26 @@ export const portfolioData: PortfolioData = {
   developer: {
     name: 'YASH BAVISKAR',
     handle: 'yashbaviskar15',
-    role: 'Cloud / DevOps Engineer',
-    phone: '+91 96231 66585',
+    role: 'Cloud Support Engineer',
     email: 'yashbaviskar0215@outlook.com',
     website: 'https://yashbaviskar.me',
     linkedin: 'https://linkedin.com/in/yashbaviskar15',
     github: 'https://github.com/yashbaviskar15',
-    location: 'Jalgaon / Pune, Maharashtra, India',
-    status: 'Available for Cloud & DevOps Roles',
+    location: 'Jalgaon, Maharashtra, India',
+    status: 'Open to relocation to Germany and other EU countries',
     summary:
-      'Cloud / DevOps Engineer with hands-on project experience in AWS, Terraform, Docker, Kubernetes, and Linux. Built and deployed cloud infrastructure end-to-end – provisioning with Terraform, containerizing with Docker, and monitoring with Prometheus and Grafana. Comfortable with Bash scripting, YAML/JSON configuration, and CI/CD automation.',
+      'Cloud Support Engineer at IT Digi Solution. I investigate EC2 instance and system status checks, CloudWatch metrics, Linux logs, IAM access issues, Docker container errors and network connectivity problems, document my findings in the ticket, and escalate to a senior engineer for the fix. Comfortable with Linux, Bash, AWS basics, Terraform (designed and validated) and Docker.',
     os: 'Ubuntu 24.04 LTS (Noble Numbat)',
     kernel: 'Linux 6.8.0-generic x86_64',
-    shell: 'zsh 5.9 / bash 5.2',
-    uptime: '2+ Years Project & Lab Engineering',
+    shell: 'bash 5.2',
+    uptime: 'Cloud support & hands-on lab engineering',
   },
   education: {
     degree: 'Bachelor of Computer Applications (BCA)',
     institution: "KCES's Institute of Management and Research",
-    location: 'Jalgaon, India',
-    period: '2023 – 2026 (Expected)',
+    location: 'Jalgaon, India (KBCNMU)',
+    period: '2023 – 2026',
+    cgpa: '8.14 / 10',
     coursework: [
       'Cloud Architecture & Operating Systems',
       'Computer Networks & Subnetting',
@@ -131,55 +142,69 @@ export const portfolioData: PortfolioData = {
       'Data Structures & Linux Systems Administration',
     ],
   },
+  experience: [
+    {
+      id: 'it-digi-solution',
+      role: 'Cloud Support Engineer',
+      company: 'IT Digi Solution',
+      location: 'Jalgaon, India',
+      period: 'June 2026 – Present',
+      bullets: [
+        'Investigates EC2 instance/system status checks and CloudWatch metrics, Linux logs, IAM access issues, Docker container errors and network connectivity issues.',
+        'Documents findings (status, metrics, time) in the ticket and escalates to a senior engineer for the fix.',
+      ],
+    },
+  ],
   languages: [
-    { language: 'English', proficiency: 'B2 (Professional Working)' },
-    { language: 'German', proficiency: 'A1 (Beginner)' },
+    { language: 'English', proficiency: 'B2' },
+    { language: 'German', proficiency: 'A1 (learning)' },
+    { language: 'Hindi', proficiency: 'Native' },
+    { language: 'Marathi', proficiency: 'Native' },
   ],
   technicalSkills: {
-    cloudAWS: ['EC2', 'S3', 'IAM', 'VPC', 'Route 53', 'RDS', 'ECS', 'ECR', 'ELB', 'CloudFront'],
-    iac: ['Terraform (modular, provider-based, state-managed deployments)'],
-    containers: ['Docker', 'Kubernetes (Minikube, k3s)', 'Amazon ECS', 'Amazon ECR'],
-    cicd: ['GitHub Actions', 'AWS CodePipeline', 'CodeBuild', 'CodeDeploy'],
-    monitoring: ['Prometheus', 'Grafana', 'Alertmanager', 'Amazon CloudWatch'],
+    cloudAWS: ['EC2', 'CloudWatch', 'S3', 'IAM', 'VPC', 'Route 53', 'RDS', 'ECS', 'ECR'],
+    iac: ['Terraform (designed, defined and validated with plan/validate)'],
+    containers: ['Docker', 'Kubernetes (learning the basics)'],
+    cicd: ['GitHub Actions'],
+    monitoring: ['Prometheus', 'Grafana', 'CloudWatch'],
     linuxOS: ['Ubuntu Server', 'Amazon Linux', 'systemd', 'cron', 'log analysis'],
-    networking: ['VPC/Subnet design (public/private)', 'Route Tables', 'Internet Gateway', 'Security Groups', 'NACLs', 'DNS', 'Load Balancers'],
-    programming: ['Python', 'Bash / Shell', 'YAML', 'JSON'],
-    versionControl: ['Git', 'GitHub', 'Branching workflows'],
+    networking: ['VPC/Subnet design (public/private)', 'Route Tables', 'Internet Gateway', 'Security Groups', 'DNS', 'Load Balancers'],
+    programming: ['Bash / Shell', 'Python (basics)', 'YAML', 'JSON'],
+    versionControl: ['Git', 'GitHub'],
     databases: ['PostgreSQL'],
-    securityAutomation: ['IAM least-privilege policies', 'SSH key-only authentication', 'UFW', 'Fail2Ban'],
+    securityAutomation: ['IAM least-privilege policies', 'SSH key-only authentication', 'UFW'],
   },
   skills: [
     {
       id: 'cloud-aws',
-      category: 'Cloud Infrastructure (AWS) & Networking',
+      category: 'Cloud Support (AWS) & Networking',
       icon: 'Cloud',
-      items: ['EC2', 'S3', 'IAM', 'VPC', 'Route 53', 'RDS', 'ECS', 'ECR', 'ELB', 'CloudFront', 'Subnets', 'NACLs', 'Security Groups'],
+      items: ['EC2', 'CloudWatch', 'S3', 'IAM', 'VPC', 'Route 53', 'RDS', 'Subnets', 'Security Groups'],
       skills: [
-        { name: 'Amazon Web Services (AWS)', level: 'Core Cloud', desc: 'VPC, EC2, RDS, S3, IAM least-privilege, Route 53, ALB, CloudFront' },
-        { name: 'Networking & Subnets', level: 'Architecture', desc: 'Public/Private subnet segmentation, Route Tables, NAT, Internet Gateways' },
-        { name: 'IAM Security & Firewalls', level: 'Security', desc: 'Least-privilege policies, security groups, NACLs, SSH key authentication, UFW' },
+        { name: 'AWS Support Fundamentals', level: 'Core Support', desc: 'EC2 instance & system status checks, CloudWatch metrics and alarms, IAM access triage' },
+        { name: 'Networking & Subnets', level: 'Fundamentals', desc: 'Public/private subnet concepts, Route Tables, NAT, Internet Gateways, connectivity triage' },
+        { name: 'IAM & Access', level: 'Support', desc: 'Least-privilege policy concepts, security groups, SSH key authentication, UFW' },
       ],
     },
     {
       id: 'iac-devops',
-      category: 'Infrastructure as Code & CI/CD Pipelines',
+      category: 'Infrastructure as Code & CI/CD',
       icon: 'Code2',
-      items: ['Terraform', 'GitHub Actions', 'AWS CodePipeline', 'CodeBuild', 'CodeDeploy', 'YAML', 'JSON'],
+      items: ['Terraform (plan/validate)', 'GitHub Actions', 'YAML', 'JSON'],
       skills: [
-        { name: 'Terraform (IaC)', level: 'Modular Deployments', desc: 'Modular, provider-based, state-managed cloud infrastructure automation' },
-        { name: 'GitHub Actions (CI/CD)', level: 'Continuous Delivery', desc: 'Automated linting, test suites, container builds, and Kubernetes rollouts' },
-        { name: 'AWS CodePipeline', level: 'AWS Native', desc: 'End-to-end build, test, and deploy orchestration with CodeBuild & CodeDeploy' },
+        { name: 'Terraform (IaC)', level: 'Designed & validated', desc: 'Modular configuration designed and validated with terraform validate and terraform plan' },
+        { name: 'GitHub Actions (CI/CD)', level: 'Defined', desc: 'Workflows defined for linting, tests and container image builds' },
       ],
     },
     {
       id: 'containers-monitoring',
       category: 'Containers, Orchestration & Observability',
       icon: 'Server',
-      items: ['Docker', 'Kubernetes (Minikube, k3s)', 'Amazon ECS/ECR', 'Prometheus', 'Grafana', 'Alertmanager', 'CloudWatch'],
+      items: ['Docker', 'Kubernetes (learning basics)', 'Prometheus', 'Grafana', 'CloudWatch'],
       skills: [
-        { name: 'Docker Containerization', level: 'Packaging', desc: 'Multi-stage builds, container isolation, image publishing to Amazon ECR' },
-        { name: 'Kubernetes (k3s / Minikube)', level: 'Orchestration', desc: 'Pod manifests, services, ingress, and zero-downtime rolling updates' },
-        { name: 'Prometheus & Grafana', level: 'Observability', desc: '10+ container scrape targets, 5 tailored dashboards, Alertmanager tuning' },
+        { name: 'Docker Containerization', level: 'Working', desc: 'Multi-stage builds, container isolation, image publishing' },
+        { name: 'Kubernetes', level: 'Learning (basics)', desc: 'Studying pod manifests, services and ingress fundamentals' },
+        { name: 'Prometheus & Grafana', level: 'Hands-on lab', desc: 'Scrape configuration and dashboards set up in a personal lab' },
       ],
     },
     {
@@ -188,85 +213,89 @@ export const portfolioData: PortfolioData = {
       icon: 'Terminal',
       items: ['Ubuntu Server', 'Amazon Linux', 'systemd', 'cron', 'Bash', 'Python', 'PostgreSQL', 'Git'],
       skills: [
-        { name: 'Ubuntu & Amazon Linux', level: 'Server Administration', desc: 'systemd service units, cron automated jobs, log analysis, user security' },
-        { name: 'Python & Bash Scripting', level: 'Automation', desc: 'System management scripts, REST services, FastAPI, JSON/YAML processing' },
-        { name: 'Git & Version Control', level: 'Collaboration', desc: 'Branching workflows, code reviews, semantic version tagging' },
+        { name: 'Ubuntu & Amazon Linux', level: 'Support', desc: 'systemd service units, cron jobs, log analysis, user security' },
+        { name: 'Bash & Python', level: 'Automation basics', desc: 'System management scripts, JSON/YAML processing' },
+        { name: 'Git & Version Control', level: 'Collaboration', desc: 'Branching workflows and code reviews' },
       ],
     },
   ],
   projects: [
     {
       id: 'aws-three-tier',
-      name: 'AWS Three-Tier Web Application Infrastructure',
+      name: 'AWS Three-Tier Web Application Infrastructure (Terraform)',
       category: 'Cloud & IaC',
-      status: 'Completed – 2024',
+      status: 'Configuration validated (terraform validate & plan)',
       github: 'https://github.com/yashbaviskar15/3-tier-app',
       repoPath: 'yashbaviskar15/3-tier-app',
-      tagline: 'High-availability multi-tier architecture deployed with modular Terraform IaC.',
-      problem: 'Monolithic single-tier deployments suffer from single points of failure, lack of isolation between database and web layers, and manual configuration bottlenecks.',
-      solution: 'Built a three-tier setup on AWS – public/private VPC subnets, an Application Load Balancer, EC2, and RDS – keeping presentation, application, and database layers separate.',
+      tagline: 'Designed a modular, high-availability three-tier AWS architecture as Terraform infrastructure as code.',
+      problem: 'Monolithic single-tier deployments suffer from single points of failure and no isolation between the database and web layers.',
+      solution:
+        'Designed and defined a three-tier AWS architecture in modular Terraform — public/private VPC subnets, an Application Load Balancer, EC2 and RDS (MySQL) — keeping the presentation, application and database layers separate. Validated the configuration with terraform validate and terraform plan; not applied to a live AWS account.',
       technologies: ['AWS VPC', 'Terraform', 'EC2', 'Application Load Balancer', 'RDS (MySQL)', 'CloudWatch', 'Security Groups', 'IAM'],
       bulletPoints: [
-        'Built a three-tier setup on AWS – public/private VPC subnets, an Application Load Balancer, EC2, and RDS – keeping presentation, application, and database layers separate.',
-        'Wrote the full stack as Terraform code (VPC, route tables, Internet Gateway, security groups, compute), so the environment can be torn down and rebuilt with one command.',
-        'Restricted access with security groups and NACLs following least-privilege principles.',
-        'Used SSH key-only authentication for all EC2 instances.',
+        'Designed and defined a modular three-tier AWS architecture in Terraform (VPC, route tables, Internet Gateway, security groups and compute).',
+        'Validated the configuration with terraform validate and terraform plan; the stack was not applied to a live AWS account.',
+        'Defined security groups and network ACL rules following least-privilege principles.',
+        'Defined SSH key-only authentication for the EC2 instances in the configuration.',
       ],
-      metrics: ['100% Infrastructure as Code', 'Multi-AZ Database Isolation', 'One-Command Deployment'],
+      metrics: ['Infrastructure as Code', 'Terraform validate + plan verified', 'Multi-tier network design'],
     },
     {
       id: 'cloud-monitoring',
       name: 'Cloud Infrastructure Monitoring with Prometheus & Grafana',
       category: 'Observability',
-      status: 'Completed – 2024 – 2025',
+      status: 'Hands-on lab',
       github: 'https://github.com/yashbaviskar15/cloud-monitoring',
       repoPath: 'yashbaviskar15/cloud-monitoring',
-      tagline: 'End-to-end container & host telemetry stack provisioned on AWS EC2 with Terraform.',
-      problem: 'Silent production service degradations and delayed incident detection lead to extended downtime.',
-      solution: 'Provisioned the monitoring infrastructure itself on EC2 using Terraform, running Prometheus against 10+ containerized services and building 5 Grafana dashboards.',
-      technologies: ['AWS EC2', 'Terraform', 'Prometheus', 'Grafana', 'Alertmanager', 'Docker', 'Linux'],
+      tagline: 'Defined a Prometheus + Grafana telemetry setup for container and host metrics in a personal lab.',
+      problem: 'Silent service degradations and delayed detection make problems harder to notice.',
+      solution:
+        'Defined a Prometheus and Grafana configuration for host and container metrics, and built dashboards to visualise system health in a personal lab environment.',
+      technologies: ['Prometheus', 'Grafana', 'Docker', 'Linux'],
       bulletPoints: [
-        'Provisioned the monitoring infrastructure itself on EC2 using Terraform, so the whole setup is version-controlled and repeatable.',
-        'Ran Prometheus against 10+ containerized services and built 5 Grafana dashboards for visibility into system health.',
-        'Tuned Alertmanager rules, cutting mean time to detection from 15+ minutes to under 2 in testing.',
+        'Defined Prometheus scrape configurations for node and container metrics in a personal lab.',
+        'Built Grafana dashboards to visualise system and container health.',
+        'Studied alerting rules to understand how degradation could be detected earlier.',
       ],
-      metrics: ['10+ Monitored Services', '5 Tailored Grafana Dashboards', 'MTTD cut from 15m+ to <2m'],
+      metrics: ['Prometheus scrape config', 'Grafana dashboards', 'Container & host metrics'],
     },
     {
       id: 'cicd-pipeline',
-      name: 'CI/CD Pipeline with Docker, Kubernetes & AWS',
+      name: 'CI/CD Pipeline with Docker, GitHub Actions & AWS',
       category: 'DevOps & CI/CD',
-      status: 'Completed – 2025',
+      status: 'Workflow defined',
       github: 'https://github.com/yashbaviskar15/cicd-pipeline',
       repoPath: 'yashbaviskar15/cicd-pipeline',
-      tagline: 'Automated GitHub Actions release pipeline with zero-downtime Kubernetes rolling updates.',
-      problem: 'Manual multi-step release workflows were error-prone and caused service downtime during deployments.',
-      solution: 'Set up a GitHub Actions pipeline that builds, tests, and deploys automatically – transforming a manual multi-step release into one triggered workflow.',
-      technologies: ['GitHub Actions', 'Docker', 'Kubernetes (k3s)', 'Amazon ECR/ECS', 'AWS CodePipeline', 'Bash', 'YAML'],
+      tagline: 'Defined a GitHub Actions workflow to lint, test and build container images.',
+      problem: 'Manual multi-step release workflows are error-prone and hard to repeat.',
+      solution:
+        'Defined a GitHub Actions workflow that runs linting and tests, then builds container images. The deploy stage targets Kubernetes, where I am learning the basics using locally validated manifests.',
+      technologies: ['GitHub Actions', 'Docker', 'Kubernetes (learning basics)', 'Amazon ECR', 'Bash', 'YAML'],
       bulletPoints: [
-        'Set up a GitHub Actions pipeline that builds, tests, and deploys automatically – a manual multi-step release became one triggered workflow.',
-        'Containerized a multi-service application and pushed versioned images to Amazon ECR.',
-        'Deployed to Kubernetes with rolling updates so a redeploy doesn’t take the service down.',
+        'Defined a GitHub Actions workflow that runs linting and tests, then builds container images.',
+        'Defined container image publishing steps for Amazon ECR.',
+        'Defined Kubernetes manifests and validated them locally while learning the basics.',
       ],
-      metrics: ['Zero Downtime Deployments', 'Automated ECR Image Push', 'One Triggered Workflow'],
+      metrics: ['GitHub Actions workflow', 'Container image build', 'Locally validated manifests'],
     },
     {
       id: 'aravanta-cloudos',
       name: 'Aravanta CloudOS — Cloud Infrastructure Automation Platform',
       category: 'DevOps & CI/CD',
-      status: 'In Progress – 2025 – Present',
+      status: 'In progress',
       github: 'https://github.com/yashbaviskar15/acos',
       repoPath: 'yashbaviskar15/acos',
-      tagline: 'Self-service cloud provisioning platform on Infrastructure as Code.',
-      problem: 'Repetitive manual setup of cloud compute, databases, and networking delays developer onboarding.',
-      solution: 'Building a self-service cloud provisioning platform on Infrastructure as Code, cutting down manual setup before a containerized app can go live.',
-      technologies: ['AWS', 'Terraform', 'Docker', 'Kubernetes', 'Amazon ECR/ECS', 'AWS CodePipeline', 'Python', 'FastAPI', 'PostgreSQL'],
+      tagline: 'An in-progress self-service cloud provisioning platform built on infrastructure as code.',
+      problem: 'Repetitive manual setup of cloud compute, databases and networking slows down getting an app live.',
+      solution:
+        'Building a self-service cloud provisioning platform on infrastructure as code to reduce manual setup before a containerized app can go live.',
+      technologies: ['AWS', 'Terraform', 'Docker', 'Python', 'FastAPI', 'PostgreSQL'],
       bulletPoints: [
-        'Building a self-service cloud provisioning platform on Infrastructure as Code, cutting down manual setup before a containerized app can go live.',
+        'Building a self-service provisioning platform on infrastructure as code to reduce manual setup.',
         'Backend built with FastAPI and PostgreSQL, containerized with Docker.',
-        'GitHub Actions handles build and deploy automation.',
+        'GitHub Actions defined for build and publish automation.',
       ],
-      metrics: ['Self-Service Cloud Provisioning', 'FastAPI & PostgreSQL Backend', 'Containerized Architecture'],
+      metrics: ['Self-service provisioning', 'FastAPI & PostgreSQL backend', 'Containerized architecture'],
     },
   ],
   contact: {
@@ -275,7 +304,7 @@ export const portfolioData: PortfolioData = {
     github: 'https://github.com/yashbaviskar15',
     linkedin: 'https://linkedin.com/in/yashbaviskar15',
     website: 'https://yashbaviskar.me',
-    location: 'Jalgaon / Pune, Maharashtra, India',
+    location: 'Jalgaon, Maharashtra, India',
   },
   terminalFiles: [
     { name: 'about.txt', type: 'file', size: '2.4K' },

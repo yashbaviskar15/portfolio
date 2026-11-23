@@ -40,7 +40,7 @@ export class BashInterpreter {
         PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/yash/bin',
         TERM: 'xterm-256color',
         LANG: 'en_US.UTF-8',
-        ROLE: 'Cloud / DevOps Engineer',
+        ROLE: 'Cloud Support Engineer',
         AWS_DEFAULT_REGION: 'eu-central-1',
         KUBECONFIG: '/home/yash/.kube/config',
       },
@@ -797,11 +797,11 @@ rtt min/avg/max/mdev = 13.842/14.125/14.510/0.245 ms
       case 'crontab': {
         if (flags.includes('-l')) {
           return {
-            stdout: `# Automated Cloud & DevOps Crontab
+            stdout: `# Automated Cloud Support maintenance crontab (lab)
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-# 1. Automated daily Terraform remote state snapshot to S3
+# 1. Terraform state backup script (lab environment)
 0 2 * * * /home/yash/bin/backup-tfstate.sh > /var/log/backup-tfstate.log 2>&1
 
 # 2. Prometheus scraping node healthcheck every 15 minutes
@@ -1036,12 +1036,12 @@ node                              20-alpine 112233445566   4 weeks ago    48.5MB
         const sub = flags[0];
         if (sub === 'log') {
           return {
-            stdout: `\x1b[1;33m8f9b4c2\x1b[0m (HEAD -> main, origin/main) feat(infra): provision 3-tier AWS infrastructure with Terraform
-\x1b[1;33m6a1e8d9\x1b[0m feat(docker): multi-stage Docker build & Kubernetes rolling update manifests
-\x1b[1;33m3d5f7a1\x1b[0m feat(cicd): GitHub Actions automated test, build and ECR deployment pipeline
-\x1b[1;33m9c2b4e6\x1b[0m feat(monitoring): Prometheus node exporter scraping & Grafana dashboard metrics
-\x1b[1;33m1a2b3c4\x1b[0m feat(edu): BCA Degree (2023-2026 Expected) — KCES's IMR Jalgaon
-\x1b[1;33m0e8f9a2\x1b[0m Initial commit: Cloud / DevOps Engineer workstation setup
+            stdout: `\x1b[1;33m8f9b4c2\x1b[0m (HEAD -> main, origin/main) feat(infra): define 3-tier AWS architecture with Terraform modules (plan/validate)
+\x1b[1;33m6a1e8d9\x1b[0m feat(docker): multi-stage Docker build; studying Kubernetes basics
+\x1b[1;33m3d5f7a1\x1b[0m feat(cicd): GitHub Actions workflow defined for lint, test and image build
+\x1b[1;33m9c2b4e6\x1b[0m feat(monitoring): Prometheus scrape config & Grafana dashboards (personal lab)
+\x1b[1;33m1a2b3c4\x1b[0m feat(edu): BCA (2023-2026) — KCES's IMR Jalgaon
+\x1b[1;33m0e8f9a2\x1b[0m Initial commit: Cloud Support Engineer workstation setup
 `,
             exitCode: 0,
           };
@@ -1071,13 +1071,13 @@ nothing to commit, working tree clean
      Memory: 64.0M
         CPU: 12.4s
      CGroup: /system.slice/yash.service
-             ├─1337 /usr/bin/yash-engineer --mode=junior-cloud-devops
+             ├─1337 /usr/bin/yash-engineer --mode=cloud-support
              └─1338 /usr/bin/yash-telemetry --listen=0.0.0.0:8080
 
 Apr 24 08:00:00 yashos systemd[1]: Started Yash Baviskar Engineering Availability Service.
-Apr 24 08:00:01 yashos yash-engineer[1337]: [INFO] Candidate status: Available for Junior Cloud / DevOps Engineer roles.
-Apr 24 08:00:02 yashos yash-engineer[1337]: [INFO] Target regions: Germany, Luxembourg, Netherlands, Poland, Switzerland & Remote.
-Apr 24 08:00:03 yashos yash-engineer[1337]: [INFO] Direct contact: yashbaviskar0215@outlook.com | +91 96231 66585
+Apr 24 08:00:01 yashos yash-engineer[1337]: [INFO] Candidate status: Available for Cloud Support Engineer roles.
+Apr 24 08:00:02 yashos yash-engineer[1337]: [INFO] Open to relocation to Germany and other EU countries.
+Apr 24 08:00:03 yashos yash-engineer[1337]: [INFO] Direct contact: yashbaviskar0215@outlook.com
 `,
             exitCode: 0,
           };
@@ -1091,17 +1091,17 @@ Apr 24 08:00:03 yashos yash-engineer[1337]: [INFO] Direct contact: yashbaviskar0
           stdout: `\x1b[1;31m          ./+o+-       \x1b[0m\x1b[1;32myash\x1b[0m@\x1b[1;32myashos\x1b[0m
 \x1b[1;31m                  yyyyy-     \x1b[0m------------------------
 \x1b[1;31m               \`:+ssssssso+\`   \x1b[0m\x1b[1;33mOS\x1b[0m: YashOS 24.04 LTS x86_64
-\x1b[1;31m             \`-/osssssssssss/  \x1b[0m\x1b[1;33mHost\x1b[0m: Cloud & DevOps Workstation
+\x1b[1;31m             \`-/osssssssssss/  \x1b[0m\x1b[1;33mHost\x1b[0m: Cloud Support Workstation
 \x1b[1;31m           \`:+sssssssssssssso  \x1b[0m\x1b[1;33mKernel\x1b[0m: 6.8.0-45-generic
 \x1b[1;31m         \`-/ossssssssssssssso  \x1b[0m\x1b[1;33mUptime\x1b[0m: 42 days, 3 hours
 \x1b[1;31m        .+sssssssssssssssssso  \x1b[0m\x1b[1;33mPackages\x1b[0m: 2,298 (dpkg)
 \x1b[1;31m       .ossssssssssssssssssso  \x1b[0m\x1b[1;33mShell\x1b[0m: bash 5.2.21
 \x1b[1;31m       .ossssssssssssssssssso  \x1b[0m\x1b[1;33mDE\x1b[0m: GNOME 46.0 (Yaru)
 \x1b[1;31m        .+sssssssssssssssssso  \x1b[0m\x1b[1;33mWM\x1b[0m: Mutter
-\x1b[1;31m         \`-/ossssssssssssssso  \x1b[0m\x1b[1;33mRole\x1b[0m: Cloud / DevOps Engineer
-\x1b[1;31m           \`:+sssssssssssssso  \x1b[0m\x1b[1;33mStack\x1b[0m: AWS, Terraform, Docker, K8s
+\x1b[1;31m         \`-/ossssssssssssssso  \x1b[0m\x1b[1;33mRole\x1b[0m: Cloud Support Engineer
+\x1b[1;31m           \`:+sssssssssssssso  \x1b[0m\x1b[1;33mStack\x1b[0m: AWS, Linux, Terraform, Docker
 \x1b[1;31m             \`-/osssssssssss/  \x1b[0m\x1b[1;33mMonitoring\x1b[0m: Prometheus & Grafana
-\x1b[1;31m               \`:+ssssssso+\`   \x1b[0m\x1b[1;33mTarget\x1b[0m: EU & Remote Relocation
+\x1b[1;31m               \`:+ssssssso+\`   \x1b[0m\x1b[1;33mTarget\x1b[0m: Germany & EU relocation
 \x1b[1;31m                  yyyyy-       \x1b[0m\x1b[1;33mTerminal\x1b[0m: YashOS Terminal
 \x1b[1;31m          ./+o+-               \x1b[0m\x1b[1;33mMemory\x1b[0m: 5242MiB / 16000MiB
 `,
@@ -1146,15 +1146,15 @@ Apr 24 08:00:03 yashos yash-engineer[1337]: [INFO] Direct contact: yashbaviskar0
         return { stdout: 'Opening Skills Matrix...\n', openApp: 'skills', exitCode: 0 };
 
       case 'projects':
-        return { stdout: 'Opening Cloud & DevOps Projects...\n', openApp: 'projects', exitCode: 0 };
+        return { stdout: 'Opening Cloud Projects...\n', openApp: 'projects', exitCode: 0 };
 
       case 'about':
         return {
-          stdout: `\x1b[1;36mYash Baviskar — Junior Cloud / DevOps Engineer\x1b[0m
-Location:    Jalgaon / Pune, India (Open to EU Relocation & Remote)
-Core Stack:  AWS, Terraform, Docker, Kubernetes, Prometheus/Grafana, CI/CD, Linux
-Education:   Bachelor of Computer Applications (BCA, 2023 – 2026 Expected)
-Contact:     yashbaviskar0215@outlook.com | +91 96231 66585
+          stdout: `\x1b[1;36mYash Baviskar — Cloud Support Engineer\x1b[0m
+Location:    Jalgaon, Maharashtra, India (open to relocation to Germany & other EU countries)
+Core Stack:  AWS (EC2, CloudWatch, IAM), Linux, Terraform (designed & validated), Docker, Prometheus/Grafana
+Education:   Bachelor of Computer Applications (BCA, 2023 – 2026), CGPA 8.14/10
+Contact:     yashbaviskar0215@outlook.com
 Links:       https://yashbaviskar.me | https://github.com/yashbaviskar15 | https://linkedin.com/in/yashbaviskar15
 Type 'projects', 'skills', or 'resume' to explore work or open CV.
 `,
@@ -1165,7 +1165,7 @@ Type 'projects', 'skills', or 'resume' to explore work or open CV.
       // Easter Eggs & TUI Tools
       // ----------------------------------------------------
       case 'cowsay': {
-        const text = flags.join(' ') || 'Cloud & DevOps with Yash!';
+        const text = flags.join(' ') || 'Cloud support with Yash!';
         const border = '-'.repeat(text.length + 2);
         return {
           stdout: ` ${border}

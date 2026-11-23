@@ -197,7 +197,7 @@ export const ContactApp: React.FC = () => {
                     themeMode === 'dark' ? 'text-white' : 'text-neutral-900'
                   }`}
                 >
-                  {portfolioData.contact.phone}
+                  Hidden — click copy to reveal
                 </span>
               </div>
             </div>
@@ -312,7 +312,7 @@ export const ContactApp: React.FC = () => {
               </label>
               <textarea
                 rows={4}
-                placeholder="Hello Yash, we have an open role for a Junior Cloud/DevOps Engineer..."
+                placeholder="Hello Yash, we have an open role for a Cloud Support Engineer..."
                 value={form.message}
                 onChange={(e) => {
                   setForm({ ...form, message: e.target.value });

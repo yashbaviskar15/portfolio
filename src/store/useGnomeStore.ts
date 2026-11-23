@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { WindowId, WindowState, WindowPosition, WindowSize, NotificationItem, WallpaperPreset } from '../types/gnome';
 import { LocaleCode, TranslationSchema, SUPPORTED_LANGUAGES } from '../types/i18n';
 import { translations, detectBrowserLocale } from '../locales/translations';
@@ -91,7 +90,7 @@ const initialWindows: WindowState[] = [
   },
   {
     id: 'projects',
-    title: 'Projects Showcase — Cloud & DevOps Architecture',
+    title: 'Projects Showcase — Cloud Support & Lab Architecture',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -388,9 +387,7 @@ interface GnomeStore {
   setCwd: (path: string) => void;
 }
 
-export const useGnomeStore = create<GnomeStore>()(
-  persist(
-    (set, get) => ({
+export const useGnomeStore = create<GnomeStore>()((set, get) => ({
       // Lifecycle initial states
       isBooted: true,
       setBooted: (booted) => set({ isBooted: booted }),
@@ -660,6 +657,13 @@ export const useGnomeStore = create<GnomeStore>()(
       },
 
       resetDesktopLayout: () => {
+        // Full "Reset desktop": windows + every personalisation setting returns
+        // to the clean default, and the virtual file system is restored to factory.
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.remove('reduce-motion');
+          document.documentElement.style.fontSize = '';
+        }
+        sounds.isMuted = true; // default soundEnabled is false
         set({
           windows: initialWindows.map((w) => ({
             ...w,
@@ -670,6 +674,21 @@ export const useGnomeStore = create<GnomeStore>()(
           })),
           activeWindowId: 'terminal',
           activeWorkspace: 1,
+          notifications: createInitialNotifications(),
+          selectedWallpaperId: 'noble-numbat',
+          themeMode: 'dark',
+          accentColor: '#e95420',
+          soundEnabled: false,
+          nightLight: false,
+          fontSize: 'standard',
+          reducedMotion: false,
+          locale: 'en',
+          settingsPage: 'appearance',
+          currentCwd: '/home/yash',
+          isActivitiesOpen: false,
+          isShortcutsHelpOpen: false,
+          isWallpaperModalOpen: false,
+          isRecruiterViewOpen: false,
         });
         vfs.resetToFactory();
       },
@@ -752,18 +771,5 @@ export const useGnomeStore = create<GnomeStore>()(
       toggleReducedMotion: () => get().setReducedMotion(!get().reducedMotion),
       setSettingsPage: (page) => set({ settingsPage: page }),
       setCwd: (path) => set({ currentCwd: path }),
-    }),
-    {
-      name: 'yashos_gnome_store_v2',
-      partialize: (state) => ({
-        selectedWallpaperId: state.selectedWallpaperId,
-        themeMode: state.themeMode,
-        accentColor: state.accentColor,
-        soundEnabled: state.soundEnabled,
-        fontSize: state.fontSize,
-        reducedMotion: state.reducedMotion,
-        locale: state.locale,
-      }),
-    }
-  )
+    })
 );

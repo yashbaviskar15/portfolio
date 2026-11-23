@@ -28,13 +28,13 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete, onOpenRe
     'Reached target Local Encrypted Storage & S3 State Locks',
     'Started Docker Application Container Engine (dockerd 26.0.1)',
     'Started containerd container runtime engine',
-    'Reached target Terraform-Provisioned Multi-AZ AWS Infrastructure',
+    'Reached target Documented Multi-AZ AWS Architecture (Terraform validated)',
     'Initialized Kubernetes (k3s) Node & CoreDNS mesh',
     'Started Prometheus Telemetry Node Exporter (port 9100)',
     'Started Grafana Observability Dashboard Service (port 3000)',
     'Reached target Network Time & AWS CloudWatch Daemon',
     'Started OpenSSH Server (sshd - ED25519 cloud access)',
-    'Reached target Multi-AZ Cloud Architecture & High Availability',
+    'Reached target Multi-AZ Architecture Documentation & Lab Environment',
     'Starting GNOME Display Manager (GDM 46.0)...',
   ];
 
@@ -298,7 +298,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({ onBootComplete, onOpenRe
                 YashOS 24.04 LTS
               </h1>
               <p className="text-xs text-orange-400 font-mono">
-                Yash Baviskar • Cloud &amp; DevOps Engineer
+                Yash Baviskar • Cloud Support Engineer
               </p>
             </div>
 

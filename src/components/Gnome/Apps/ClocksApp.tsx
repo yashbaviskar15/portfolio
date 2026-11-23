@@ -12,7 +12,7 @@ export const ClocksApp: React.FC = () => {
   }, []);
 
   const worldClocks = [
-    { city: 'Local Time (Jalgaon/Pune)', tz: 'Asia/Kolkata', offset: 'IST' },
+    { city: 'Local Time (Jalgaon)', tz: 'Asia/Kolkata', offset: 'IST' },
     { city: 'Frankfurt (EU Target)', tz: 'Europe/Berlin', offset: 'CET' },
     { city: 'London (GMT)', tz: 'Europe/London', offset: 'GMT' },
     { city: 'New York (EST)', tz: 'America/New_York', offset: 'EST' },

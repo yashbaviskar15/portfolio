@@ -1,0 +1,270 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --gnome-bg-start: #2c001e;
+    --gnome-bg-mid: #1f0b24;
+    --gnome-bg-end: #0f172a;
+    --ubuntu-orange: #e95420;
+    --ubuntu-aubergine: #77216f;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0f172a;
+    color: #f3f4f6;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Only lock scrolling once the JS desktop shell has mounted */
+  html[data-hydrated='true'],
+  html[data-hydrated='true'] body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Static, crawlable fallback content: visible with JS disabled, hidden once the desktop mounts */
+#seo-fallback {
+  min-height: 100vh;
+}
+
+html[data-hydrated='true'] #seo-fallback {
+  display: none !important;
+}
+
+/* Ubuntu GNOME Desktop Wallpaper - Strict CSS Gradient (No Images) */
+.gnome-wallpaper {
+  background: radial-gradient(circle at 15% 15%, rgba(233, 84, 32, 0.18), transparent 45%),
+              radial-gradient(circle at 85% 85%, rgba(119, 33, 111, 0.3), transparent 50%),
+              linear-gradient(135deg, #2c001e 0%, #1a0826 40%, #0d1322 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 22s ease infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* GNOME Top Bar */
+.gnome-topbar {
+  background-color: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* GNOME Left / Bottom Dock (Dash to Dock) */
+.gnome-dock {
+  background-color: rgba(20, 20, 24, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* GNOME Dock Item Tooltip */
+.dock-item-wrapper {
+  position: relative;
+}
+
+.dock-tooltip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+  background-color: rgba(28, 28, 32, 0.95);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+}
+
+@media (min-width: 768px) {
+  .dock-item-wrapper:hover .dock-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(14px);
+  }
+}
+
+/* GNOME Window System */
+.gnome-window {
+  border-radius: 12px 12px 4px 4px;
+}
+
+/* GNOME Window Content Body Scroll Fix */
+.gnome-window-content {
+  flex: 1 1 0%;
+  min-height: 0;
+  height: calc(100% - 40px);
+  max-height: calc(100% - 40px);
+  width: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.gnome-mobile-window-content {
+  flex: 1 1 0%;
+  min-height: 0;
+  height: calc(100% - 44px);
+  max-height: calc(100% - 44px);
+  width: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* react-rnd 8-Direction Cursor States */
+div[style*="cursor: nw-resize"], div[style*="cursor: se-resize"], .react-rnd-handle-nw, .react-rnd-handle-se {
+  cursor: nwse-resize !important;
+}
+
+div[style*="cursor: ne-resize"], div[style*="cursor: sw-resize"], .react-rnd-handle-ne, .react-rnd-handle-sw {
+  cursor: nesw-resize !important;
+}
+
+div[style*="cursor: n-resize"], div[style*="cursor: s-resize"], .react-rnd-handle-n, .react-rnd-handle-s {
+  cursor: ns-resize !important;
+}
+
+div[style*="cursor: e-resize"], div[style*="cursor: w-resize"], .react-rnd-handle-e, .react-rnd-handle-w {
+  cursor: ew-resize !important;
+}
+
+/* Complete Global Scrollbar Suppression: Zero visible scrollbars across whole portfolio */
+*, *::before, *::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-track,
+.gnome-scrollbar::-webkit-scrollbar,
+.gnome-window-content::-webkit-scrollbar,
+.gnome-mobile-window-content::-webkit-scrollbar,
+.allow-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+.gnome-scrollbar,
+.gnome-window-content,
+.gnome-mobile-window-content,
+.allow-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Desktop Icon Selection */
+.desktop-icon-highlight {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.desktop-icon-highlight:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.desktop-icon-highlight.active {
+  background-color: rgba(233, 84, 32, 0.25);
+  border-color: rgba(233, 84, 32, 0.5);
+}
+
+/* Reduced motion: honour the OS-level preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Print Optimization */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .gnome-topbar,
+  .gnome-dock,
+  .gnome-wallpaper,
+  #quick-settings-popover,
+  #calendar-popover,
+  #help-menu-popover,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Recruiter Modal Print Override */
+  .fixed.inset-0.z-\[120\] {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .recruiter-print-card {
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+}

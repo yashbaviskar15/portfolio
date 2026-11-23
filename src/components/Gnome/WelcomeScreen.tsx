@@ -121,7 +121,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onEnter }) => {
 
       {/* Bottom Footer */}
       <div className="absolute bottom-6 text-center text-xs text-neutral-500 font-mono">
-        Yash Baviskar • Cloud & DevOps Engineer
+        Yash Baviskar • Cloud Support Engineer
       </div>
     </motion.div>
   );

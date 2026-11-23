@@ -26,9 +26,6 @@ export interface TrashItem {
   node: VFSNode;
 }
 
-const STORAGE_KEY = 'yashos_vfs_v3';
-const TRASH_STORAGE_KEY = 'yashos_trash_v3';
-
 export const getInitialFileSystem = (): VFSNode => {
   const hardwareConcurrency = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 8 : 8;
   const deviceMemory = typeof (navigator as any) !== 'undefined' && (navigator as any).deviceMemory ? (navigator as any).deviceMemory : 16;
@@ -98,7 +95,7 @@ SUPPORT_URL="mailto:yashbaviskar0215@outlook.com"
 BUG_REPORT_URL="https://github.com/yashbaviskar15/portfolio/issues"
 PRIVACY_POLICY_URL="https://yashbaviskar.me/privacy"
 UBUNTU_CODENAME=noble
-ENGINEER="Yash Baviskar — Cloud & DevOps Engineer"
+ENGINEER="Yash Baviskar — Cloud Support Engineer"
 `,
           },
           motd: {
@@ -110,10 +107,11 @@ ENGINEER="Yash Baviskar — Cloud & DevOps Engineer"
             group: 'root',
             content: `================================================================================
   Welcome to YashOS 24.04 LTS (GNU/Linux 6.8.0-generic x86_64)
-  Interactive Cloud & DevOps Engineering Workstation
+  Interactive Cloud Support Engineering Workstation
 ================================================================================
-  * Engineer:       Yash Baviskar (AWS, Terraform, Docker, K8s, CI/CD, Linux)
-  * Target Roles:   Junior Cloud Engineer / Junior DevOps Engineer (EU & Remote)
+  * Engineer:       Yash Baviskar (AWS, Linux, Terraform, Docker, Prometheus/Grafana)
+  * Role:           Cloud Support Engineer @ IT Digi Solution
+  * Relocation:     Open to Germany and other EU countries
   * Portfolio Web:  https://yashbaviskar.me
   * Quick Actions:  Type 'help', 'neofetch', 'terraform plan', or 'resume'
 ================================================================================
@@ -198,10 +196,10 @@ SwapFree:        2097148 kB
                 type: 'file',
                 size: '24 KB',
                 permissions: '-rw-r-----',
-                content: `Apr 24 08:00:01 yashos systemd[1]: Reached target Terraform-Provisioned Infrastructure.
+                content: `Apr 24 08:00:01 yashos systemd[1]: Reached target Terraform-Validated Infrastructure (lab).
 Apr 24 08:00:02 yashos systemd[1]: Started Docker Application Container Engine.
 Apr 24 08:00:03 yashos dockerd[1482]: Started containerd container runtime.
-Apr 24 08:00:04 yashos k3s[1520]: Node ip-10-0-1-42 ready for workload scheduling.
+Apr 24 08:00:04 yashos kubelet[1520]: Kubernetes (lab) node ready for local workload experiments.
 Apr 24 08:00:05 yashos prometheus[1680]: Server is ready to receive web requests.
 Apr 24 08:00:06 yashos gdm[1720]: GDM Display Manager initialized successfully.
 `,
@@ -219,11 +217,11 @@ Apr 24 08:00:06 yashos gdm[1720]: GDM Display Manager initialized successfully.
                 size: '8.8 KB',
                 permissions: '-rw-r--r--',
                 content: `Cloud-init v. 24.1.3 running 'init-local' at Apr 24 07:59:58 UTC.
-AWS EC2 instance i-0a89f3e1b7c89a712 metadata acquired.
-Provisioned VPC: vpc-07b941ec923a1f4b (10.0.0.0/16)
-Public Subnets: subnet-pub-1a (10.0.1.0/24), subnet-pub-1b (10.0.2.0/24)
-Private Subnets: subnet-priv-1a (10.0.10.0/24), subnet-priv-1b (10.0.20.0/24)
-NAT Gateway nat-0812fe76ba online. Application Load Balancer active.
+Simulated AWS EC2 metadata for this portfolio demo (no live AWS account).
+VPC design (documented): 10.0.0.0/16
+Public Subnets (design): 10.0.1.0/24, 10.0.2.0/24
+Private Subnets (design): 10.0.10.0/24, 10.0.20.0/24
+NAT Gateway & Application Load Balancer: defined in Terraform configuration (not deployed)
 Cloud-init finished at Apr 24 08:00:01 UTC. Datasource DataSourceEc2Local. Up 3.42 seconds
 `,
               },
@@ -265,8 +263,8 @@ Cloud-init finished at Apr 24 08:00:01 UTC. Datasource DataSourceEc2Local. Up 3.
                 content: `# ~/.bashrc: executed by bash(1) for non-login shells.
 export USER="yash"
 export HOSTNAME="yashos"
-export ROLE="Cloud / DevOps Engineer"
-export LOCATION="Jalgaon / Pune, India (Open to EU Relocation)"
+export ROLE="Cloud Support Engineer"
+export LOCATION="Jalgaon, Maharashtra, India (open to relocation to Germany & other EU countries)"
 
 # Aliases
 alias ll='ls -la'
@@ -341,14 +339,14 @@ cat Desktop/README.md
                     permissions: '-rw-r--r--',
                     owner: 'yash',
                     group: 'yash',
-                    content: `# YashOS 24.04 LTS — Welcome to my Cloud & DevOps Workstation
+                    content: `# YashOS 24.04 LTS — Welcome to my Cloud Support Workstation
 
-Hello! I am **Yash Baviskar**, an entry-level **Cloud / DevOps Engineer** specializing in AWS, Terraform (IaC), Docker, Kubernetes, CI/CD automation, and Linux systems administration.
+Hello! I am **Yash Baviskar**, a **Cloud Support Engineer** working with AWS, Linux, Terraform (IaC), Docker, and CI/CD tooling.
 
 ## Quick Terminal Commands to Try:
-- \`terraform plan\` -> Inspect live simulated IaC deployment for AWS 3-tier architecture
-- \`kubectl get pods -A\` -> View containerized microservices running on cluster
-- \`docker ps\` -> List running containerized services
+- \`terraform plan\` -> Inspect the designed (validated) IaC for a 3-tier AWS architecture
+- \`kubectl get pods -A\` -> View a local Kubernetes (lab) sandbox
+- \`docker ps\` -> List local containerized services
 - \`git log --oneline\` inside \`~/experience\` -> Explore career and education history
 - \`neofetch\` -> Full system information and ASCII terminal badge
 - \`top\` or \`htop\` -> Live interactive system monitor TUI
@@ -429,21 +427,21 @@ Categories=Communication;
                     owner: 'yash',
                     group: 'yash',
                     content: `# Motivation & Cover Letter — Yash Baviskar
-**Target Role:** Junior Cloud Engineer / Junior DevOps Engineer  
+**Target Role:** Cloud Support Engineer / Junior Cloud Engineer  
 **Target Market:** Germany, Luxembourg, Netherlands, Poland, Switzerland & Remote
 
 Dear Hiring Manager,
 
-I am an entry-level Cloud and DevOps Engineer with practical experience designing, provisioning, containerizing, and monitoring cloud infrastructure across AWS.
+I am an entry-level Cloud Support Engineer with hands-on experience investigating AWS and Linux issues, and with self-directed lab projects in cloud infrastructure, containers, and monitoring.
 
 My core technical competencies include:
-1. **Cloud & IaC:** Provisioning modular, reusable AWS VPCs, Subnets, ALBs, EC2, and RDS MySQL with Terraform remote state locking.
-2. **Containers & Orchestration:** Building optimized multi-stage Docker images and deploying rolling-update Kubernetes manifests with health probes.
-3. **CI/CD Automation:** Constructing GitHub Actions pipelines that run linting, test suites, ECR pushes, and automated deployments on git push.
-4. **Observability:** Instrumenting Prometheus scraping exporters, PromQL query panels, and Grafana dashboards.
-5. **Linux Systems:** Strong Ubuntu Server administration, systemd service units, and Bash scripting.
+1. **Cloud & IaC:** Designing and validating modular AWS VPCs, Subnets, ALBs, EC2, and RDS MySQL with Terraform (terraform plan/validate — not applied to a live AWS account).
+2. **Containers & Orchestration:** Building multi-stage Docker images and defining Kubernetes manifests; currently studying Kubernetes fundamentals.
+3. **CI/CD Automation:** Designing GitHub Actions pipelines that run linting, tests, and container builds on push.
+4. **Observability:** Configuring Prometheus scraping exporters and Grafana dashboards in a lab environment.
+5. **Linux Systems:** Ubuntu Server administration basics, systemd service units, and Bash scripting.
 
-I hold a Bachelor of Computer Applications (BCA, Expected 2026), have professional working proficiency in English (B2) and active study in German (A1). I am eager to relocate to Europe and contribute reliably to your infrastructure engineering team.
+I hold a Bachelor of Computer Applications (BCA, 2026), have professional working proficiency in English (B2) and am actively learning German (A1). I am open to relocation to Germany and other EU countries.
 
 Sincerely,
 Yash Baviskar
@@ -463,13 +461,13 @@ Yash Baviskar
                         permissions: '-rw-r--r--',
                         owner: 'yash',
                         group: 'yash',
-                        content: `# AWS Cloud Architecture Practical Competency
-Status: Verified Projects & Active Preparation
+                        content: `# AWS Cloud Architecture — Practical Lab Competency
+Status: Self-Study & Documented Lab Projects (not applied on a live AWS account)
 Focus Areas:
-- Multi-AZ VPC Network Topology (Public/Private Subnets, NAT Gateway, Internet Gateway, Route Tables)
-- Compute & Storage: EC2 Auto Scaling Groups, Elastic Load Balancing (ALB), S3 lifecycle policies
-- Database: Amazon RDS MySQL multi-AZ failover and automated snapshots
-- Identity & Access Management: IAM Least-Privilege roles, policies, MFA enforcement
+- Multi-AZ VPC network design (Public/Private Subnets, NAT Gateway, Internet Gateway, Route Tables)
+- Compute & Storage: EC2 and Elastic Load Balancing (ALB) defined in Terraform, S3 lifecycle policies
+- Database: Amazon RDS MySQL multi-AZ configuration defined in Terraform
+- Identity & Access Management: IAM least-privilege roles and policies
 `,
                       },
                       'terraform-associate.md': {
@@ -479,13 +477,13 @@ Focus Areas:
                         permissions: '-rw-r--r--',
                         owner: 'yash',
                         group: 'yash',
-                        content: `# HashiCorp Terraform Infrastructure as Code Competency
-Status: Verified Codebase & Project Implementations
+                        content: `# HashiCorp Terraform — Infrastructure as Code Competency
+Status: Self-Study & Documented Lab Projects
 Core Principles:
-- Declarative infrastructure specification with HCL syntax
-- Modular architecture with clear input variables, locals, and output parameters
-- Remote backend state management in AWS S3 with DynamoDB distributed state locking
-- Resource lifecycle management, dependency graphs, and drift detection
+- Declarative infrastructure definition with HCL syntax
+- Modular structure with clear input variables, locals, and output parameters
+- Remote backend state configuration in AWS S3 with DynamoDB state locking (defined, validated with terraform plan/validate)
+- Configuration validated with terraform fmt/validate and plan (not applied to a live AWS account)
 `,
                       },
                       'docker-kubernetes.md': {
@@ -495,12 +493,12 @@ Core Principles:
                         permissions: '-rw-r--r--',
                         owner: 'yash',
                         group: 'yash',
-                        content: `# Docker & Kubernetes Container Orchestration Competency
-Status: Verified Implementations
+                        content: `# Docker & Kubernetes — Container Competency
+Status: Docker self-study & lab projects; Kubernetes at learning (basics) level
 Core Skills:
-- Multi-stage Dockerfile optimization (reducing image size from 800MB to 75MB)
-- Kubernetes Deployments, Services (ClusterIP, NodePort, Ingress), ConfigMaps, and Secrets
-- Zero-downtime rolling upgrades, ReplicaSets, and Liveness/Readiness probes
+- Multi-stage Dockerfile builds to reduce image size
+- Docker Compose for local multi-service stacks
+- Kubernetes fundamentals (learning): Deployments, Services, ConfigMaps and Secrets manifests defined
 `,
                       },
                     },
@@ -528,15 +526,16 @@ Core Skills:
                         permissions: '-rw-r--r--',
                         owner: 'yash',
                         group: 'yash',
-                        content: `# Automated Cloud Infrastructure with Terraform (AWS)
+                        content: `# Automated Cloud Infrastructure with Terraform (AWS) — Lab Design
 GitHub: https://github.com/yashbaviskar15/3-tier-app
+Validated with terraform plan / validate (not applied on a live AWS account).
 
-## Architecture:
-- Complete 3-tier AWS architecture provisioned via modular Terraform code.
+## Architecture (defined in Terraform):
+- 3-tier AWS architecture defined via modular Terraform code.
 - Custom VPC (10.0.0.0/16) across 2 Availability Zones with public/private subnets.
-- Internet Gateway, NAT Gateway, Application Load Balancer with health checks.
-- Auto-scaling EC2 instances and RDS MySQL private database subnet group.
-- Remote state management stored in AWS S3 with DynamoDB distributed locking.
+- Internet Gateway, NAT Gateway, Application Load Balancer defined with health checks.
+- EC2 instances and RDS MySQL private database subnet group defined.
+- Remote state configuration using AWS S3 backend with DynamoDB locking.
 `,
                       },
                       'main.tf': {
@@ -638,10 +637,10 @@ variable "availability_zones" {
                         permissions: '-rw-r--r--',
                         owner: 'yash',
                         group: 'yash',
-                        content: `# Containerized Microservices Deployment (Docker + Kubernetes)
+                        content: `# Containerized Microservices (Docker + Kubernetes lab)
 GitHub: https://github.com/yashbaviskar15/acos
 
-Multi-tier service containerization with multi-stage Docker builds, Kubernetes manifests, rolling updates, and Ingress routing.
+Multi-service containerization with multi-stage Docker builds and Kubernetes manifests (learning-lab). Local Docker Compose stack; Kubernetes manifests defined for study.
 `,
                       },
                       'Dockerfile': {
@@ -813,7 +812,8 @@ scrape_configs:
                     group: 'yash',
                     content: `# Bachelor of Computer Applications (BCA)
 Institution: KCES's Institute of Management and Research, Jalgaon (KBCNMU)
-Period: 2023 – 2026 (Expected)
+Period: 2023 – 2026
+CGPA: 8.14 / 10
 Focus: Computer Networking, Operating Systems (Linux), Cloud Computing Fundamentals, Python, Database Systems (RDBMS, SQL).
 `,
                   },
@@ -824,11 +824,11 @@ Focus: Computer Networking, Operating Systems (Linux), Cloud Computing Fundament
                     permissions: '-rw-r--r--',
                     owner: 'yash',
                     group: 'yash',
-                    content: `# Cloud & DevOps Hands-On Projects
-- Architected modular Terraform AWS infrastructure with VPC, ALB, EC2, RDS, and S3 state locking.
-- Built automated GitHub Actions CI/CD pipelines with linting, container builds, and ECR synchronization.
-- Containerized microservices with Docker and deployed to Kubernetes clusters with health probes.
-- Configured Prometheus scraping and Grafana telemetry dashboards.
+                    content: `# Cloud & DevOps Hands-On Lab Projects
+- Designed modular Terraform AWS infrastructure with VPC, ALB, EC2, RDS, and S3 state locking (validated with terraform plan/validate — not applied on AWS).
+- Designed GitHub Actions CI/CD pipelines with linting and container build steps.
+- Containerized microservices with Docker; defined Kubernetes manifests while learning Kubernetes basics.
+- Configured Prometheus scraping and Grafana dashboards in a lab environment.
 `,
                   },
                   '03_devops_contributions.md': {
@@ -911,7 +911,12 @@ GitHub Profile: https://github.com/yashbaviskar15
 };
 
 /**
- * VFS Class with reactive state sync
+ * VFS Class with reactive state sync.
+ *
+ * SESSION-ISOLATED BY DESIGN: the file system lives in memory only. It is a
+ * per-tab in-memory singleton (each browser tab / page load gets its own copy),
+ * so one visitor's created / edited / deleted files can never be seen by another
+ * visitor, and a refresh always returns to the clean factory file system.
  */
 export class VirtualFileSystem {
   private root: VFSNode;
@@ -919,7 +924,7 @@ export class VirtualFileSystem {
   private listeners: (() => void)[] = [];
 
   constructor() {
-    this.root = this.loadFromStorage();
+    this.root = getInitialFileSystem();
   }
 
   public subscribe(listener: () => void) {
@@ -930,29 +935,8 @@ export class VirtualFileSystem {
   }
 
   private notify() {
-    this.saveToStorage();
+    // No persistence — state stays in this tab's memory and resets on refresh.
     this.listeners.forEach((l) => l());
-  }
-
-  private loadFromStorage(): VFSNode {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const saved = window.localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          return JSON.parse(saved);
-        }
-      }
-    } catch {}
-    return getInitialFileSystem();
-  }
-
-  public saveToStorage() {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.root));
-        window.localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(this.trash));
-      }
-    } catch {}
   }
 
   public resetToFactory() {

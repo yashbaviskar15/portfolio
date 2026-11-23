@@ -289,7 +289,7 @@ export const RecruiterView: React.FC<RecruiterViewProps> = ({ isOpen, onClose })
                       <span>Containers & Observability</span>
                     </div>
                     <p className="text-neutral-400 leading-relaxed font-mono text-[11.5px]">
-                      Docker multi-stage builds, Kubernetes (k3s, Minikube) rolling updates, Prometheus telemetry scraping, Grafana dashboards, Alertmanager
+                      Docker multi-stage builds, Kubernetes (k3s, Minikube) fundamentals (learning basics), Prometheus telemetry scraping, Grafana dashboards, Alertmanager
                     </p>
                   </div>
 
@@ -305,11 +305,11 @@ export const RecruiterView: React.FC<RecruiterViewProps> = ({ isOpen, onClose })
                 </div>
               </div>
 
-              {/* Cloud & DevOps Projects */}
+              {/* Cloud Support & Lab Projects */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xs font-bold uppercase tracking-wider font-mono text-neutral-400">
-                    Featured Cloud & DevOps Projects
+                    Featured Cloud Support & Lab Projects
                   </h2>
                   <span className="text-[11px] text-neutral-500 font-mono">100% Code-Backed on GitHub</span>
                 </div>

@@ -190,3 +190,12 @@ export const terminalLineVariants: Variants = {
     transition: { duration: 0.15, ease: 'easeOut' },
   },
 };
+
+// 8. Welcome Screen Enter Button — Continuous Pulsing Scale
+export const welcomeButtonVariants: Variants = {
+  idle: { scale: 1 },
+  pulse: {
+    scale: [1, 1.03, 1],
+    transition: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' },
+  },
+};

@@ -12,69 +12,76 @@ export const ResumeApp: React.FC = () => {
 
   const resumePlainText = `================================================================================
 YASH BAVISKAR
-Junior Cloud / DevOps Engineer
-+91 96231 66585 | yashbaviskar0215@outlook.com
-Jalgaon / Pune, India (Open to EU Relocation / Remote)
+Cloud Support Engineer
+yashbaviskar0215@outlook.com | +91 96231 66585
+Jalgaon, India (Open to relocation to Germany and other EU countries)
 yashbaviskar.me | linkedin.com/in/yashbaviskar15 | github.com/yashbaviskar15
 ================================================================================
 
 [PROFESSIONAL SUMMARY]
 --------------------------------------------------------------------------------
-Entry-level Cloud & DevOps Engineer with hands-on project experience in AWS,
-Infrastructure as Code (Terraform), Docker containerization, Kubernetes
-orchestration, and Linux systems administration. Independently architected,
-built, and deployed multi-tier AWS environments with Terraform, containerized
-microservices with Docker, automated CI/CD release pipelines with GitHub Actions,
-and instrumented full observability stacks with Prometheus and Grafana.
+Cloud Support Engineer at IT Digi Solution with hands-on experience investigating
+AWS and Linux issues, and with self-directed lab projects in cloud infrastructure,
+containers and monitoring. Comfortable with Linux, Bash, AWS basics, Terraform
+(designed and validated) and Docker.
+
+[EXPERIENCE]
+--------------------------------------------------------------------------------
+Cloud Support Engineer | IT Digi Solution | Jalgaon, India | June 2026 – Present
+• Investigates EC2 instance/system status checks and CloudWatch metrics, Linux
+  logs, IAM access issues, Docker container errors and network connectivity issues.
+• Documents findings (status, metrics, time) in the ticket and escalates to a
+  senior engineer for the fix.
 
 [TECHNICAL SKILLS]
 --------------------------------------------------------------------------------
-* Cloud Infrastructure (AWS): EC2, S3, IAM, VPC, Route 53, RDS MySQL, ECS, ECR,
-                              ELB/ALB, CloudFront, CloudWatch
-* Infrastructure as Code:     Terraform (modular design, state management)
-* Containers & Orchestration: Docker (multi-stage builds), Kubernetes (k3s, Minikube)
-* CI/CD & Automation:         GitHub Actions, AWS CodePipeline, CodeBuild, CodeDeploy
-* Observability & SRE:        Prometheus, Grafana, Alertmanager, Amazon CloudWatch
-* Linux Systems:              Ubuntu Server, Amazon Linux, systemd units, cron
-* Networking & Security:      VPC Subnets, Route Tables, Internet Gateway, Security
-                              Groups, NACLs, SSH key authentication, UFW, Fail2Ban
-* Scripting & Databases:      Python, Bash/Shell, YAML, JSON, PostgreSQL, Git
+* Cloud (AWS):                EC2, CloudWatch, S3, IAM, VPC, Route 53, RDS, ECS, ECR
+* Infrastructure as Code:     Terraform (designed, defined and validated with plan/validate)
+* Containers:                 Docker (multi-stage builds); Kubernetes (learning the basics)
+* CI/CD & Automation:         GitHub Actions, Bash/Shell, YAML, JSON
+* Observability:              Prometheus, Grafana, CloudWatch (lab)
+* Linux Systems:              Ubuntu Server, Amazon Linux, systemd, cron, log analysis
+* Networking & Security:      VPC/Subnet design (public/private), Route Tables, Internet
+                              Gateway, Security Groups, SSH key authentication, UFW
+* Scripting & Databases:      Bash, Python (basics), PostgreSQL, Git
 
-[CLOUD & DEVOPS PROJECTS]
+[CLOUD & DEVOPS LAB PROJECTS]
 --------------------------------------------------------------------------------
-1. AWS Three-Tier Web Application Infrastructure (2024)
+1. AWS Three-Tier Web Application Infrastructure — Terraform (Lab Design)
    GitHub: github.com/yashbaviskar15/3-tier-app
-   • Architected and provisioned an isolated 3-tier AWS environment using modular
-     Terraform scripts across dedicated public and private VPC subnets.
-   • Configured an Application Load Balancer (ALB) and isolated RDS MySQL database.
-   • Enforced least-privilege IAM roles, Security Groups, NACLs, and SSH key-only auth.
+   • Designed and defined a modular three-tier AWS architecture in Terraform
+     (VPC, route tables, Internet Gateway, security groups and compute).
+   • Defined an Application Load Balancer and an RDS MySQL instance in the config.
+   • Validated the configuration with terraform validate and terraform plan; the
+     stack was not applied to a live AWS account.
 
-2. Cloud Infrastructure Monitoring with Prometheus & Grafana (2024 – 2025)
+2. Cloud Infrastructure Monitoring with Prometheus & Grafana (Lab)
    GitHub: github.com/yashbaviskar15/cloud-monitoring
-   • Automated provisioning of full-stack observability on AWS EC2 via Terraform & Docker.
-   • Scraped telemetry across 10+ containerized services; built 5 custom Grafana dashboards.
-   • Tuned Alertmanager rules, reducing MTTD from 15+ mins to <2 mins during testing.
+   • Defined Prometheus scrape configurations for node and container metrics in a
+     personal lab environment.
+   • Built Grafana dashboards to visualise system and container health.
 
-3. CI/CD Release Pipeline with Docker, Kubernetes & AWS (2025)
+3. CI/CD Pipeline with Docker, GitHub Actions & AWS (Workflow Defined)
    GitHub: github.com/yashbaviskar15/cicd-pipeline
-   • Built automated GitHub Actions CI/CD pipeline for linting, testing, and container builds.
-   • Published optimized multi-stage Docker images to Amazon ECR.
-   • Deployed containerized workloads to Kubernetes (k3s) with zero-downtime rolling updates.
+   • Defined a GitHub Actions workflow that runs linting and tests, then builds
+     container images.
+   • Defined container image publishing steps for Amazon ECR.
+   • Defined Kubernetes manifests and validated them locally while learning the basics.
 
-4. Aravanta CloudOS — Cloud Infrastructure Automation Platform (2025 – Present)
+4. Aravanta CloudOS — Cloud Infrastructure Automation Platform (In Progress)
    GitHub: github.com/yashbaviskar15/acos
-   • Building a self-service cloud provisioning platform on Infrastructure as Code.
-   • RESTful backend built with Python (FastAPI) and PostgreSQL, containerized with Docker.
-   • GitHub Actions handles validation, linting, and continuous delivery.
+   • Building a self-service cloud provisioning platform on infrastructure as code.
+   • Backend built with FastAPI and PostgreSQL, containerized with Docker.
+   • GitHub Actions defined for build and publish automation.
 
 [EDUCATION]
 --------------------------------------------------------------------------------
-Bachelor of Computer Applications (BCA) | 2023 – 2026 (Expected)
-KCES's Institute of Management and Research, Jalgaon, India
+Bachelor of Computer Applications (BCA) | 2023 – 2026 | CGPA 8.14 / 10
+KCES's Institute of Management and Research, Jalgaon (KBCNMU), India
 
 [LANGUAGES]
 --------------------------------------------------------------------------------
-English: B2 (Professional Working) | German: A1 (Elementary / Active Study)
+English: B2 | German: A1 (learning) | Hindi | Marathi
 ================================================================================`;
 
   const handleCopyText = () => {
